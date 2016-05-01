@@ -1,8 +1,6 @@
 lrsh
 ====
-Lua Reverse Shell
-
-`TODO`
+Lua Reverse Shell (`TODO`)
 
 License
 -------
