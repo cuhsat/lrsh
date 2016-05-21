@@ -1,6 +1,17 @@
-lrsh
-====
-Lua Reverse Shell (`TODO`)
+Palantir (o̱)
+============
+A Lua remote shell.
+
+Usage
+-----
+```
+$ palantir [-dhlv] IP PORT
+```
+
+* `-d` Starts Palantir as a daemon
+* `-h` Shows the usage information
+* `-l` Shows the license
+* `-v` Shows the version
 
 License
 -------
