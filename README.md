@@ -8,6 +8,7 @@ Usage
 $ palantir [-dhlv] IP PORT
 ```
 
+Options:
 * `-d` Starts Palantir as a daemon
 * `-h` Shows the usage information
 * `-l` Shows the license
