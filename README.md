@@ -1,7 +1,5 @@
 Palantir
 ========
-A Lua reverse shell.
-
 Palantir is a minimal, Lua scriptable reverse shell using a simple human 
 readable [protocol](doc/PROTOCOL).
 
