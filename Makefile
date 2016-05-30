@@ -1,12 +1,12 @@
 CC=gcc
-CFLAGS=-c -ansi -pedantic -std=gnu99 -Wall -Werror -DDEBUG
+CFLAGS=-c -ansi -pedantic -std=gnu99 -Wall -Werror -DDEBUG=0
 LDFLAGS=-llua5.3
 LUA=luac5.3
-SOURCES=palantir.c lib/lua.c lib/net.c
-SCRIPTS=palantir.lua
+SOURCES=src/palantir.c src/lib/lua.c src/lib/net.c
+SCRIPTS=src/palantir.lua
 OBJECTS=$(SOURCES:.c=.o)
 RESOURCES=$(SCRIPTS:.lua=.inc)
-EXECUTABLES=../bin
+EXECUTABLES=bin
 EXECUTABLE=$(EXECUTABLES)/palantir
 
 .PHONY: all clean
@@ -24,5 +24,6 @@ $(EXECUTABLE): $(RESOURCES) $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -f $(EXECUTABLE) *.luac *.inc *.o lib/*.o
-	rmdir $(EXECUTABLES)
+	-@find . -regex ".*\.\(luac\|inc\|o\)" -delete
+	-@rm -f $(EXECUTABLE)
+	-@rmdir $(EXECUTABLES)

@@ -1,17 +1,30 @@
-Palantir (o̱)
-============
-A Lua remote shell.
+Palantir
+========
+A Lua reverse shell.
+
+Palantir is a minimal, Lua scriptable reverse shell using a simple human 
+readable [protocol](doc/PROTOCOL).
 
 Usage
 -----
 ```
-$ palantir [-dhlv] IP PORT
+$ palantir [-chlv] IP PORT
 ```
 
-* `-d` Starts Palantir as a daemon
+Options:
+* `-c` Starts in client mode (daemon)
 * `-h` Shows the usage information
 * `-l` Shows the license
 * `-v` Shows the version
+
+Commands:
+* `/eval` Evaluate Lua code
+* `/exit` Shutdown server
+* `/halt` Shutdown client
+
+All other commands will be execute be the clients default system shell.
+
+> A user specific configuration file can be place under `~/.palantirrc`.
 
 License
 -------

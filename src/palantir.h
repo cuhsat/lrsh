@@ -21,6 +21,16 @@
 #ifndef PALANTIR_H
 #define PALANTIR_H
 
-#define VERSION "0.1.0"
+#include <lua5.3/lua.h>
+
+#define VERSION "0.2.0"
+
+#if LUA_VERSION_NUM < 503
+#error "Lua 5.3 required"
+#endif
+
+#ifndef DEBUG
+#define DEBUG 0
+#endif
 
 #endif // PALANTIR_H

@@ -26,9 +26,15 @@
 #include <lua5.3/lauxlib.h>
 
 #include <errno.h>
+#include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 
+#define HOST_MAX 16
+
+/*
+ * Lua connect
+ */
 extern int lua_connect(lua_State *L) {
     if (!lua_isstring(L, 1) || !lua_isinteger(L, 2)) {
         return luaL_error(L, "Invalid args");
@@ -41,6 +47,9 @@ extern int lua_connect(lua_State *L) {
     return 0;
 }
 
+/*
+ * Lua listen
+ */
 extern int lua_listen(lua_State *L) {
     if (!lua_isstring(L, 1) || !lua_isinteger(L, 2)) {
         return luaL_error(L, "Invalid args");
@@ -53,14 +62,26 @@ extern int lua_listen(lua_State *L) {
     return 0;
 }
 
+/*
+ * Lua accept
+ */
 extern int lua_accept(lua_State *L) {
-    if (net_accept() < 0) {
+    char host[HOST_MAX];
+    uint16_t port = 0;
+
+    if (net_accept(host, &port) < 0) {
         return luaL_error(L, strerror(errno));
     }
 
-    return 0;
+    lua_pushlstring(L, host, strnlen(host, HOST_MAX));
+    lua_pushinteger(L, port);
+
+    return 2;
 }
 
+/*
+ * Lua send
+ */
 extern int lua_send(lua_State *L) {
     if (!lua_isstring(L, 1)) {
         return luaL_error(L, "Invalid args");
@@ -76,9 +97,12 @@ extern int lua_send(lua_State *L) {
     return 0;
 }
 
+/*
+ * Lua recv
+ */
 extern int lua_recv(lua_State *L) {
-    size_t size = 0;
     char *data = NULL;
+    size_t size = 0;
 
     if (net_recv(&data, &size) < 0) {
         return luaL_error(L, strerror(errno));
@@ -89,28 +113,46 @@ extern int lua_recv(lua_State *L) {
     return 1;
 }
 
-extern int lua_path(lua_State *L) {
-    if (lua_gettop(L) && !lua_isstring(L, 1)) {
-        return luaL_error(L, "Invalid args");
-    }
+/*
+ * Lua system info
+ */
+extern int lua_info(lua_State *L) {
+    if (lua_gettop(L) > 0) {
+        if (!lua_isstring(L, 1)) {
+            return luaL_error(L, "Invalid args");
+        }
 
-    if (lua_gettop(L)) {
         if (chdir(lua_tostring(L, 1)) < 0) {
             return luaL_error(L, strerror(errno));
         }
+    }    
+
+    char user[LOGIN_NAME_MAX + 1];
+    char host[HOST_NAME_MAX + 1];
+    char path[PATH_MAX + 1];
+
+    if (getlogin_r(user, sizeof(user)) < 0) {
+        return luaL_error(L, strerror(errno));
     }
 
-    char path[PATH_MAX + 1];
+    if (gethostname(host, sizeof(host)) < 0) {
+        return luaL_error(L, strerror(errno));   
+    }
 
     if (getcwd(path, sizeof(path)) == NULL) {
         return luaL_error(L, strerror(errno));
     }
 
+    lua_pushlstring(L, user, strnlen(user, sizeof(user)));
+    lua_pushlstring(L, host, strnlen(host, sizeof(host)));
     lua_pushlstring(L, path, strnlen(path, sizeof(path)));
 
-    return 1;
+    return 3;
 }
 
+/*
+ * Lua sleep
+ */
 extern int lua_sleep(lua_State *L) {
     if (!lua_isinteger(L, 1)) {
         return luaL_error(L, "Invalid args");
