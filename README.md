@@ -18,7 +18,7 @@ $ palantir [-chlv] IP PORT
 * `/exit` Shutdown server
 * `/halt` Shutdown client
 
-All other commands will be execute be the clients default system shell.
+All other commands will be execute by the clients default system shell.
 
 > A user specific configuration file can be place under `~/.palantirrc`.
 
