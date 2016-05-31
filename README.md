@@ -8,7 +8,7 @@ $ palantir [-chlv] IP PORT
 ```
 
 ### Options:
-* `-c` Starts in client mode (daemon)
+* `-c` Start in client mode (daemon)
 * `-h` Shows the usage information
 * `-l` Shows the license
 * `-v` Shows the version
