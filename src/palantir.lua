@@ -16,32 +16,60 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
-print(string.format('Palantir %s (%s) ', VERSION, _VERSION))
+io.write(string.format('Palantir %s (%s)\n', VERSION, _VERSION))
 
--- global config
-local host = HOST
-local port = PORT
-local idle = 5000
+-- config
+TIMEOUT = 5000
 
 -- pretty protocol
-local raw_send = send
 local raw_recv = recv
+local raw_send = send
 
-function send(command, data)
-  local frame = command .. ' ' .. (data or '')
-  return raw_send(frame)
-end
-
+-- recv command
 function recv()
   local frame = raw_recv()
   return frame:sub(1, 4), frame:sub(6)
+end
+
+-- send command
+function send(command, param)
+  local frame = command .. ' ' .. (param or '')
+  return raw_send(frame)
+end
+
+-- execute shell command
+function exec(command)
+  local handle = io.popen(command .. ' 2>&1')
+  local result = handle:read('*a')
+
+  handle:close()
+  return result
+end
+
+-- execute Lua command
+function eval(command)
+  local lua, err = load('return ' .. command, 'eval', 't')
+
+  -- force line break
+  if lua then
+    return tostring(lua() or ''):match('^(.-)\n*$') .. '\n'
+  else
+    return string.format('Palantir error: %s\n', err)
+  end
+end
+
+-- error handler
+function fail(err)
+  if err ~= 'Success' then
+    io.stderr:write(string.format('Palantir error: %s\n', err))
+  end
 end
 
 -- client mode
 function client(host, port)
 
   while true do
-    if pcall(connect, host, port) then
+    if xpcall(connect, fail, host, port) then
 
       while true do
         send('INIT', string.format('%s@%s:%s: ', info()))
@@ -53,36 +81,29 @@ function client(host, port)
           info(data)
         end
 
-        -- execute Lua code
-        if command == 'EVAL' then
-          local result = assert(load('return ' .. data)())
-          send('TEXT', result)
-        end
-
-        -- execute by shell
+        -- execute code
         if command == 'EXEC' then
-          local handle = io.popen(data .. ' 2>&1')
-          local result = handle:read('*a')
-          send('TEXT', result)
-          handle:close()
+          send('TEXT', eval(data))
         end
 
         -- shutdown client
         if command == 'HALT' then
-          do return end
+          os.exit()
         end
       end
 
-    else sleep(idle) end
+    else sleep(TIMEOUT) end
   end
 end
 
 -- server mode
 function server(host, port)
-  listen(host, port)
+  while not xpcall(listen, fail, host, port) do
+    sleep(TIMEOUT)
+  end
 
   while true do
-    if pcall(accept) then
+    if xpcall(accept, fail) then
 
       while true do
         local command, data = recv()
@@ -90,31 +111,27 @@ function server(host, port)
         -- show prompt
         if command == 'INIT' then
           io.write(data)
-        
+
           local line = io.read()
 
           -- error
           if not line then
-            error('broken')
+            error('Input invalid')
           
           -- change directory
           elseif line:lower():match('^cd%s+') then
             send('PATH', line:sub(4))
 
-          -- evaluate Lua code
-          elseif line:lower():match('^/eval') then
-            send('EVAL', line:sub(7))
-          
           -- shutdown server
-          elseif line:lower():match('^/exit') then
+          elseif line:lower():match('^--%s*exit$') then
             return
 
           -- shutdown client
-          elseif line:lower():match('^/halt') then
+          elseif line:lower():match('^--%s*halt$') then
             send('HALT')
             break
 
-          -- execute by shell
+          -- execute code
           else       
             send('EXEC', line)
           end
@@ -132,14 +149,7 @@ end
 -- call user config
 pcall(dofile, os.getenv('HOME') .. '/.palantirrc')
 
--- exit
-function exit(status)
-  if not status == 'Success' then
-    io.write(string.format('Lua error: %s\n', status))
-  end
-end
-
 -- main
-if xpcall(MODE and client or server, exit, host, port) then
-  print('Palantir exit')
+if xpcall(MODE and server or client, fail, HOST, PORT) then
+  io.write('Palantir exit\n')
 end

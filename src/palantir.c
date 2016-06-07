@@ -38,11 +38,11 @@
 #define LUA_SIZE ((size_t)src_palantir_luac_len)
 
 typedef enum {
-    MODE_SERVER,
-    MODE_CLIENT
+    MODE_PASSIVE,
+    MODE_ACTIVE
 } palantir_mode;
 
-static palantir_mode mode = MODE_SERVER;
+static palantir_mode mode = MODE_ACTIVE;
 
 /*
  * Palantir start
@@ -79,12 +79,12 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_register(L, "sleep", lua_sleep);
 
     if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != LUA_OK) {
-        fprintf(stderr, "Lua error: %s\n", lua_tostring(L, -1));
+        fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
         return -1;
     }
 
     if (lua_pcall(L, 0, LUA_MULTRET, 0) != LUA_OK) {
-        fprintf(stderr, "Lua error: %s\n", lua_tostring(L, -1));
+        fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
         return -1;
     }
 
@@ -108,14 +108,14 @@ static void palantir_exit() {
 int main(int argc, char *argv[]) {
     int opt, port = 0; char *t = NULL;
 
-    while ((opt = getopt(argc, argv, "chlv")) != -1) {
+    while ((opt = getopt(argc, argv, "phlv")) != -1) {
         switch (opt) {
-            case 'c':
-                mode = MODE_CLIENT;
+            case 'p':
+                mode = MODE_PASSIVE;
                 break;
             
             case 'h':
-                printf("Usage: %s [-chlv] IP PORT\n", argv[0]);
+                printf("Usage: %s [-hlv] [-p] IP PORT\n", argv[0]);
                 exit(EXIT_SUCCESS);
 
             case 'l':
@@ -132,12 +132,12 @@ int main(int argc, char *argv[]) {
     }
 
     if ((argc - optind) < 2) {
-        fprintf(stderr, "Please give IP PORT\n");
+        fprintf(stderr, "Please give IP and PORT\n");
         exit(EXIT_FAILURE);
     }
 
     if ((port = strtol(argv[optind + 1], &t, 0)) == 0) {
-        fprintf(stderr, "Please give IP PORT\n");
+        fprintf(stderr, "Please give IP and PORT\n");
         exit(EXIT_FAILURE);
     }
 

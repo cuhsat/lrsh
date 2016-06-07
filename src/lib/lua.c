@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <stdint.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #define HOST_MAX 16
@@ -158,8 +159,14 @@ extern int lua_sleep(lua_State *L) {
         return luaL_error(L, "Invalid args");
     }
 
-    if (usleep(lua_tointeger(L, 1) * 1000) < 0) {
-        return luaL_error(L, strerror(errno));
+    time_t time = lua_tointeger(L, 1);
+    struct timespec ts;
+
+    ts.tv_sec  = (time / 1000);
+    ts.tv_nsec = (time % 1000) * 1000000L;
+
+    while (nanosleep(&ts, &ts) < 0) {
+        continue;
     }
 
     return 0;

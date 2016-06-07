@@ -1,6 +1,6 @@
 CC=gcc
 LUA=luac5.3
-CFLAGS=-c -ansi -pedantic -std=gnu99 -Wall -Werror -DDEBUG=0
+CFLAGS=-c -ansi -pedantic -std=gnu99 -Wall -Werror
 LDFLAGS=-llua5.3
 SOURCES=src/palantir.c src/lib/lua.c src/lib/net.c
 SCRIPTS=src/palantir.lua

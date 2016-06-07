@@ -156,9 +156,9 @@ extern int net_accept(char *host, uint16_t *port) {
  * Net send
  */
 extern int net_send(const char *data, size_t size) {
-    uint32_t crc = crc32(data, size);
+    uint32_t checksum = crc32(data, size);
 
-    if (send(sock, (const char *)&crc, 4, 0) < 0) {
+    if (send(sock, (const char *)&checksum, 4, 0) < 0) {
         return -1;
     }
 
@@ -181,10 +181,10 @@ extern int net_send(const char *data, size_t size) {
  * Net recv
  */
 extern int net_recv(char **data, size_t *size) {
-    uint32_t crc;
+    uint32_t checksum;
     char frame[FRAME_MAX];
 
-    if (recv(sock, (char *)&crc, 4, 0) < 0) {
+    if (recv(sock, (char *)&checksum, 4, 0) < 0) {
         return -1;
     }
 
@@ -208,7 +208,7 @@ extern int net_recv(char **data, size_t *size) {
         memcpy(buffer + (*size - frame_last), frame, frame_size);
     } while (frame_size && (frame_last -= frame_size));
 
-    if (crc != crc32(buffer, *size)) {
+    if (checksum != crc32(buffer, *size)) {
         return -1;
     }
 
