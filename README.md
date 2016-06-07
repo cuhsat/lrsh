@@ -1,8 +1,6 @@
-# Palantir
+# Palantir ![](http://lua-users.org/files/wiki_insecure/lua-icons-png/lua-48x48.png)
 Palantir is a [Lua](https://www.lua.org) scriptable, extendable, tiny reverse 
 shell, using a human readable protocol written in C and Lua.
-
-![Lua](https://www.lua.org/images/lua-logo.gif)
 
 ## Usage
 ```
@@ -33,7 +31,7 @@ The following global variables will be defined:
 * `HOST`    The command line argument `IP`
 * `PORT`    The command line argument `PORT`
 * `DEBUG`   If compiled with `DEBUG` flag set
-* `TIMEOUT` The time between connection attempts (defaults to 5 seconds)
+* `TIMEOUT` The time between connection attempts (defaults to `5` seconds)
 * `VERSION` The version number
 
 ### Functions
@@ -101,35 +99,35 @@ Each command consists of a `5` byte command header followed by `0` to `n`
 bytes of `param`. A command header will end with a single blank ` ` character 
 for better readability.
 
-#### Commands issued by the server (as requests):
-* `EXEC` Execute command
-* `HALT` Shutdown client
-* `PATH` Change directory
-
 #### Commands issued by the client (as responses):
 * `INIT` Show prompt
 * `TEXT` Print text
 
+#### Commands issued by the server (as requests):
+* `EXEC` Execute command
+* `HALT` Halt client
+* `PATH` Change path
+
 ### Examples
 ```
-Client: INIT root@localhost:/
+Client: INIT root@localhost:/:
 ```
 ```
 Server: PATH var
 ```
 
 ```
-Client: INIT root@localhost:/var
+Client: INIT root@localhost:/var:
 ```
 ```
-Server: EXEC exec('echo hello')
+Server: EXEC exec('echo hello') .. ' world'
 ```
 ```
-Client: TEXT hello
+Client: TEXT hello world
 ```
 
 ```
-Client: INIT root@localhost:/var
+Client: INIT root@localhost:/var:
 ```
 ```
 Server: HALT
