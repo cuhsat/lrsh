@@ -1,4 +1,4 @@
-# Palantir ![](http://lua-users.org/files/wiki_insecure/lua-icons-png/lua-48x48.png)
+# Palantir ![](http://www.andreas-rozek.de/Lua/Lua-Logo_32x32.png)
 Palantir is a [Lua](https://www.lua.org) scriptable, extendable, tiny reverse 
 shell, using a human readable protocol written in C and Lua.
 
