@@ -1,4 +1,4 @@
-# Palantir ![](http://lua-users.org/files/wiki_insecure/lua-icons-png/lua-32x32.png)
+# Palantir ![](http://lua-users.org/files/wiki_insecure/lua-icons-png/lua-48x48.png)
 Palantir is a [Lua](https://www.lua.org) scriptable, extendable, tiny reverse 
 shell, using a human readable protocol written in C and Lua.
 
@@ -18,7 +18,7 @@ $ palantir [-hlv] [-p] IP PORT
 * `-- exit` Shutdown server
 
 All other input will be evaluated and execute as Lua commands. The internal
-command `exec` will execute system commands by using the clients default 
+command `exec` will execute system commands by using the users default 
 system shell and return the results (`strerr` will be mapped to `stdout`).
 
 ## Environment
