@@ -1,8 +1,8 @@
 # Palantir
-![Lua](https://www.lua.org/images/lua-logo.gif)
-
 Palantir is a [Lua](https://www.lua.org) scriptable, extendable, tiny reverse 
 shell, using a human readable protocol written in C and Lua.
+
+![Lua](https://www.lua.org/images/lua-logo.gif)
 
 ## Usage
 ```
