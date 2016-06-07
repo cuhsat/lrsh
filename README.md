@@ -86,7 +86,7 @@ A network frame is build according to the following format:
 | CHECKSUM (4 bytes) | SIZE (4 bytes) | DATA (n bytes) |
 +--------------------+----------------+----------------+
 ```
-> The `CHECKSUM` is a bitwise CRC-32 over the `DATA` field only.
+The `CHECKSUM` is a bitwise CRC-32 only over the `DATA` field.
 
 ### Command Layer
 A command is build according to the following format:
