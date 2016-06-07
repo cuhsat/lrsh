@@ -36,7 +36,7 @@ The following global variables will be defined:
 * `TIMEOUT` The time between connection attempts (defaults to 5 seconds)
 * `VERSION` The version number
 
-### Functions:
+### Functions
 The following global functions will be defined:
 
 #### connect(host, port)
