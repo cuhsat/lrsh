@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
                 break;
             
             case 'h':
-                printf("Usage: %s [-hlv] [-p] IP PORT\n", argv[0]);
+                printf("Usage: %s [-hlv] [-p] HOST PORT\n", argv[0]);
                 exit(EXIT_SUCCESS);
 
             case 'l':
@@ -132,13 +132,18 @@ int main(int argc, char *argv[]) {
     }
 
     if ((argc - optind) < 2) {
-        fprintf(stderr, "Please give IP and PORT\n");
+        fprintf(stderr, "Please give HOST and PORT\n");
         exit(EXIT_FAILURE);
     }
 
     if ((port = strtol(argv[optind + 1], &t, 0)) == 0) {
-        fprintf(stderr, "Please give IP and PORT\n");
+        fprintf(stderr, "Please give HOST and PORT\n");
         exit(EXIT_FAILURE);
+    }
+
+    if (mode == MODE_PASSIVE && daemon(0, 0) < 0) {
+        perror("Palantir error");
+        exit(EXIT_FAILURE);            
     }
 
     atexit(palantir_exit);

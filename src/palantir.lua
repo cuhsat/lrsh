@@ -38,8 +38,8 @@ function send(command, param)
 end
 
 -- execute shell command
-function exec(command)
-  local handle = io.popen(command .. ' 2>&1')
+function exec(param)
+  local handle = io.popen(param .. ' 2>&1')
   local result = handle:read('*a')
 
   handle:close()
@@ -47,12 +47,18 @@ function exec(command)
 end
 
 -- execute Lua command
-function eval(command)
-  local lua, err = load('return ' .. command, 'eval', 't')
+function eval(param)
+  local lua, err = load('return ' .. param, 'eval', 't')
 
-  -- force line break
   if lua then
-    return tostring(lua() or ''):match('^(.-)\n*$') .. '\n'
+    local result = tostring(lua() or '')
+
+    -- force line break
+    if result and result:sub(-1) ~= '\n' then
+      result = result .. '\n'
+    end
+
+    return result
   else
     return string.format('Palantir error: %s\n', err)
   end
@@ -72,18 +78,18 @@ function client(host, port)
     if xpcall(connect, fail, host, port) then
 
       while true do
-        send('INIT', string.format('%s@%s:%s: ', info()))
+        send('INIT', string.format('%s@%s:%s ', info()))
 
-        local command, data = recv()
+        local command, param = recv()
 
         -- change directory
         if command == 'PATH' then
-          info(data)
+          info(param)
         end
 
         -- execute code
         if command == 'EXEC' then
-          send('TEXT', eval(data))
+          send('TEXT', eval(param))
         end
 
         -- shutdown client
@@ -106,11 +112,11 @@ function server(host, port)
     if xpcall(accept, fail) then
 
       while true do
-        local command, data = recv()
+        local command, param = recv()
 
         -- show prompt
         if command == 'INIT' then
-          io.write(data)
+          io.write(param)
 
           local line = io.read()
 
@@ -139,7 +145,7 @@ function server(host, port)
 
         -- print text
         if command == 'TEXT' then
-          io.write(data)
+          io.write(param)
         end
       end
     end

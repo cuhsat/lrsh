@@ -4,7 +4,7 @@ shell, using a human readable protocol written in C and Lua.
 
 ## Usage
 ```
-$ palantir [-hlv] [-p] IP PORT
+$ palantir [-hlv] [-p] HOST PORT
 ```
 
 ### Options:
@@ -28,7 +28,7 @@ A user specific configuration file can be place under `~/.palantirrc`.
 The following global variables will be defined:
 
 * `MODE`    The command line option `-p`
-* `HOST`    The command line argument `IP`
+* `HOST`    The command line argument `HOST`
 * `PORT`    The command line argument `PORT`
 * `DEBUG`   If compiled with `DEBUG` flag set
 * `TIMEOUT` The time between connection attempts (defaults to `5` seconds)
@@ -58,11 +58,11 @@ Returns `user`, `host`, `path` and sets the `path` if given.
 #### sleep(time)
 Sleeps for the given `time` (in milliseconds).
 
-#### exec(command)
-Returns the executed shell `command` output.
+#### exec(param)
+Returns the `param` output executed by the users default shell.
 
-#### eval(command)
-Returns the executed Lua `command` output.
+#### eval(param)
+Returns the `param` output executed and evaluated by Lua.
 
 #### fail(err)
 The default error handler that prints `err`.
@@ -110,24 +110,24 @@ for better readability.
 
 ### Examples
 ```
-Client: INIT root@localhost:/:
+Client: INIT root@localhost:/
 ```
 ```
 Server: PATH var
 ```
 
 ```
-Client: INIT root@localhost:/var:
+Client: INIT root@localhost:/var
 ```
 ```
-Server: EXEC exec('echo hello') .. ' world'
+Server: EXEC exec('echo hello')
 ```
 ```
-Client: TEXT hello world
+Client: TEXT hello
 ```
 
 ```
-Client: INIT root@localhost:/var:
+Client: INIT root@localhost:/var
 ```
 ```
 Server: HALT

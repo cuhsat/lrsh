@@ -20,6 +20,7 @@
  */
 #include "net.h"
 
+#include <netdb.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -78,9 +79,15 @@ extern int net_connect(const char *host, uint16_t port) {
         return -1;
     }
 
+    struct hostent *he;
     struct sockaddr_in addr;
 
+    if ((he = gethostbyname2(host, AF_INET)) == NULL) {
+        return -1;
+    }
+
     memset(&addr, 0, sizeof(addr));
+    memcpy(&addr.sin_addr, he->h_addr, he->h_length);
 
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -104,9 +111,15 @@ extern int net_listen(const char *host, uint16_t port) {
         return -1;
     }
 
+    struct hostent *he;
     struct sockaddr_in addr;
 
+    if ((he = gethostbyname2(host, AF_INET)) == NULL) {
+        return -1;
+    }
+
     memset(&addr, 0, sizeof(addr));
+    memcpy(&addr.sin_addr, he->h_addr, he->h_length);
 
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
