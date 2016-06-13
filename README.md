@@ -75,12 +75,14 @@ function client_echo(param)
   send('ECHO', param)
   return true
 end
-
+```
+```
 function server_echo(param)
   io.write(param .. '\n')
   return true
 end
-
+```
+```
 function server_input(line)
   send('ECHO', line)
   return true
@@ -109,11 +111,11 @@ Each command consists of a `5` byte command header followed by `0` to `n`
 bytes of `param`. A command header will end with a single blank ` ` character 
 for better readability.
 
-#### Commands issued by the client (as responses):
+#### Commands issued by the client:
 * `INIT` Show prompt
 * `TEXT` Print text
 
-#### Commands issued by the server (as requests):
+#### Commands issued by the server:
 * `EXEC` Execute command
 * `HALT` Halt client
 * `PATH` Change path
