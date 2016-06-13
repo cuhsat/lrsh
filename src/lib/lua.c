@@ -31,14 +31,12 @@
 #include <time.h>
 #include <unistd.h>
 
-#define HOST_MAX 16
-
 /*
  * Lua connect
  */
 extern int lua_connect(lua_State *L) {
     if (!lua_isstring(L, 1) || !lua_isinteger(L, 2)) {
-        return luaL_error(L, "Invalid args");
+        return luaL_error(L, "invalid args");
     }
 
     if (net_connect(lua_tostring(L, 1), lua_tointeger(L, 2)) < 0) {
@@ -53,7 +51,7 @@ extern int lua_connect(lua_State *L) {
  */
 extern int lua_listen(lua_State *L) {
     if (!lua_isstring(L, 1) || !lua_isinteger(L, 2)) {
-        return luaL_error(L, "Invalid args");
+        return luaL_error(L, "invalid args");
     }
 
     if (net_listen(lua_tostring(L, 1), lua_tointeger(L, 2)) < 0) {
@@ -67,17 +65,11 @@ extern int lua_listen(lua_State *L) {
  * Lua accept
  */
 extern int lua_accept(lua_State *L) {
-    char host[HOST_MAX];
-    uint16_t port = 0;
-
-    if (net_accept(host, &port) < 0) {
+    if (net_accept() < 0) {
         return luaL_error(L, strerror(errno));
     }
 
-    lua_pushlstring(L, host, strnlen(host, HOST_MAX));
-    lua_pushinteger(L, port);
-
-    return 2;
+    return 0;
 }
 
 /*
@@ -85,7 +77,7 @@ extern int lua_accept(lua_State *L) {
  */
 extern int lua_send(lua_State *L) {
     if (!lua_isstring(L, 1)) {
-        return luaL_error(L, "Invalid args");
+        return luaL_error(L, "invalid args");
     }
 
     size_t size = 0;
@@ -120,7 +112,7 @@ extern int lua_recv(lua_State *L) {
 extern int lua_info(lua_State *L) {
     if (lua_gettop(L) > 0) {
         if (!lua_isstring(L, 1)) {
-            return luaL_error(L, "Invalid args");
+            return luaL_error(L, "invalid args");
         }
 
         if (chdir(lua_tostring(L, 1)) < 0) {
@@ -156,7 +148,7 @@ extern int lua_info(lua_State *L) {
  */
 extern int lua_sleep(lua_State *L) {
     if (!lua_isinteger(L, 1)) {
-        return luaL_error(L, "Invalid args");
+        return luaL_error(L, "invalid args");
     }
 
     time_t time = lua_tointeger(L, 1);

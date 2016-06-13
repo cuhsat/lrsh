@@ -25,15 +25,15 @@ TIMEOUT = 5000
 local raw_recv = recv
 local raw_send = send
 
--- recv command
+-- recv frame
 function recv()
   local frame = raw_recv()
   return frame:sub(1, 4), frame:sub(6)
 end
 
--- send command
+-- send frame
 function send(command, param)
-  local frame = command .. ' ' .. (param or '')
+  local frame = (command or 'TEXT') .. ' ' .. (param or '')
   return raw_send(frame)
 end
 
@@ -48,10 +48,10 @@ end
 
 -- execute Lua command
 function eval(param)
-  local lua, err = load('return ' .. param, 'eval', 't')
+  local fn, err = load('return (function() '.. param ..' end)()', 'eval', 't')
 
-  if lua then
-    local result = tostring(lua() or '')
+  if fn then
+    local result = tostring(fn() or '')
 
     -- force line break
     if result and result:sub(-1) ~= '\n' then
@@ -64,6 +64,17 @@ function eval(param)
   end
 end
 
+-- hook handler
+function hook(source, event, arg)
+  local fn = _G[(source .. '_' .. event):lower()]
+
+  if fn then
+    return fn(arg)
+  else
+    return false
+  end
+end
+
 -- error handler
 function fail(err)
   if err ~= 'Success' then
@@ -71,7 +82,7 @@ function fail(err)
   end
 end
 
--- client mode
+-- client main loop
 function client(host, port)
 
   while true do
@@ -82,18 +93,19 @@ function client(host, port)
 
         local command, param = recv()
 
+        -- callback
+        if hook('client', command, param) then
+
         -- change directory
-        if command == 'PATH' then
+        elseif command == 'PATH' then
           info(param)
-        end
 
         -- execute code
-        if command == 'EXEC' then
+        elseif command == 'EXEC' then
           send('TEXT', eval(param))
-        end
 
         -- shutdown client
-        if command == 'HALT' then
+        elseif command == 'HALT' then
           os.exit()
         end
       end
@@ -102,7 +114,7 @@ function client(host, port)
   end
 end
 
--- server mode
+-- server main loop
 function server(host, port)
   while not xpcall(listen, fail, host, port) do
     sleep(TIMEOUT)
@@ -114,15 +126,17 @@ function server(host, port)
       while true do
         local command, param = recv()
 
+        -- callback
+        if hook('server', command, param) then
+
         -- show prompt
-        if command == 'INIT' then
+        elseif command == 'INIT' then
           io.write(param)
 
           local line = io.read()
 
-          -- error
-          if not line then
-            error('Input invalid')
+          -- callback
+          if hook('server', 'input', line) then
           
           -- change directory
           elseif line:lower():match('^cd%s+') then
@@ -138,13 +152,12 @@ function server(host, port)
             break
 
           -- execute code
-          else       
+          else
             send('EXEC', line)
           end
-        end
 
         -- print text
-        if command == 'TEXT' then
+        elseif command == 'TEXT' then
           io.write(param)
         end
       end

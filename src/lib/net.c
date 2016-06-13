@@ -32,12 +32,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#define MIN(a,b) (((a)<(b))?(a):(b))
-#define FRAME_MAX 1024
-
-static char *buffer;
-static int serv = 0;
-static int sock = 0;
+static char *buffer = NULL;
+static int ss = 0;
+static int cs = 0;
 
 /*
  * Bitwise CRC32
@@ -57,25 +54,14 @@ static uint32_t crc32(const char *data, size_t size) {
 }
 
 /*
- * Net start
- */
-extern int net_start() {
-    if ((buffer = (char *)calloc(0, sizeof(char))) == NULL) {
-        return -1;
-    }
-
-    return 0;
-}
-
-/*
  * Net connect
  */
 extern int net_connect(const char *host, uint16_t port) {
-    if (sock && close(sock) < 0) {
+    if (cs && close(cs) < 0) {
         return -1;
     }
 
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((cs = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         return -1;
     }
 
@@ -96,7 +82,7 @@ extern int net_connect(const char *host, uint16_t port) {
         return -1;
     }
 
-    if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+    if (connect(cs, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         return -1;
     }
 
@@ -107,7 +93,7 @@ extern int net_connect(const char *host, uint16_t port) {
  * Net listen
  */
 extern int net_listen(const char *host, uint16_t port) {
-    if ((serv = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((ss = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         return -1;
     }
 
@@ -128,11 +114,11 @@ extern int net_listen(const char *host, uint16_t port) {
         return -1;
     }
 
-    if (bind(serv, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+    if (bind(ss, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         return -1;
     }
 
-    if (listen(serv, 1) < 0) {
+    if (listen(ss, 1) < 0) {
         return -1;
     }
 
@@ -142,25 +128,14 @@ extern int net_listen(const char *host, uint16_t port) {
 /*
  * Net accept
  */
-extern int net_accept(char *host, uint16_t *port) {
-    if (sock && close(sock) < 0) {
+extern int net_accept() {
+    if (cs && close(cs) < 0) {
         return -1;
     }
 
-    struct sockaddr_in addr;
-    socklen_t size = (socklen_t)sizeof(struct sockaddr_in);
-
-    memset(&addr, 0, size);
-
-    if ((sock = accept(serv, (struct sockaddr *)&addr, &size)) < 0) {
+    if ((cs = accept(ss, NULL, NULL)) < 0) {
         return -1;
     }
-
-    if (inet_ntop(AF_INET, &(addr.sin_addr), host, INET_ADDRSTRLEN) == NULL) {
-        return -1;
-    }
-
-    *port = ntohs(addr.sin_port);
 
     return 0;
 }
@@ -171,21 +146,21 @@ extern int net_accept(char *host, uint16_t *port) {
 extern int net_send(const char *data, size_t size) {
     uint32_t checksum = crc32(data, size);
 
-    if (send(sock, (const char *)&checksum, 4, 0) < 0) {
-        return -1;
-    }
-
-    if (send(sock, (const char *)&size, 4, 0) < 0) {
-        return -1;
-    }
-
-    if (send(sock, data, size, 0) < 0) {
-        return -1;
-    }
-
-    #ifdef DEBUG
-    printf(">>> %.*s\n", (int)size, data);
+    #if (defined(DEBUG) && (DEBUG == 1))
+    printf(">> %.*s\n", (int)size, data);
     #endif
+
+    if (write(cs, (const char *)&checksum, 4) < 4) {
+        return -1;
+    }
+
+    if (write(cs, (const char *)&size, 4) < 4) {
+        return -1;
+    }
+
+    if (write(cs, data, size) < size) {
+        return -1;
+    }
 
     return 0;
 }
@@ -195,13 +170,12 @@ extern int net_send(const char *data, size_t size) {
  */
 extern int net_recv(char **data, size_t *size) {
     uint32_t checksum;
-    char frame[FRAME_MAX];
 
-    if (recv(sock, (char *)&checksum, 4, 0) < 0) {
+    if (read(cs, (char *)&checksum, 4) < 4) {
         return -1;
     }
 
-    if (recv(sock, (char *)size, 4, 0) < 0) {
+    if (read(cs, (char *)size, 4) < 4) {
         return -1;
     }
 
@@ -209,17 +183,9 @@ extern int net_recv(char **data, size_t *size) {
         return -1;
     }
 
-    int frame_size, frame_last = *size;
-
-    do {
-        frame_size = recv(sock, frame, MIN(FRAME_MAX, frame_last), 0);
-
-        if (frame_size < 0) {
-            return -1;
-        }
-
-        memcpy(buffer + (*size - frame_last), frame, frame_size);
-    } while (frame_size && (frame_last -= frame_size));
+    if (read(cs, buffer, *size) < *size) {
+        return -1;
+    }
 
     if (checksum != crc32(buffer, *size)) {
         return -1;
@@ -227,24 +193,24 @@ extern int net_recv(char **data, size_t *size) {
 
     *data = buffer;
 
-    #ifdef DEBUG
-    printf("<<< %.*s\n", (int)*size, *data);
+    #if (defined(DEBUG) && (DEBUG == 1))
+    printf("<< %.*s\n", (int)*size, *data);
     #endif
 
     return 0;
 }
 
 /*
- * Net close
+ * Net exit
  */
-extern int net_close() {
+extern int net_exit() {
     free(buffer);
 
-    if (serv && close(serv) < 0) {
+    if (ss && close(ss) < 0) {
         return -1;
     }
 
-    if (sock && close(sock) < 0) {
+    if (cs && close(cs) < 0) {
         return -1;
     }
 

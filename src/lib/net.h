@@ -24,12 +24,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
-extern int net_start();
 extern int net_connect(const char *host, uint16_t port);
 extern int net_listen(const char *host, uint16_t port);
-extern int net_accept(char *host, uint16_t *port);
+extern int net_accept();
 extern int net_send(const char *data, size_t size);
 extern int net_recv(char **data, size_t *size);
-extern int net_close();
+extern int net_exit();
 
 #endif // LIB_NET_H

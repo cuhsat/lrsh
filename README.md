@@ -1,14 +1,14 @@
-# Palantir ![](http://www.andreas-rozek.de/Lua/Lua-Logo_32x32.png)
+# Palantir ![Logo](logo.png)
 Palantir is a [Lua](https://www.lua.org) scriptable, extendable, tiny reverse 
 shell, using a human readable protocol written in C and Lua.
 
 ## Usage
 ```
-$ palantir [-hlv] [-p] HOST PORT
+$ palantir [-hlv] [-d] HOST PORT
 ```
 
 ### Options:
-* `-p` Start in passiv mode (listen)
+* `-d` Start in passiv mode (listen)
 * `-h` Shows the usage information
 * `-l` Shows the license
 * `-v` Shows the version
@@ -25,9 +25,9 @@ system shell and return the results (`strerr` will be mapped to `stdout`).
 A user specific configuration file can be place under `~/.palantirrc`.
 
 ### Variables
-The following global variables will be defined:
+The following additional global variables will be defined:
 
-* `MODE`    The command line option `-p`
+* `MODE`    The command line option `-d`
 * `HOST`    The command line argument `HOST`
 * `PORT`    The command line argument `PORT`
 * `DEBUG`   If compiled with `DEBUG` flag set
@@ -35,16 +35,19 @@ The following global variables will be defined:
 * `VERSION` The version number
 
 ### Functions
-The following global functions will be defined:
+The following additional global functions will be defined:
 
-#### connect(host, port)
-Connects to the given `host` and `port`.
+#### eval(param)
+Returns the `param` output executed and evaluated by Lua.
 
-#### listen(host, port)
-Listens on the given `host` and `port`.
+#### exec(param)
+Returns the `param` output executed by the users default shell.
 
-#### accept()
-Accepts an incoming connection.
+#### fail(err)
+The default error handler that prints `err`.
+
+#### info(path)
+Returns `user`, `host`, `path` and sets the `path` if given.
 
 #### recv()
 Returns the received `command` and `param`.
@@ -52,26 +55,37 @@ Returns the received `command` and `param`.
 #### send(command, param)
 Sends the given `command` and `param`.
 
-#### info(path)
-Returns `user`, `host`, `path` and sets the `path` if given.
-
 #### sleep(time)
 Sleeps for the given `time` (in milliseconds).
 
-#### exec(param)
-Returns the `param` output executed by the users default shell.
+### Callbacks
+The default shell functionality can be extended by creating custom event 
+callbacks in the configuration file. There are three different events:
 
-#### eval(param)
-Returns the `param` output executed and evaluated by Lua.
+* `client_<command>` will be execute if the client receives a `<command>`
+* `server_<command>` will be execute if the server receives a `<command>`
+* `server_input`     will be execute if the server processes an input
 
-#### fail(err)
-The default error handler that prints `err`.
+All callbacks must return either `true` or `false`. In case `true` is
+returned, all further processing will be prevented.
 
-#### client(host, port)
-Start as client on the given `host` and `port`.
+Here is an example on how to implement an simple echo server:
+```
+function client_echo(param)
+  send('ECHO', param)
+  return true
+end
 
-#### server(host, port)
-Start as server on the given `host` and `port`.
+function server_echo(param)
+  io.write(param .. '\n')
+  return true
+end
+
+function server_input(line)
+  send('ECHO', line)
+  return true
+end
+```
 
 ## Protocol
 The protocol consists of two layers:
@@ -82,18 +96,14 @@ The protocol consists of two layers:
 ### Network Layer
 A network frame is build according to the following format:
 ```
-+--------------------+----------------+----------------+
-| CHECKSUM (4 bytes) | SIZE (4 bytes) | DATA (n bytes) |
-+--------------------+----------------+----------------+
+CHECKSUM (4 bytes) | SIZE (4 bytes) | DATA (n bytes)
 ```
 The `CHECKSUM` is a bitwise CRC-32 only over the `DATA` field.
 
 ### Command Layer
 A command is build according to the following format:
 ```
-+-------------------+----------------+-----------------+
-| COMMAND (4 bytes) | BLANK (1 byte) | PARAM (n bytes) |
-+-------------------+----------------+-----------------+
+COMMAND (4 bytes) | BLANK (1 byte) | PARAM (n bytes)
 ```
 Each command consists of a `5` byte command header followed by `0` to `n` 
 bytes of `param`. A command header will end with a single blank ` ` character 
@@ -120,7 +130,7 @@ Server: PATH var
 Client: INIT root@localhost:/var
 ```
 ```
-Server: EXEC exec('echo hello')
+Server: EXEC return exec('echo hello')
 ```
 ```
 Client: TEXT hello

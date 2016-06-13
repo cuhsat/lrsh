@@ -48,10 +48,6 @@ static palantir_mode mode = MODE_ACTIVE;
  * Palantir start
  */ 
 static int palantir_start(const char *host, uint16_t port) {
-    if (net_start() < 0) {
-        return -1;
-    }
-
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
@@ -89,7 +85,6 @@ static int palantir_start(const char *host, uint16_t port) {
     }
 
     lua_close(L);
-
     return 0;
 }
 
@@ -97,7 +92,7 @@ static int palantir_start(const char *host, uint16_t port) {
  * Palantir exit
  */ 
 static void palantir_exit() {
-    if (net_close() < 0) {
+    if (net_exit() < 0) {
         perror("Palantir error");
     }
 }
@@ -108,14 +103,14 @@ static void palantir_exit() {
 int main(int argc, char *argv[]) {
     int opt, port = 0; char *t = NULL;
 
-    while ((opt = getopt(argc, argv, "phlv")) != -1) {
+    while ((opt = getopt(argc, argv, "dhlv")) != -1) {
         switch (opt) {
-            case 'p':
+            case 'd':
                 mode = MODE_PASSIVE;
                 break;
             
             case 'h':
-                printf("Usage: %s [-hlv] [-p] HOST PORT\n", argv[0]);
+                printf("Usage: %s [-hlv] [-d] HOST PORT\n", argv[0]);
                 exit(EXIT_SUCCESS);
 
             case 'l':
