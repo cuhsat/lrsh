@@ -31,44 +31,44 @@ specific functions and variables:
 #### Functions
 The following functions will be definded:
 
-##### `palantir.execute(chunk)`
+##### palantir.execute(chunk)
 Returns the `chunk`s output executed by the users default shell.
 
-##### `palantir.load(chunk)`
+##### palantir.load(chunk)
 Returns the `chunk`s output executed and evaluated by Lua.
 
-##### `palantir.recv()`
+##### palantir.recv()
 Returns the received `command` and `param`.
  
-##### `palantir.send(command, param)`
+##### palantir.send(command, param)
 Sends the given `command` and `param`.
 
-##### `palantir.sleep(time)`
+##### palantir.sleep(time)
 The execution will be stopped for the given `time` in milliseconds.
 
-##### `palantir.system(path)`
+##### palantir.system(path)
 Returns the `user`, `host` and `path` system infos. If a `path` is given, the 
 current working directory will be changed to it.
 
 #### Variables
 The following variables will be definded:
 
-##### `palantir.mode`
+##### palantir.mode
 The command line option `-d`.
 
-##### `palantir.host`
+##### palantir.host
 The command line argument `HOST`.
 
-##### `palantir.port`
+##### palantir.port
 The command line argument `PORT`.
 
-##### `palantir.debug`
+##### palantir.debug
 The `DEBUG` flag (to set compile with `-DDEBUG=1`).
 
-##### `palantir.timeout`
+##### palantir.timeout
 The time between connection attempts (default is `5000` milliseconds).
 
-##### `palantir.version`
+##### palantir.version
 The semantic version number.
 
 ### Callbacks
