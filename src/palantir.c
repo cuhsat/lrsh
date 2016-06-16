@@ -36,6 +36,7 @@
 
 #define LUA_CODE ((const char*)src_palantir_luac)
 #define LUA_SIZE ((size_t)src_palantir_luac_len)
+#define TIMEOUT 5000
 
 typedef enum {
     MODE_PASSIVE,
@@ -51,28 +52,48 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
+    lua_createtable(L, 0, 13);
+
+    lua_pushcfunction(L, lua_connect);
+    lua_setfield(L, -2, "connect");
+
+    lua_pushcfunction(L, lua_listen);
+    lua_setfield(L, -2, "listen");
+
+    lua_pushcfunction(L, lua_accept);
+    lua_setfield(L, -2, "accept");
+
+    lua_pushcfunction(L, lua_recv);
+    lua_setfield(L, -2, "raw_recv");
+    
+    lua_pushcfunction(L, lua_send);
+    lua_setfield(L, -2, "raw_send");
+    
+    lua_pushcfunction(L, lua_sleep);
+    lua_setfield(L, -2, "sleep");
+
+    lua_pushcfunction(L, lua_system);
+    lua_setfield(L, -2, "system");
+    
     lua_pushboolean(L, mode);
-    lua_setglobal(L, "MODE");
+    lua_setfield(L, -2, "mode");
 
     lua_pushstring(L, host);
-    lua_setglobal(L, "HOST");
+    lua_setfield(L, -2, "host");
 
     lua_pushinteger(L, port);
-    lua_setglobal(L, "PORT");
+    lua_setfield(L, -2, "port");
 
     lua_pushboolean(L, DEBUG);
-    lua_setglobal(L, "DEBUG");
+    lua_setfield(L, -2, "debug");
+
+    lua_pushinteger(L, TIMEOUT);
+    lua_setfield(L, -2, "timeout");
 
     lua_pushstring(L, VERSION);
-    lua_setglobal(L, "VERSION");
+    lua_setfield(L, -2, "version");
 
-    lua_register(L, "connect", lua_connect);
-    lua_register(L, "listen", lua_listen);
-    lua_register(L, "accept", lua_accept);
-    lua_register(L, "recv", lua_recv);
-    lua_register(L, "send", lua_send);
-    lua_register(L, "info", lua_info);
-    lua_register(L, "sleep", lua_sleep);
+    lua_setglobal(L, "palantir");
 
     if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != LUA_OK) {
         fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));

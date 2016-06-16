@@ -28,7 +28,7 @@ extern int lua_listen(lua_State *L);
 extern int lua_accept(lua_State *L);
 extern int lua_send(lua_State *L);
 extern int lua_recv(lua_State *L);
-extern int lua_info(lua_State *L);
 extern int lua_sleep(lua_State *L);
+extern int lua_system(lua_State *L);
 
 #endif // LIB_LUA_H

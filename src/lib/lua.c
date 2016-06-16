@@ -107,9 +107,30 @@ extern int lua_recv(lua_State *L) {
 }
 
 /*
- * Lua system info
+ * Lua sleep
  */
-extern int lua_info(lua_State *L) {
+extern int lua_sleep(lua_State *L) {
+    if (!lua_isinteger(L, 1)) {
+        return luaL_error(L, "invalid args");
+    }
+
+    time_t time = lua_tointeger(L, 1);
+    struct timespec ts;
+
+    ts.tv_sec  = (time / 1000);
+    ts.tv_nsec = (time % 1000) * 1000000L;
+
+    while (nanosleep(&ts, &ts) < 0) {
+        continue;
+    }
+
+    return 0;
+}
+
+/*
+ * Lua system
+ */
+extern int lua_system(lua_State *L) {
     if (lua_gettop(L) > 0) {
         if (!lua_isstring(L, 1)) {
             return luaL_error(L, "invalid args");
@@ -141,25 +162,4 @@ extern int lua_info(lua_State *L) {
     lua_pushlstring(L, path, strnlen(path, sizeof(path)));
 
     return 3;
-}
-
-/*
- * Lua sleep
- */
-extern int lua_sleep(lua_State *L) {
-    if (!lua_isinteger(L, 1)) {
-        return luaL_error(L, "invalid args");
-    }
-
-    time_t time = lua_tointeger(L, 1);
-    struct timespec ts;
-
-    ts.tv_sec  = (time / 1000);
-    ts.tv_nsec = (time % 1000) * 1000000L;
-
-    while (nanosleep(&ts, &ts) < 0) {
-        continue;
-    }
-
-    return 0;
 }

@@ -16,159 +16,128 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
-io.write(string.format('Palantir %s (%s)\n', VERSION, _VERSION))
+io.write(string.format('Palantir %s (%s)\n', palantir.version, _VERSION))
 
--- config
-TIMEOUT = 5000
-
--- pretty protocol
-local raw_recv = recv
-local raw_send = send
-
--- recv frame
-function recv()
-  local frame = raw_recv()
-  return frame:sub(1, 4), frame:sub(6)
-end
-
--- send frame
-function send(command, param)
-  local frame = (command or 'TEXT') .. ' ' .. (param or '')
-  return raw_send(frame)
-end
-
--- execute shell command
-function exec(param)
-  local handle = io.popen(param .. ' 2>&1')
+-- palantir execute
+function palantir.execute(chunk)
+  local handle = io.popen(chunk .. ' 2>&1')
   local result = handle:read('*a')
 
   handle:close()
   return result
 end
 
--- execute Lua command
-function eval(param)
-  local fn, err = load('return (function() '.. param ..' end)()', 'eval', 't')
+-- palantir load
+function palantir.load(chunk)
+  local fn, err = load(chunk, 'load', 't')
 
   if fn then
-    local result = tostring(fn() or '')
-
-    -- force line break
-    if result and result:sub(-1) ~= '\n' then
-      result = result .. '\n'
-    end
-
-    return result
+    return tostring(fn() or '')
   else
     return string.format('Palantir error: %s\n', err)
   end
 end
 
--- hook handler
-function hook(source, event, arg)
-  local fn = _G[(source .. '_' .. event):lower()]
+-- palantir recv
+function palantir.recv()
+  local frame = palantir.raw_recv()
+  return frame:sub(1, 4), frame:sub(6)
+end
 
-  if fn then
-    return fn(arg)
-  else
-    return false
-  end
+-- palantir send
+function palantir.send(command, param)
+  local frame = command .. ' ' .. (param or '')
+  return palantir.raw_send(frame)
+end
+
+-- event handler
+local function hook(source, event, arg)
+  return pcall(_G[source .. '_' .. event:lower()], arg)
 end
 
 -- error handler
-function fail(err)
-  if err ~= 'Success' then
-    io.stderr:write(string.format('Palantir error: %s\n', err))
-  end
+local function fail(err)
+  io.stderr:write(string.format('Palantir error: %s\n', err))
 end
 
 -- client main loop
-function client(host, port)
+local function client(host, port)
 
   while true do
-    if xpcall(connect, fail, host, port) then
+    if xpcall(palantir.connect, fail, host, port) then
 
       while true do
-        send('INIT', string.format('%s@%s:%s ', info()))
+        palantir.send('INIT', string.format('%s@%s:%s ', palantir.system()))
 
-        local command, param = recv()
+        local command, param = palantir.recv()
 
-        -- callback
         if hook('client', command, param) then
 
-        -- change directory
         elseif command == 'PATH' then
-          info(param)
+          palantir.system(param)
 
-        -- execute code
         elseif command == 'EXEC' then
-          send('TEXT', eval(param))
+          palantir.send('TEXT', palantir.load(param))
 
-        -- shutdown client
         elseif command == 'HALT' then
           os.exit()
         end
       end
 
-    else sleep(TIMEOUT) end
+    else palantir.sleep(palantir.timeout) end
   end
 end
 
 -- server main loop
-function server(host, port)
-  while not xpcall(listen, fail, host, port) do
-    sleep(TIMEOUT)
+local function server(host, port)
+  while not xpcall(palantir.listen, fail, host, port) do
+    palantir.sleep(palantir.timeout)
   end
 
   while true do
-    if xpcall(accept, fail) then
+    if xpcall(palantir.accept, fail) then
 
       while true do
-        local command, param = recv()
 
-        -- callback
+        local command, param = palantir.recv()
+
         if hook('server', command, param) then
 
-        -- show prompt
         elseif command == 'INIT' then
           io.write(param)
 
           local line = io.read()
 
-          -- callback
           if hook('server', 'input', line) then
           
-          -- change directory
           elseif line:lower():match('^cd%s+') then
-            send('PATH', line:sub(4))
+            palantir.send('PATH', line:sub(4))
 
-          -- shutdown server
           elseif line:lower():match('^--%s*exit$') then
             return
 
-          -- shutdown client
           elseif line:lower():match('^--%s*halt$') then
-            send('HALT')
+            palantir.send('HALT')
             break
 
-          -- execute code
           else
-            send('EXEC', line)
+            palantir.send('EXEC', line)
           end
 
-        -- print text
         elseif command == 'TEXT' then
-          io.write(param)
+          io.write(param or '\n')
         end
       end
     end
   end
 end
 
--- call user config
+-- user config
 pcall(dofile, os.getenv('HOME') .. '/.palantirrc')
 
 -- main
-if xpcall(MODE and server or client, fail, HOST, PORT) then
+local main = (palantir.mode and server or client)
+
+if xpcall(main, fail, palantir.host, palantir.port) then
   io.write('Palantir exit\n')
 end

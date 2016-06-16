@@ -1,4 +1,4 @@
-# Palantir ![Logo](logo.png)
+# Palantir ![logo](doc/logo.png)
 Palantir is a [Lua](https://www.lua.org) scriptable, extendable, tiny reverse 
 shell, using a human readable protocol written in C and Lua.
 
@@ -18,61 +18,76 @@ $ palantir [-hlv] [-d] HOST PORT
 * `-- exit` Shutdown server
 
 All other input will be evaluated and execute as Lua commands. The internal
-command `exec` will execute system commands by using the users default 
+command `execute` will execute system commands by using the users default 
 system shell and return the results (`strerr` will be mapped to `stdout`).
 
 ## Environment
 A user specific configuration file can be place under `~/.palantirrc`.
 
-### Variables
-The following additional global variables will be defined:
+### Globals
+A new global table named `palantir` will be defined which contains all shell 
+specific functions and variables:
 
-* `MODE`    The command line option `-d`
-* `HOST`    The command line argument `HOST`
-* `PORT`    The command line argument `PORT`
-* `DEBUG`   If compiled with `DEBUG` flag set
-* `TIMEOUT` The time between connection attempts (defaults to `5` seconds)
-* `VERSION` The version number
+#### Functions
+The following functions will be definded:
 
-### Functions
-The following additional global functions will be defined:
+##### `palantir.execute(chunk)`
+Returns the `chunk`s output executed by the users default shell.
 
-#### eval(param)
-Returns the `param` output executed and evaluated by Lua.
+##### `palantir.load(chunk)`
+Returns the `chunk`s output executed and evaluated by Lua.
 
-#### exec(param)
-Returns the `param` output executed by the users default shell.
-
-#### fail(err)
-The default error handler that prints `err`.
-
-#### info(path)
-Returns `user`, `host`, `path` and sets the `path` if given.
-
-#### recv()
+##### `palantir.recv()`
 Returns the received `command` and `param`.
-
-#### send(command, param)
+ 
+##### `palantir.send(command, param)`
 Sends the given `command` and `param`.
 
-#### sleep(time)
-Sleeps for the given `time` (in milliseconds).
+##### `palantir.sleep(time)`
+The execution will be stopped for the given `time` in milliseconds.
+
+##### `palantir.system(path)`
+Returns the `user`, `host` and `path` system infos. If a `path` is given, the 
+current working directory will be changed to it.
+
+#### Variables
+The following variables will be definded:
+
+##### `palantir.mode`
+The command line option `-d`.
+
+##### `palantir.host`
+The command line argument `HOST`.
+
+##### `palantir.port`
+The command line argument `PORT`.
+
+##### `palantir.debug`
+The `DEBUG` flag (to set compile with `-DDEBUG=1`).
+
+##### `palantir.timeout`
+The time between connection attempts (default is `5000` milliseconds).
+
+##### `palantir.version`
+The semantic version number.
 
 ### Callbacks
 The default shell functionality can be extended by creating custom event 
-callbacks in the configuration file. There are three different events:
+callbacks in the user specific configuration file. There are three different 
+events sources:
 
-* `client_<command>` will be execute if the client receives a `<command>`
-* `server_<command>` will be execute if the server receives a `<command>`
-* `server_input`     will be execute if the server processes an input
+* `client_<command>` called when the client receives a `<command>`
+* `server_<command>` called when the server receives a `<command>`
+* `server_input`     called when the server processes an input
 
-All callbacks must return either `true` or `false`. In case `true` is
-returned, all further processing will be prevented.
+The `<command>` names will be converted to lowercase. All callbacks must 
+return a `boolean`. In case `true` is returned, all further processing will 
+be prevented.
 
 Here is an example on how to implement an simple echo server:
 ```
 function client_echo(param)
-  send('ECHO', param)
+  palantir.send('ECHO', param)
   return true
 end
 ```
@@ -84,7 +99,7 @@ end
 ```
 ```
 function server_input(line)
-  send('ECHO', line)
+  palantir.send('ECHO', line)
   return true
 end
 ```
@@ -132,7 +147,7 @@ Server: PATH var
 Client: INIT root@localhost:/var
 ```
 ```
-Server: EXEC return exec('echo hello')
+Server: EXEC return palantir.execute('echo hello')
 ```
 ```
 Client: TEXT hello
