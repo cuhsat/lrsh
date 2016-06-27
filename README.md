@@ -50,7 +50,7 @@ Returns the `chunk`s output executed by the users default system shell as a
 
 ##### palantir.load(chunk)
 Returns the `chunk`s output evaluated and executed as Lua code. The evaluated 
-symbols will be added to the global environment ('_G').
+symbols will be added to the global environment (`_G`).
 
 ##### palantir.recv()
 Returns the received `command` and `param` as `string`s. If the `param` was 
