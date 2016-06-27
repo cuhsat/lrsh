@@ -18,19 +18,31 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PALANTIR_H
-#define PALANTIR_H
+#ifndef LIB_SYS_H
+#define LIB_SYS_H
 
-#include <lua5.3/lua.h>
+#include <limits.h>
+#include <time.h>
 
-#define VERSION "1.4.0"
+#define MAX_LINE 1024
+#define MAX_USER (LOGIN_NAME_MAX + 1)
+#define MAX_HOST (HOST_NAME_MAX + 1)
+#define MAX_PATH (PATH_MAX + 1)
 
-#if LUA_VERSION_NUM < 503
-#error "Lua 5.3 required"
-#endif
+typedef struct {
+    const char* prompt;
+    char line[MAX_LINE];
+} prompt_t;
 
-#ifndef DEBUG
-#define DEBUG 0
-#endif
+typedef struct {
+    char user[MAX_USER];
+    char host[MAX_HOST];
+    char path[MAX_PATH];
+} info_t;
 
-#endif // PALANTIR_H
+extern int sys_handler(const char *error);
+extern int sys_prompt(prompt_t *prompt);
+extern int sys_sleep(time_t time);
+extern int sys_info(info_t *info);
+
+#endif // LIB_SYS_H

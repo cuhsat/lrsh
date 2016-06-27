@@ -38,43 +38,26 @@ function palantir.load(chunk)
   end
 end
 
--- palantir recv
-function palantir.recv()
-  local frame = palantir.raw_recv()
-  return frame:sub(1, 4), frame:sub(6)
-end
-
--- palantir send
-function palantir.send(command, param)
-  local frame = command .. ' ' .. (param or '')
-  return palantir.raw_send(frame)
-end
-
 -- event handler
-local function hook(source, event, arg)
-  return pcall(_G[source .. '_' .. event:lower()], arg)
-end
-
--- error handler
-local function fail(err)
-  io.stderr:write(string.format('Palantir error: %s\n', err))
+local function trigger(source, event, param)
+  return pcall(_G[source .. '_' .. event:lower()], param)
 end
 
 -- client main loop
 local function client(host, port)
 
   while true do
-    if xpcall(palantir.connect, fail, host, port) then
+    if xpcall(palantir.connect, palantir.handler, host, port) then
 
       while true do
-        palantir.send('INIT', string.format('%s@%s:%s ', palantir.system()))
+        palantir.send('INIT', string.format('%s@%s:%s ', palantir.info()))
 
         local command, param = palantir.recv()
 
-        if hook('client', command, param) then
+        if trigger('client', command, param) then
 
         elseif command == 'PATH' then
-          palantir.system(param)
+          palantir.info(param)
 
         elseif command == 'EXEC' then
           palantir.send('TEXT', palantir.load(param))
@@ -90,25 +73,23 @@ end
 
 -- server main loop
 local function server(host, port)
-  while not xpcall(palantir.listen, fail, host, port) do
+  while not xpcall(palantir.listen, palantir.handler, host, port) do
     palantir.sleep(palantir.timeout)
   end
 
   while true do
-    if xpcall(palantir.accept, fail) then
+    if xpcall(palantir.accept, palantir.handler) then
 
       while true do
 
         local command, param = palantir.recv()
 
-        if hook('server', command, param) then
+        if trigger('server', command, param) then
 
         elseif command == 'INIT' then
-          io.write(param)
+          local line = palantir.prompt(param)
 
-          local line = io.read()
-
-          if hook('server', 'input', line) then
+          if trigger('server', 'input', line) then
           
           elseif line:lower():match('^cd%s+') then
             palantir.send('PATH', line:sub(4))
@@ -138,6 +119,6 @@ pcall(dofile, os.getenv('HOME') .. '/.palantirrc')
 -- main
 local main = (palantir.mode and server or client)
 
-if xpcall(main, fail, palantir.host, palantir.port) then
+if xpcall(main, palantir.handler, palantir.host, palantir.port) then
   io.write('Palantir exit\n')
 end

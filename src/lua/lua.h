@@ -18,17 +18,22 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LIB_LUA_H
-#define LIB_LUA_H
+#ifndef LUA_LUA_H
+#define LUA_LUA_H
 
 #include <lua5.3/lua.h>
 
+// Net library
 extern int lua_connect(lua_State *L);
 extern int lua_listen(lua_State *L);
 extern int lua_accept(lua_State *L);
 extern int lua_send(lua_State *L);
 extern int lua_recv(lua_State *L);
-extern int lua_sleep(lua_State *L);
-extern int lua_system(lua_State *L);
 
-#endif // LIB_LUA_H
+// Sys library
+extern int lua_handler(lua_State *L);
+extern int lua_prompt(lua_State *L);
+extern int lua_sleep(lua_State *L);
+extern int lua_info(lua_State *L);
+
+#endif // LUA_LUA_H

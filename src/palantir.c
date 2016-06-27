@@ -19,8 +19,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "palantir.h"
-#include "lib/lua.h"
 #include "lib/net.h"
+#include "lib/sys.h"
+#include "lua/lua.h"
 
 #include <lua5.3/lua.h>
 #include <lua5.3/lualib.h>
@@ -52,29 +53,8 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
-    lua_createtable(L, 0, 13);
+    lua_createtable(L, 0, 15);
 
-    lua_pushcfunction(L, lua_connect);
-    lua_setfield(L, -2, "connect");
-
-    lua_pushcfunction(L, lua_listen);
-    lua_setfield(L, -2, "listen");
-
-    lua_pushcfunction(L, lua_accept);
-    lua_setfield(L, -2, "accept");
-
-    lua_pushcfunction(L, lua_recv);
-    lua_setfield(L, -2, "raw_recv");
-    
-    lua_pushcfunction(L, lua_send);
-    lua_setfield(L, -2, "raw_send");
-    
-    lua_pushcfunction(L, lua_sleep);
-    lua_setfield(L, -2, "sleep");
-
-    lua_pushcfunction(L, lua_system);
-    lua_setfield(L, -2, "system");
-    
     lua_pushboolean(L, mode);
     lua_setfield(L, -2, "mode");
 
@@ -93,6 +73,33 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_pushstring(L, VERSION);
     lua_setfield(L, -2, "version");
 
+    lua_pushcfunction(L, lua_connect);
+    lua_setfield(L, -2, "connect");
+
+    lua_pushcfunction(L, lua_listen);
+    lua_setfield(L, -2, "listen");
+
+    lua_pushcfunction(L, lua_accept);
+    lua_setfield(L, -2, "accept");
+
+    lua_pushcfunction(L, lua_recv);
+    lua_setfield(L, -2, "recv");
+    
+    lua_pushcfunction(L, lua_send);
+    lua_setfield(L, -2, "send");
+    
+    lua_pushcfunction(L, lua_handler);
+    lua_setfield(L, -2, "handler");
+
+    lua_pushcfunction(L, lua_prompt);
+    lua_setfield(L, -2, "prompt");
+
+    lua_pushcfunction(L, lua_sleep);
+    lua_setfield(L, -2, "sleep");
+
+    lua_pushcfunction(L, lua_info);
+    lua_setfield(L, -2, "info");
+    
     lua_setglobal(L, "palantir");
 
     if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != LUA_OK) {
@@ -157,7 +164,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (mode == MODE_PASSIVE && daemon(0, 0) < 0) {
+    if (mode == MODE_PASSIVE && daemon(0, (DEBUG ? 1 : 0)) < 0) {
         perror("Palantir error");
         exit(EXIT_FAILURE);            
     }

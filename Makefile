@@ -1,8 +1,8 @@
 CC=gcc
 LUA=luac5.3
 CFLAGS=-c -ansi -pedantic -std=gnu99 -Wall -Werror
-LDFLAGS=-llua5.3
-SOURCES=src/palantir.c src/lib/lua.c src/lib/net.c
+LDFLAGS=-lreadline -llua5.3
+SOURCES=src/palantir.c src/lua/lua.c src/lib/net.c src/lib/sys.c
 SCRIPTS=src/palantir.lua
 OBJECTS=$(SOURCES:.c=.o)
 RESOURCES=$(SCRIPTS:.lua=.inc)

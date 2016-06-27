@@ -1,4 +1,4 @@
-# Palantir ![logo](doc/logo.png)
+# Palantir ![logo](doc/palantir.png)
 Palantir is a [Lua](https://www.lua.org) scriptable, extendable, tiny reverse 
 shell, using a human readable protocol written in C and Lua.
 
@@ -8,7 +8,7 @@ $ palantir [-hlv] [-d] HOST PORT
 ```
 
 ### Options:
-* `-d` Start in passiv mode (listen)
+* `-d` Start in passive mode (listen)
 * `-h` Shows the usage information
 * `-l` Shows the license
 * `-v` Shows the version
@@ -19,39 +19,58 @@ $ palantir [-hlv] [-d] HOST PORT
 
 All other input will be evaluated and execute as Lua commands. The internal
 command `execute` will execute system commands by using the users default 
-system shell and return the results (`strerr` will be mapped to `stdout`).
+system shell and return the results.
 
 ## Environment
 A user specific configuration file can be place under `~/.palantirrc`.
+
+Here is an example configuration file:
+```
+-- faster reconnect
+palantir.timeout = 1000
+
+-- shortcut
+function shell(param)
+  return palantir.execute(param)
+end
+
+print('Profile loaded')
+```
 
 ### Globals
 A new global table named `palantir` will be defined which contains all shell 
 specific functions and variables:
 
 #### Functions
-The following functions will be definded:
+The following functions will be definded for user usage:
 
 ##### palantir.execute(chunk)
-Returns the `chunk`s output executed by the users default shell.
+Returns the `chunk`s output executed by the users default system shell as a 
+`string` (`strerr` will be mapped to `stdout`).
 
 ##### palantir.load(chunk)
-Returns the `chunk`s output executed and evaluated by Lua.
+Returns the `chunk`s output evaluated and executed as Lua code. The evaluated 
+symbols will be added to the global environment ('_G').
 
 ##### palantir.recv()
-Returns the received `command` and `param`.
+Returns the received `command` and `param` as `string`s. If the `param` was 
+not specified, `nil` is returned instead.
  
 ##### palantir.send(command, param)
-Sends the given `command` and `param`.
+Sends the given `command` and `param` as `string`s. If the `param` is not 
+specified, an empty string (`''`) will be send instead.
 
 ##### palantir.sleep(time)
-The execution will be stopped for the given `time` in milliseconds.
+The execution will be stopped for the given `time` in milliseconds. The `time`
+must be given as an `integer`.
 
-##### palantir.system(path)
-Returns the `user`, `host` and `path` system infos. If a `path` is given, the 
-current working directory will be changed to it.
+##### palantir.info(path)
+Returns the `user`, `host` and `path` system infos as `string`s. If a `path` 
+is given, the current working directory will be changed to it. If started in
+_passive_ mode, the working directory will be set to the root directory (`/`).
 
 #### Variables
-The following variables will be definded:
+The following variables will be definded for user usage:
 
 ##### palantir.mode
 The command line option `-d`.
@@ -159,6 +178,12 @@ Client: INIT root@localhost:/var
 ```
 Server: HALT
 ```
+
+## Dependancies
+The following libraries are required:
+
+* [Lua 5.3](https://www.lua.org)
+* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
 
 ## License
 Licensed under the terms of the [MIT License](LICENSE).

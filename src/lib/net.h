@@ -24,11 +24,21 @@
 #include <stddef.h>
 #include <stdint.h>
 
-extern int net_connect(const char *host, uint16_t port);
-extern int net_listen(const char *host, uint16_t port);
+typedef struct {
+    const char *name;
+    uint16_t port;
+} host_t;
+
+typedef struct {
+    char *data;
+    size_t size;
+} frame_t;
+
+extern int net_connect(host_t addr);
+extern int net_listen(host_t addr);
 extern int net_accept();
-extern int net_send(const char *data, size_t size);
-extern int net_recv(char **data, size_t *size);
+extern int net_send(frame_t frame);
+extern int net_recv(frame_t *frame);
 extern int net_exit();
 
 #endif // LIB_NET_H
