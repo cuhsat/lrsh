@@ -50,7 +50,7 @@ local function client(host, port)
     if xpcall(palantir.connect, palantir.handler, host, port) then
 
       while true do
-        palantir.send('INIT', string.format('%s@%s:%s ', palantir.info()))
+        palantir.send('HELO', string.format('%s@%s:%s ', palantir.info()))
 
         local command, param = palantir.recv()
 
@@ -62,7 +62,7 @@ local function client(host, port)
         elseif command == 'EXEC' then
           palantir.send('TEXT', palantir.load(param))
 
-        elseif command == 'HALT' then
+        elseif command == 'EXIT' then
           os.exit()
         end
       end
@@ -86,7 +86,7 @@ local function server(host, port)
 
         if trigger('server', command, param) then
 
-        elseif command == 'INIT' then
+        elseif command == 'HELO' then
           local line = palantir.prompt(param)
 
           if trigger('server', 'input', line) then
@@ -95,11 +95,11 @@ local function server(host, port)
             palantir.send('PATH', line:sub(4))
 
           elseif line:lower():match('^--%s*exit$') then
-            return
+            palantir.send('EXIT')
+            break
 
           elseif line:lower():match('^--%s*halt$') then
-            palantir.send('HALT')
-            break
+            return
 
           else
             palantir.send('EXEC', line)

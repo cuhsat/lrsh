@@ -14,8 +14,8 @@ $ palantir [-hlv] [-d] HOST PORT
 * `-v` Shows the version
 
 ### Commands:
-* `-- halt` Shutdown client
-* `-- exit` Shutdown server
+* `-- exit` Shutdown client
+* `-- halt` Shutdown server
 
 All other input will be evaluated and execute as Lua commands. The internal
 command `execute` will execute system commands by using the users default 
@@ -146,24 +146,24 @@ bytes of `param`. A command header will end with a single blank ` ` character
 for better readability.
 
 #### Commands issued by the client:
-* `INIT` Show prompt
+* `HELO` Show prompt
 * `TEXT` Print text
 
 #### Commands issued by the server:
 * `EXEC` Execute command
-* `HALT` Halt client
+* `EXIT` Exit client
 * `PATH` Change path
 
 ### Examples
 ```
-Client: INIT root@localhost:/
+Client: HELO root@localhost:/
 ```
 ```
 Server: PATH var
 ```
 
 ```
-Client: INIT root@localhost:/var
+Client: HELO root@localhost:/var
 ```
 ```
 Server: EXEC return palantir.execute('echo hello')
@@ -173,10 +173,10 @@ Client: TEXT hello
 ```
 
 ```
-Client: INIT root@localhost:/var
+Client: HELO root@localhost:/var
 ```
 ```
-Server: HALT
+Server: EXIT
 ```
 
 ## Dependancies
