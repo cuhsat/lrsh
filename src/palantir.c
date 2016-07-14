@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2016 Christian Uhsat <christian@uhsat.de>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -19,8 +19,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "palantir.h"
-#include "lib/net.h"
-#include "lib/sys.h"
 #include "lua/lua.h"
 
 #include <lua5.3/lua.h>
@@ -46,8 +44,11 @@ typedef enum {
 
 static palantir_mode mode = MODE_ACTIVE;
 
-/*
+/**
  * Palantir start
+ * @param host the host address (name or ip)
+ * @param port the port number
+ * @return success
  */ 
 static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
@@ -116,17 +117,20 @@ static int palantir_start(const char *host, uint16_t port) {
     return 0;
 }
 
-/*
+/**
  * Palantir exit
  */ 
 static void palantir_exit() {
-    if (net_exit() < 0) {
+    if (!lua_exit()) {
         perror("Palantir error");
     }
 }
 
-/*
+/**
  * Main
+ * @param argc the command line arguments count
+ * @param argv the command line arguments array
+ * @return exit code
  */ 
 int main(int argc, char *argv[]) {
     int opt, port = 0; char *t = NULL;

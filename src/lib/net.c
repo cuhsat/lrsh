@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2016 Christian Uhsat <christian@uhsat.de>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -36,26 +36,31 @@ static char *buffer = NULL;
 static int s_socket = 0;
 static int c_socket = 0;
 
-/*
- * Bitwise CRC32
+/**
+ * CRC32 (bitwise)
+ * @param data the data address
+ * @param size the data size
+ * @return crc sum
  */ 
 static uint32_t crc32(const char *data, size_t size) {
-    uint32_t crc = 0;
+    uint32_t sum = 0;
 
     while (size--) {
-        crc ^= *data++;
+        sum ^= *data++;
 
         for (uint8_t i = 0; i < 8; i++) {
-            crc = (crc >> 1) ^ ((crc & 1) ? 0xEDB88320 : 0);
+            sum = (sum >> 1) ^ ((sum & 1) ? 0xEDB88320 : 0);
         }
     }
 
-    return crc;
+    return sum;
 }
 
-/*
+/**
  * Net connect
- */
+ * @param host the host object
+ * @return success
+ */ 
 extern int net_connect(host_t host) {
     if (c_socket && close(c_socket) < 0) {
         return -1;
@@ -89,9 +94,11 @@ extern int net_connect(host_t host) {
     return 0;
 }
 
-/*
+/**
  * Net listen
- */
+ * @param host the host object
+ * @return success
+ */ 
 extern int net_listen(host_t host) {
     if ((s_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         return -1;
@@ -125,9 +132,10 @@ extern int net_listen(host_t host) {
     return 0;
 }
 
-/*
+/**
  * Net accept
- */
+ * @return success
+ */ 
 extern int net_accept() {
     if (c_socket && close(c_socket) < 0) {
         return -1;
@@ -140,9 +148,11 @@ extern int net_accept() {
     return 0;
 }
 
-/*
+/**
  * Net send
- */
+ * @param frame the frame object
+ * @return success
+ */ 
 extern int net_send(frame_t frame) {
     uint32_t checksum = crc32(frame.data, frame.size), size = frame.size;
 
@@ -165,9 +175,11 @@ extern int net_send(frame_t frame) {
     return 0;
 }
 
-/*
+/**
  * Net recv
- */
+ * @param frame the frame address
+ * @return success
+ */ 
 extern int net_recv(frame_t *frame) {
     uint32_t checksum, size;
 
@@ -201,9 +213,10 @@ extern int net_recv(frame_t *frame) {
     return 0;
 }
 
-/*
+/**
  * Net exit
- */
+ * @return success
+ */ 
 extern int net_exit() {
     free(buffer);
 

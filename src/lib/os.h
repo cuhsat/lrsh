@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2016 Christian Uhsat <christian@uhsat.de>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -18,8 +18,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LIB_SYS_H
-#define LIB_SYS_H
+#ifndef LIB_OS_H
+#define LIB_OS_H
 
 #include <limits.h>
 #include <time.h>
@@ -40,9 +40,9 @@ typedef struct {
     char path[MAX_PATH];
 } info_t;
 
-extern int sys_handler(const char *error);
-extern int sys_prompt(prompt_t *prompt);
-extern int sys_sleep(time_t time);
-extern int sys_info(info_t *info);
+extern int os_handler(const char *error);
+extern int os_prompt(prompt_t *prompt);
+extern int os_sleep(time_t time);
+extern int os_info(info_t *info);
 
-#endif // LIB_SYS_H
+#endif // LIB_OS_H

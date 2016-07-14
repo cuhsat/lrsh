@@ -44,27 +44,39 @@ specific functions and variables:
 #### Functions
 The following functions will be definded for user usage:
 
-##### palantir.execute(chunk)
+```
+palantir.execute(chunk)
+```
 Returns the `chunk`s output executed by the users default system shell as a 
 `string` (`strerr` will be mapped to `stdout`).
 
-##### palantir.load(chunk)
+```
+palantir.load(chunk)
+```
 Returns the `chunk`s output evaluated and executed as Lua code. The evaluated 
 symbols will be added to the global environment (`_G`).
 
-##### palantir.recv()
+```
+palantir.recv()
+```
 Returns the received `command` and `param` as `string`s. If the `param` was 
 not specified, `nil` is returned instead.
  
-##### palantir.send(command, param)
+```
+palantir.send(command, param)
+```
 Sends the given `command` and `param` as `string`s. If the `param` is not 
 specified, an empty string (`''`) will be send instead.
 
-##### palantir.sleep(time)
+```
+palantir.sleep(time)
+```
 The execution will be stopped for the given `time` in milliseconds. The `time`
 must be given as an `integer`.
 
-##### palantir.info(path)
+```
+palantir.info(path)
+```
 Returns the `user`, `host` and `path` system infos as `string`s. If a `path` 
 is given, the current working directory will be changed to it. If started in
 _passive_ mode, the working directory will be set to the root directory (`/`).
@@ -72,22 +84,34 @@ _passive_ mode, the working directory will be set to the root directory (`/`).
 #### Variables
 The following variables will be definded for user usage:
 
-##### palantir.mode
+```
+palantir.mode
+```
 The command line option `-d`.
 
-##### palantir.host
+```
+palantir.host
+```
 The command line argument `HOST`.
 
-##### palantir.port
+```
+palantir.port
+```
 The command line argument `PORT`.
 
-##### palantir.debug
+```
+palantir.debug
+```
 The `DEBUG` flag (to set compile with `-DDEBUG=1`).
 
-##### palantir.timeout
+```
+palantir.timeout
+```
 The time between connection attempts (default is `5000` milliseconds).
 
-##### palantir.version
+```
+palantir.version
+```
 The semantic version number.
 
 ### Callbacks
@@ -146,13 +170,13 @@ bytes of `param`. A command header will end with a single blank ` ` character
 for better readability.
 
 #### Commands issued by the client:
-* `HELO` Show prompt
-* `TEXT` Print text
+* `HELO` Shows the command prompt
+* `TEXT` Prints the `param`
 
 #### Commands issued by the server:
-* `EXEC` Execute command
-* `EXIT` Exit client
-* `PATH` Change path
+* `EXEC` Executes the `param`
+* `EXIT` Exits the client
+* `PATH` Changes the path
 
 ### Examples
 ```
@@ -184,6 +208,9 @@ The following libraries are required:
 
 * [Lua 5.3](https://www.lua.org)
 * [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
+
+> The `readline` support is optional and can be turned off by removing the 
+> compiler flag `-DREADLINE` from the [makefile](Makefile).
 
 ## License
 Licensed under the terms of the [MIT License](LICENSE).

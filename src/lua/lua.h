@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2016 Christian Uhsat <christian@uhsat.de>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -23,17 +23,17 @@
 
 #include <lua5.3/lua.h>
 
-// Net library
+extern int lua_handler(lua_State *L);
+extern int lua_prompt(lua_State *L);
+extern int lua_sleep(lua_State *L);
+extern int lua_info(lua_State *L);
+
 extern int lua_connect(lua_State *L);
 extern int lua_listen(lua_State *L);
 extern int lua_accept(lua_State *L);
 extern int lua_send(lua_State *L);
 extern int lua_recv(lua_State *L);
 
-// Sys library
-extern int lua_handler(lua_State *L);
-extern int lua_prompt(lua_State *L);
-extern int lua_sleep(lua_State *L);
-extern int lua_info(lua_State *L);
+extern int lua_exit();
 
 #endif // LUA_LUA_H
