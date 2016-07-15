@@ -34,6 +34,7 @@ function shell(param)
   return palantir.execute(param)
 end
 
+-- debug
 print('Profile loaded')
 ```
 
@@ -44,39 +45,27 @@ specific functions and variables:
 #### Functions
 The following functions will be definded for user usage:
 
-```
-palantir.execute(chunk)
-```
+##### `palantir.execute(chunk)`
 Returns the `chunk`s output executed by the users default system shell as a 
 `string` (`strerr` will be mapped to `stdout`).
 
-```
-palantir.load(chunk)
-```
+##### `palantir.load(chunk)`
 Returns the `chunk`s output evaluated and executed as Lua code. The evaluated 
 symbols will be added to the global environment (`_G`).
 
-```
-palantir.recv()
-```
+##### `palantir.recv()`
 Returns the received `command` and `param` as `string`s. If the `param` was 
 not specified, `nil` is returned instead.
  
-```
-palantir.send(command, param)
-```
+##### `palantir.send(command, param)`
 Sends the given `command` and `param` as `string`s. If the `param` is not 
 specified, an empty string (`''`) will be send instead.
 
-```
-palantir.sleep(time)
-```
+##### `palantir.sleep(time)`
 The execution will be stopped for the given `time` in milliseconds. The `time`
 must be given as an `integer`.
 
-```
-palantir.info(path)
-```
+##### `palantir.info(path)`
 Returns the `user`, `host` and `path` system infos as `string`s. If a `path` 
 is given, the current working directory will be changed to it. If started in
 _passive_ mode, the working directory will be set to the root directory (`/`).
@@ -84,34 +73,22 @@ _passive_ mode, the working directory will be set to the root directory (`/`).
 #### Variables
 The following variables will be definded for user usage:
 
-```
-palantir.mode
-```
+##### `palantir.mode`
 The command line option `-d`.
 
-```
-palantir.host
-```
+##### `palantir.host`
 The command line argument `HOST`.
 
-```
-palantir.port
-```
+##### `palantir.port`
 The command line argument `PORT`.
 
-```
-palantir.debug
-```
+##### `palantir.debug`
 The `DEBUG` flag (to set compile with `-DDEBUG=1`).
 
-```
-palantir.timeout
-```
+##### `palantir.timeout`
 The time between connection attempts (default is `5000` milliseconds).
 
-```
-palantir.version
-```
+##### `palantir.version`
 The semantic version number.
 
 ### Callbacks
@@ -171,10 +148,10 @@ for better readability.
 
 #### Commands issued by the client:
 * `HELO` Shows the command prompt
-* `TEXT` Prints the `param`
+* `TEXT` Prints the parameter
 
 #### Commands issued by the server:
-* `EXEC` Executes the `param`
+* `EXEC` Executes the parameter
 * `EXIT` Exits the client
 * `PATH` Changes the path
 

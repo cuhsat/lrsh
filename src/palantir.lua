@@ -18,7 +18,9 @@
 -- DEALINGS IN THE SOFTWARE.
 io.write(string.format('Palantir %s (%s)\n', palantir.version, _VERSION))
 
--- palantir execute
+-- Palantir execute
+-- @param chunk to execute
+-- @return result or error
 function palantir.execute(chunk)
   local handle = io.popen(chunk .. ' 2>&1')
   local result = handle:read('*a')
@@ -27,7 +29,9 @@ function palantir.execute(chunk)
   return result
 end
 
--- palantir load
+-- Palantir load
+-- @param chunk to load
+-- @return result or error
 function palantir.load(chunk)
   local fn, err = load(chunk, 'load', 't')
 
@@ -38,14 +42,19 @@ function palantir.load(chunk)
   end
 end
 
--- event handler
+-- Local trigger
+-- @param source name
+-- @param event name
+-- @param param value
+-- @return callback result
 local function trigger(source, event, param)
   return pcall(_G[source .. '_' .. event:lower()], param)
 end
 
--- client main loop
+-- Local client loop
+-- @param host address
+-- @param port number
 local function client(host, port)
-
   while true do
     if xpcall(palantir.connect, palantir.handler, host, port) then
 
@@ -71,7 +80,9 @@ local function client(host, port)
   end
 end
 
--- server main loop
+-- Local server loop
+-- @param host address
+-- @param port number
 local function server(host, port)
   while not xpcall(palantir.listen, palantir.handler, host, port) do
     palantir.sleep(palantir.timeout)
@@ -81,7 +92,6 @@ local function server(host, port)
     if xpcall(palantir.accept, palantir.handler) then
 
       while true do
-
         local command, param = palantir.recv()
 
         if trigger('server', command, param) then
@@ -90,7 +100,7 @@ local function server(host, port)
           local line = palantir.prompt(param)
 
           if trigger('server', 'input', line) then
-          
+
           elseif line:lower():match('^cd%s+') then
             palantir.send('PATH', line:sub(4))
 
@@ -113,10 +123,8 @@ local function server(host, port)
   end
 end
 
--- user config
 pcall(dofile, os.getenv('HOME') .. '/.palantirrc')
 
--- main
 local main = (palantir.mode and server or client)
 
 if xpcall(main, palantir.handler, palantir.host, palantir.port) then
