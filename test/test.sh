@@ -3,7 +3,7 @@ set -o errexit
 set -o nounset
 
 HOST=127.0.0.1
-PORT=8080
+PORT=8211
 
 main() {
     killall palantir || true

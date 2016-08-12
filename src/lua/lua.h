@@ -23,17 +23,14 @@
 
 #include <lua5.3/lua.h>
 
-extern int lua_handler(lua_State *L);
-extern int lua_prompt(lua_State *L);
-extern int lua_sleep(lua_State *L);
-extern int lua_info(lua_State *L);
-
 extern int lua_connect(lua_State *L);
 extern int lua_listen(lua_State *L);
 extern int lua_accept(lua_State *L);
 extern int lua_send(lua_State *L);
 extern int lua_recv(lua_State *L);
 
-extern int lua_exit();
+extern int lua_readline(lua_State *L);
+extern int lua_sleep(lua_State *L);
+extern int lua_env(lua_State *L);
 
 #endif // LUA_LUA_H

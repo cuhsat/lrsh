@@ -34,10 +34,10 @@ typedef struct {
     size_t size;
 } frame_t;
 
-extern int net_connect(host_t addr);
-extern int net_listen(host_t addr);
+extern int net_connect(host_t *addr);
+extern int net_listen(host_t *addr);
 extern int net_accept();
-extern int net_send(frame_t frame);
+extern int net_send(frame_t *frame);
 extern int net_recv(frame_t *frame);
 extern int net_exit();
 

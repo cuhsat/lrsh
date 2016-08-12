@@ -25,52 +25,40 @@
 #include <readline/history.h>
 #endif
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 
 /**
- * OS handler
- * @param error the error message
+ * OS readline
+ * @param rl the readline address
  * @return success
  */ 
-extern int os_handler(const char *error) {
-    fprintf(stderr, "Palantir error: %s\n", error);
-
-    return 0;
-}
-
-/**
- * OS prompt
- * @param prompt the prompt address
- * @return success
- */ 
-extern int os_prompt(prompt_t *prompt) {
+extern int os_readline(readline_t *rl) {
     char *buffer = NULL;
 
     #ifdef READLINE
 
-    if ((buffer = readline(prompt->prompt)) != NULL) {
+    if ((buffer = readline(rl->prompt)) != NULL) {
         add_history(buffer);
     } else {
         return -1;        
     }
 
-    #else
+    #else // READLINE
 
     size_t size = 0;
 
-    printf("%s ", prompt->prompt);
+    printf("%s ", rl->prompt);
 
     if (getline(&buffer, &size, stdin) < 0) {
         return -1;
     }
 
-    #endif
+    #endif // READLINE
 
-    strncpy(prompt->line, buffer, sizeof(prompt->line));
+    strncpy(rl->line, buffer, sizeof(rl->line));
     free(buffer);
 
     return 0;
@@ -95,24 +83,24 @@ extern int os_sleep(time_t time) {
 }
 
 /**
- * OS info
- * @param info the info address
+ * OS env
+ * @param env the env address
  * @return success
  */ 
-extern int os_info(info_t *info) {
-    if (strnlen(info->path, sizeof(info->path)) && chdir(info->path) < 0) {
+extern int os_env(env_t *env) {
+    if (strnlen(env->path, sizeof(env->path)) && chdir(env->path) < 0) {
         return -1;
     }    
 
-    if (getlogin_r(info->user, sizeof(info->user)) < 0) {
+    if (getlogin_r(env->user, sizeof(env->user)) < 0) {
         return -1;
     }
 
-    if (gethostname(info->host, sizeof(info->host)) < 0) {
+    if (gethostname(env->host, sizeof(env->host)) < 0) {
         return -1;
     }
 
-    if (getcwd(info->path, sizeof(info->path)) == NULL) {
+    if (getcwd(env->path, sizeof(env->path)) == NULL) {
         return -1;
     }
 

@@ -19,6 +19,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "palantir.h"
+#include "lib/net.h"
 #include "lua/lua.h"
 
 #include <lua5.3/lua.h>
@@ -35,7 +36,6 @@
 
 #define LUA_CODE ((const char*)src_palantir_luac)
 #define LUA_SIZE ((size_t)src_palantir_luac_len)
-#define TIMEOUT 5000
 
 typedef enum {
     MODE_PASSIVE,
@@ -49,58 +49,47 @@ static palantir_mode mode = MODE_ACTIVE;
  * @param host the host address (name or ip)
  * @param port the port number
  * @return success
- */ 
+ */
 static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
-    lua_createtable(L, 0, 15);
+    lua_createtable(L, 0, 7);
 
     lua_pushboolean(L, mode);
-    lua_setfield(L, -2, "mode");
-
+    lua_setfield(L, -2, "MODE");
     lua_pushstring(L, host);
-    lua_setfield(L, -2, "host");
-
+    lua_setfield(L, -2, "HOST");
     lua_pushinteger(L, port);
-    lua_setfield(L, -2, "port");
-
+    lua_setfield(L, -2, "PORT");
     lua_pushboolean(L, DEBUG);
-    lua_setfield(L, -2, "debug");
-
-    lua_pushinteger(L, TIMEOUT);
-    lua_setfield(L, -2, "timeout");
-
+    lua_setfield(L, -2, "DEBUG");
     lua_pushstring(L, VERSION);
-    lua_setfield(L, -2, "version");
+    lua_setfield(L, -2, "VERSION");
 
+    lua_createtable(L, 0, 5);
     lua_pushcfunction(L, lua_connect);
     lua_setfield(L, -2, "connect");
-
     lua_pushcfunction(L, lua_listen);
     lua_setfield(L, -2, "listen");
-
     lua_pushcfunction(L, lua_accept);
     lua_setfield(L, -2, "accept");
-
     lua_pushcfunction(L, lua_recv);
     lua_setfield(L, -2, "recv");
-    
     lua_pushcfunction(L, lua_send);
     lua_setfield(L, -2, "send");
-    
-    lua_pushcfunction(L, lua_handler);
-    lua_setfield(L, -2, "handler");
+    lua_setfield(L, -2, "net");
 
-    lua_pushcfunction(L, lua_prompt);
-    lua_setfield(L, -2, "prompt");
-
+    lua_createtable(L, 0, 3);
+    lua_pushcfunction(L, lua_readline);
+    lua_setfield(L, -2, "readline");
     lua_pushcfunction(L, lua_sleep);
     lua_setfield(L, -2, "sleep");
+    lua_pushcfunction(L, lua_env);
+    lua_setfield(L, -2, "env");
 
-    lua_pushcfunction(L, lua_info);
-    lua_setfield(L, -2, "info");
-    
+    lua_setfield(L, -2, "os");
+
     lua_setglobal(L, "palantir");
 
     if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != LUA_OK) {
@@ -119,9 +108,9 @@ static int palantir_start(const char *host, uint16_t port) {
 
 /**
  * Palantir exit
- */ 
+ */
 static void palantir_exit() {
-    if (!lua_exit()) {
+    if (net_exit() < 0) {
         perror("Palantir error");
     }
 }
@@ -131,7 +120,7 @@ static void palantir_exit() {
  * @param argc the command line arguments count
  * @param argv the command line arguments array
  * @return exit code
- */ 
+ */
 int main(int argc, char *argv[]) {
     int opt, port = 0; char *t = NULL;
 
@@ -140,7 +129,7 @@ int main(int argc, char *argv[]) {
             case 'd':
                 mode = MODE_PASSIVE;
                 break;
-            
+
             case 'h':
                 printf("Usage: %s [-hlv] [-d] HOST PORT\n", argv[0]);
                 exit(EXIT_SUCCESS);
@@ -170,7 +159,7 @@ int main(int argc, char *argv[]) {
 
     if (mode == MODE_PASSIVE && daemon(0, (DEBUG ? 1 : 0)) < 0) {
         perror("Palantir error");
-        exit(EXIT_FAILURE);            
+        exit(EXIT_FAILURE);
     }
 
     atexit(palantir_exit);
@@ -180,5 +169,5 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    exit(EXIT_SUCCESS);        
+    exit(EXIT_SUCCESS);
 }

@@ -58,10 +58,10 @@ static uint32_t crc32(const char *data, size_t size) {
 
 /**
  * Net connect
- * @param host the host object
+ * @param host the host address
  * @return success
  */ 
-extern int net_connect(host_t host) {
+extern int net_connect(host_t *host) {
     if (c_socket && close(c_socket) < 0) {
         return -1;
     }
@@ -73,7 +73,7 @@ extern int net_connect(host_t host) {
     struct hostent *he;
     struct sockaddr_in addr;
 
-    if ((he = gethostbyname2(host.name, AF_INET)) == NULL) {
+    if ((he = gethostbyname2(host->name, AF_INET)) == NULL) {
         return -1;
     }
 
@@ -81,9 +81,9 @@ extern int net_connect(host_t host) {
     memcpy(&addr.sin_addr, he->h_addr, he->h_length);
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(host.port);
+    addr.sin_port = htons(host->port);
 
-    if (inet_pton(AF_INET, host.name, &(addr.sin_addr)) <= 0) {
+    if (inet_pton(AF_INET, host->name, &(addr.sin_addr)) <= 0) {
         return -1;
     }
 
@@ -96,10 +96,10 @@ extern int net_connect(host_t host) {
 
 /**
  * Net listen
- * @param host the host object
+ * @param host the host address
  * @return success
  */ 
-extern int net_listen(host_t host) {
+extern int net_listen(host_t *host) {
     if ((s_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         return -1;
     }
@@ -107,7 +107,7 @@ extern int net_listen(host_t host) {
     struct hostent *he;
     struct sockaddr_in addr;
 
-    if ((he = gethostbyname2(host.name, AF_INET)) == NULL) {
+    if ((he = gethostbyname2(host->name, AF_INET)) == NULL) {
         return -1;
     }
 
@@ -115,9 +115,9 @@ extern int net_listen(host_t host) {
     memcpy(&addr.sin_addr, he->h_addr, he->h_length);
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(host.port);
+    addr.sin_port = htons(host->port);
 
-    if (inet_pton(AF_INET, host.name, &(addr.sin_addr)) <= 0) {
+    if (inet_pton(AF_INET, host->name, &(addr.sin_addr)) <= 0) {
         return -1;
     }
 
@@ -150,25 +150,25 @@ extern int net_accept() {
 
 /**
  * Net send
- * @param frame the frame object
+ * @param frame the frame address
  * @return success
  */ 
-extern int net_send(frame_t frame) {
-    uint32_t checksum = crc32(frame.data, frame.size), size = frame.size;
+extern int net_send(frame_t *frame) {
+    uint32_t checksum = crc32(frame->data, frame->size);
 
     #if (defined(DEBUG) && (DEBUG == 1))
-    printf(">> %.*s\n", (int)(frame.size), frame.data);
+    printf(">> %.*s\n", (int)(frame->size), frame->data);
     #endif
 
     if (write(c_socket, (const char *)&checksum, 4) < 4) {
         return -1;
     }
 
-    if (write(c_socket, (const char *)&size, 4) < 4) {
+    if (write(c_socket, (const char *)&frame->size, 4) < 4) {
         return -1;
     }
 
-    if (write(c_socket, frame.data, frame.size) < frame.size) {
+    if (write(c_socket, frame->data, frame->size) < frame->size) {
         return -1;
     }
 

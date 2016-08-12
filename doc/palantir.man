@@ -15,6 +15,11 @@ Shows the license
 Shows the version
 .IP "-d"
 Starts in passive mode (listen)
+.SH FILES
+.I ~/.palantir.lua
+.RS
+Will be executed at start up
+.RE
 .SH BUGS
 No known bugs.
 .SH AUTHOR
