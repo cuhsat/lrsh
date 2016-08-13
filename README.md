@@ -48,7 +48,7 @@ specific functions and properties.
 
 #### Functions
 
-#### `error(message)`
+##### `error(message)`
 Prints the error `message`.
 
 ##### `event(source, event, param)`
