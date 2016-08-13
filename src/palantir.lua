@@ -128,8 +128,8 @@ end
 function palantir.net.client(host, port)
   while true do
     if xpcall(palantir.net.connect, palantir.error, host, port) then
-      if client_connect then
-        palantir.net.send('TEXT', client_connect())
+      if client_connected then
+        palantir.net.send('TEXT', client_connected())
       end
 
       while true do

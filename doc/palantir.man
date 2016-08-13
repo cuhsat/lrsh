@@ -18,7 +18,7 @@ Starts in passive mode (listen)
 .SH FILES
 .I ~/.palantir.lua
 .RS
-Will be executed at start up
+Executed at start
 .RE
 .SH BUGS
 No known bugs.

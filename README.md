@@ -19,7 +19,7 @@ $ palantir [-hlv] [-d] HOST PORT
 
 All other input will be evaluated and execute as Lua commands. The internal
 function `shell` will execute system commands by using the users default
-system shell and return the results.
+shell and return the results where `strerr` will be mapped to `stdout`.
 
 ## Environment
 An user specific configuration file can be place under `~/.palantir.lua`.
@@ -27,8 +27,8 @@ An user specific configuration file can be place under `~/.palantir.lua`.
 Here is an example configuration file:
 ```
 -- greet client
-function client_connect()
-  return 'Hello'
+function client_connected()
+  return 'Hello\n'
 end
 
 -- debug
@@ -40,111 +40,79 @@ A new global table named `palantir` will be defined which contains all shell
 specific functions and properties.
 
 #### Constants
-General constants:
-
-##### `MODE`
-The command line option `-d`.
-
-##### `HOST`
-The command line argument `HOST`.
-
-##### `PORT`
-The command line argument `PORT`.
-
-##### `DEBUG`
-The `DEBUG` flag (to set compile with `-DDEBUG=1`).
-
-##### `VERSION`
-The semantic version number.
+* `MODE`    The command line option `-d`
+* `HOST`    The command line argument `HOST`
+* `PORT`    The command line argument `PORT`
+* `DEBUG`   The debug flag if compiled with `-DDEBUG=1`
+* `VERSION` The semantic version number
 
 #### Functions
-General functions:
 
-##### `error(message)`
-The default error handler, will print out the given error `message`.
+#### `error(message)`
+Prints the error `message`.
 
 ##### `event(source, event, param)`
-The default event trigger, will call the function `<source>_<event>(<param>)`
-if this function exists.
+Calls the function `<source>_<event>(<param>)` if exists.
 
 ##### `load(chunk)`
-Returns the `chunk`s output evaluated and executed as Lua code. The evaluated
-symbols will be added to the global environment (`_G`).
+Returns the output of the executed `chunk` (global environment).
 
-#### Net
-Network specific functions:
+#### Network
 
 ##### `net.server(host, port)`
-Start the main program loop on the given `host` and `port` in _active_ mode.
+Starts on `host` and `port` in _active mode_.
 
 ##### `net.client(host, port)`
-Start the main program loop on the given `host` and `port` in _passive_ mode.
+Starts on `host` and `port` in _passive mode_.
 
 ##### `net.connect(host, port)`
-Connects to the given `host` and `port`.
+Connects to `host` and `port`.
 
 ##### `net.listen(host, port)`
-Listens on the given `host` and `port` for incoming connections.
+Listens on `host` and `port`.
 
 ##### `net.accept()`
-Accepts incoming connections.
-
-> This is a _blocking_ function.
+Accepts incoming connections. _(blocking)_
 
 ##### `net.recv()`
-Returns the received `command` and `param` as `string`s. If the `param` was
-not specified, `nil` is returned instead.
-
-> This is a _blocking_ function.
+Returns the received `command` and `param`. _(blocking)_
 
 ##### `net.send(command, param)`
-Sends the given `command` and `param` as `string`s. If the `param` is not
-specified, an empty string (`''`) will be send instead.
+Sends the given `command` and `param`. _(blocking)_
 
-> This is a _blocking_ function.
-
-#### OS
-Operation system specific functions:
+#### Operating System
 
 ##### `os.env(path)`
-Returns the `user`, `host` and `path` system environment as `string`s. If a
-`path` is given, the current working directory will be changed to it. If
-started in _passive_ mode, the working directory will be set to the _root_
-directory (`/`).
+Returns the `user`, `host` and `path` variables, sets the `path` if given.
 
 ##### `os.execute(command)`
-Returns the `command`s output executed by the users default system shell as a
-`string`.
-
-> `strerr` will be mapped to `stdout`.
+Returns the `command` output executed by the users default shell.
 
 ##### `os.readline(prompt)`
-Shows the given `prompt` and returns the users input as `string`.
+Prints `prompt` and returns the users input.
 
-##### `os.sleep(time)`
-The execution will be stopped for the given `time` in milliseconds. The `time`
-must be given as `integer`.
+##### `os.sleep(milliseconds)`
+Sleeps for the given `milliseconds`.
 
 ### Callbacks
 The default shell functionality can be extended by creating custom event
 callbacks in the user specific configuration file. There are four different
 event sources:
 
-* `client_connect`   called when the client connects
+* `client_connected` called when the client connects
 * `client_<command>` called when the client receives a `<command>`
 * `server_<command>` called when the server receives a `<command>`
 * `server_prompt`    called when the server processes a prompt
 
-The `<command>` names will be converted to lowercase. All callbacks except
-`client_connect` must return a `boolean`. In case `true` is returned, all
-further processing will be prevented.
+All callbacks except `client_connect` must return a `boolean`. In case `true`
+is returned, all further processing will be prevented. The `client_connected`
+callback must return a `string`, which will be displayed by the client.
 
-The `client_connect` callback must return a `string`, which will be displayed
-by the client.
+The `<command>` names will be converted to lowercase.
 
 Here is an example on how to implement an simple echo server:
 ```
-function client_connect()
+function client_connected()
   return 'This is an echo server'
 end
 ```
@@ -170,7 +138,7 @@ end
 ### Shortcuts
 The shortcut `shell` is provided as an alias of `palantir.os.execute`:
 ```
-print(shell('echo hello'))
+return shell('echo hello')
 ```
 
 ## Protocol
@@ -231,7 +199,7 @@ Server: EXIT
 
 ## Building
 ```
-$ make all test
+$ make all test install
 ```
 
 #### Dependancies
