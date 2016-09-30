@@ -33,5 +33,5 @@ clean:
 	-@find . -regex ".*\.\(luac\|inc\|o\)" -delete
 	-@rm -f $(EXECUTABLE)
 
-test: all
+test:
 	-@./test/test.sh
