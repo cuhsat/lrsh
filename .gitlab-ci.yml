@@ -4,12 +4,12 @@ variables:
 build:
   stage: build
   before_script: 
-    - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
-    - tar zxf $LUA.tar.gz
-    - cd $LUA && make linux test
-    - cd ..
+  - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
+  - tar zxf $LUA.tar.gz
+  - cd $LUA && make linux test
+  - cd ..
   script:
-    - make all CARGS="-I$LUA/src" LDARGS="-L$LUA/src"
+  - make all CARGS="-I$LUA/src" LDARGS="-L$LUA/src"
   artifacts:
     paths:
     - palantir
@@ -17,4 +17,4 @@ build:
 test:
   stage: test
   script:
-    - make test
+  - make test
