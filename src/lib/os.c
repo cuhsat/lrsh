@@ -20,15 +20,15 @@
  */
 #include "os.h"
 
-#ifdef READLINE
-#include <readline/readline.h>
-#include <readline/history.h>
-#endif
-
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
+
+#ifdef READLINE
+#include <readline/readline.h>
+#include <readline/history.h>
+#endif
 
 /**
  * OS readline
