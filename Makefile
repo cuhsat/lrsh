@@ -1,6 +1,6 @@
 CC=gcc
 LC=luac
-CFLAGS=$(CARGS) -c -ansi -pedantic -std=gnu99 -Wall -Werror -DREADLINE
+CFLAGS=$(CARGS) -c -ansi -pedantic -std=gnu99 -Wall -Werror
 LDFLAGS=$(LDARGS) -lreadline -llua
 SOURCES=$(shell find src -name '*.c')
 SCRIPTS=$(shell find src -name '*.lua')
