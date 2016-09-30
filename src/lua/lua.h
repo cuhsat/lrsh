@@ -21,7 +21,7 @@
 #ifndef LUA_LUA_H
 #define LUA_LUA_H
 
-#include <lua5.3/lua.h>
+#include <lua.h>
 
 extern int lua_connect(lua_State *L);
 extern int lua_listen(lua_State *L);

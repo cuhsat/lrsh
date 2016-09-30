@@ -1,7 +1,7 @@
 CC=gcc
-LUA=luac5.3
-CFLAGS=-c -ansi -pedantic -std=gnu99 -Wall -Werror -DREADLINE
-LDFLAGS=-lreadline -llua5.3
+LC=luac
+CFLAGS=$(CARGS) -c -ansi -pedantic -std=gnu99 -Wall -Werror -DREADLINE
+LDFLAGS=$(LDARGS) -lreadline -llua
 SOURCES=$(shell find src -name '*.c')
 SCRIPTS=$(shell find src -name '*.lua')
 OBJECTS=$(SOURCES:.c=.o)
@@ -16,7 +16,7 @@ $(EXECUTABLE): $(RESOURCES) $(OBJECTS)
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $(EXECUTABLE)
 
 %.inc: %.lua
-	$(LUA) -s -o $<c $< && xxd -i $<c $@
+	$(LC) -s -o $<c $< && xxd -i $<c $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) $< -o $@
