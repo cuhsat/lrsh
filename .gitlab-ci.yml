@@ -7,6 +7,7 @@ build:
     - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
     - tar zxf $LUA.tar.gz
     - cd $LUA && make linux test
+    - cd ..
   script:
     - make all CARGS="-I$LUA/src" LDARGS="-L$LUA/src"
   artifacts:
