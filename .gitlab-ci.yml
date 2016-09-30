@@ -10,12 +10,6 @@ build:
     - cd ..
   script:
     - make all CARGS="-I$LUA/src" LDARGS="-L$LUA/src"
-  artifacts:
-    paths:
-      - palantir
-  cache:
-    paths:
-      - "src/*.o"
 
 test:
   stage: test
