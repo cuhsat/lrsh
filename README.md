@@ -209,7 +209,7 @@ The following libraries are required:
 * [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
 
 > The `readline` support is optional and can be turned off by removing the
-> compiler flag `-DREADLINE` and `-lreadline` from the [makefile](Makefile).
+> compiler flags `-DREADLINE` and `-lreadline` from the [makefile](Makefile).
 
 ## License
 Licensed under the terms of the [MIT License](LICENSE).
