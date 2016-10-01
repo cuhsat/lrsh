@@ -10,4 +10,4 @@ run:
   - make linux test
   - cd ..
   script:
-  - make all test CARGS="-I$LUA/src" LDARGS="-L$LUA/src"
+  - make all test LC="$LUA/src" CARGS="-I$LUA/src" LDARGS="-L$LUA/src"
