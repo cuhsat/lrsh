@@ -1,10 +1,10 @@
 variables:
   LUA: "lua-5.3.3"
   LC: "lua-5.3.3/src/luac"
-  CFLAGS: "-c -ansi -pedantic -std=gnu99 -Wall -Werror"
-  LDFLAGS: "-llua -lm -ldl"
+  CFLAGS: "-Ilua-5.3.3/src -c -ansi -pedantic -std=gnu99 -Wall -Werror"
+  LDFLAGS: "-Llua-5.3.3/src -llua -lm -ldl"
 
-automatic:
+make:
   stage: build
   before_script: 
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
