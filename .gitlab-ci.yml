@@ -8,7 +8,5 @@ build:
   - cd $LUA
   - make linux test
   - cd ..
-  after_script:
-  - rm -rf $LUA
   script:
   - make all test CARGS="-I$LUA/src" LDARGS="-L$LUA/src"
