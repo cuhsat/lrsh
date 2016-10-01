@@ -2,19 +2,13 @@ variables:
   LUA: "lua-5.3.3"
 
 build:
-  stage: build
   before_script: 
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
   - tar zxf $LUA.tar.gz
-  - cd $LUA && make linux test
+  - cd $LUA
+  - make linux test
   - cd ..
+  after_script:
+  - rm -rf $LUA
   script:
-  - make all CARGS="-I$LUA/src" LDARGS="-L$LUA/src"
-  artifacts:
-    paths:
-    - palantir
-
-test:
-  stage: test
-  script:
-  - make test
+  - make all test CARGS="-I$LUA/src" LDARGS="-L$LUA/src"
