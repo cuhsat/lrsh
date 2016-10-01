@@ -4,7 +4,7 @@ variables:
   CFLAGS: "-c -ansi -pedantic -std=gnu99 -Wall -Werror"
   LDFLAGS: "-llua -lm -ldl"
 
-run:
+automatic:
   stage: build
   before_script: 
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
@@ -13,4 +13,4 @@ run:
   - make linux test
   - cd ..
   script:
-  - make all test LC=$LC CFLAGS=$CFLAGS LDFLAGS=$LDFLAGS
+  - make all test LC="$LC" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
