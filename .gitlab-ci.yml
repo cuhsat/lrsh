@@ -9,6 +9,7 @@ build:
   - tar zxf $LUA.tar.gz
   - cd $LUA
   - make linux test
+  - cd ..
   script:
   - make all LC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC"
   - make test HOST="127.0.0.1" PORT="60082"
