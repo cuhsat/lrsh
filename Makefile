@@ -1,12 +1,17 @@
 CC=gcc
 LC=luac
-CFLAGS=-c -ansi -pedantic -std=gnu99 -Wall -Werror -DREADLINE
-LDFLAGS= -llua -lm -ldl -lreadline
+override CFLAGS+=-c -ansi -pedantic -std=gnu99 -Wall -Werror
+override LDFLAGS+=-llua -lm -ldl
 SOURCES=$(shell find src -name '*.c')
 SCRIPTS=$(shell find src -name '*.lua')
 OBJECTS=$(SOURCES:.c=.o)
 RESOURCES=$(SCRIPTS:.lua=.inc)
 EXECUTABLE=palantir
+
+ifeq (1,$(USE_READLINE))
+override CFLAGS+=-DREADLINE
+override LDFLAGS+=-lreadline
+endif
 
 .PHONY: all install remove clean test
 
@@ -34,4 +39,4 @@ clean:
 	-@rm -f $(EXECUTABLE)
 
 test:
-	-@./test/test.sh
+	-@./test/test.sh $(HOST) $(PORT)

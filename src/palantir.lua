@@ -18,6 +18,9 @@
 -- DEALINGS IN THE SOFTWARE.
 io.write(string.format('Palantir %s (%s)\n', palantir.VERSION, _VERSION))
 
+-- User profile
+local profile = os.getenv('HOME') .. '/.palantir.lua'
+
 -- Raw protocol
 local raw_recv = palantir.net.recv
 local raw_send = palantir.net.send
@@ -161,8 +164,12 @@ function shell(command)
   return palantir.os.execute(command)
 end
 
--- Load user script
-pcall(dofile, os.getenv('HOME') .. '/.palantir.lua')
+-- Load user profile
+local file = io.open(profile, 'r')
+
+if file ~= nil then
+  io.close(file); pcall(dofile, profile)
+end
 
 -- Start shell
 local main = (palantir.MODE and palantir.net.server or palantir.net.client)

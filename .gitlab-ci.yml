@@ -1,16 +1,14 @@
 variables:
   LUA: "lua-5.3.3"
-  LC: "lua-5.3.3/src/luac"
-  CFLAGS: "-Ilua-5.3.3/src -c -ansi -pedantic -std=gnu99 -Wall -Werror"
-  LDFLAGS: "-Llua-5.3.3/src -llua -lm -ldl"
+  SRC: "lua-5.3.3/src"
 
-make:
+build:
   stage: build
-  before_script: 
+  before_script:
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
   - tar zxf $LUA.tar.gz
   - cd $LUA
   - make linux test
-  - cd ..
   script:
-  - make all test LC="$LC" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
+  - make all LC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC"
+  - make test HOST="127.0.0.1" PORT="60082"

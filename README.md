@@ -206,10 +206,14 @@ $ make all test install
 The following libraries are required:
 
 * [Lua 5.3](https://www.lua.org)
-* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
+* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)*
 
-> The `readline` support is optional and can be turned off by removing the
-> compiler flags `-DREADLINE` and `-lreadline` from the [makefile](Makefile).
+> The `readline` support is optional and can be turned on by calling `make`
+> with the `USE_READLINE` flag set:
+>
+> ```
+> $ make all USE_READLINE=1
+> ```
 
 ## License
 Licensed under the terms of the [MIT License](LICENSE).
