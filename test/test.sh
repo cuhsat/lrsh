@@ -9,8 +9,7 @@ main() {
     echo "Testing on $HOST:$PORT ..."
     killall palantir 2> /dev/null || true
     ./palantir -d $HOST $PORT && \
-    echo "return shell('uname -a')\n-- halt" \
-    | ./palantir $HOST $PORT
+    echo "-- halt" | ./palantir $HOST $PORT
 }
 
 main "$@"
