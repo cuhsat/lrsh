@@ -165,11 +165,7 @@ function shell(command)
 end
 
 -- Load user profile
-local file = io.open(profile, 'r')
-
-if file ~= nil then
-  io.close(file); pcall(dofile, profile)
-end
+pcall(dofile, profile)
 
 -- Start shell
 local main = (palantir.MODE and palantir.net.server or palantir.net.client)

@@ -22,9 +22,9 @@ function `shell` will execute system commands by using the users default
 shell and return the results where `strerr` will be mapped to `stdout`.
 
 ## Environment
-An user specific configuration file can be place under `~/.palantir.lua`.
+An user specific profile can be place under `~/.palantir.lua`.
 
-Here is an example configuration file:
+Here is an example profile:
 ```
 -- greet client
 function client_connected()
@@ -96,8 +96,7 @@ Sleeps for the given `milliseconds`.
 
 ### Callbacks
 The default shell functionality can be extended by creating custom event
-callbacks in the user specific configuration file. There are four different
-event sources:
+callbacks in the users profile. There are four different event sources:
 
 * `client_connected` called when the client connects
 * `client_<command>` called when the client receives a `<command>`
@@ -203,16 +202,16 @@ $ make all test install
 ```
 
 #### Dependancies
-The following libraries are required:
+The following libraries are required/supported:
 
 * [Lua 5.3](https://www.lua.org)
-* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)*
+* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
 
 > The `readline` support is optional and can be turned on by calling `make`
 > with the `USE_READLINE` flag set:
 >
 > ```
-> $ make all USE_READLINE=1
+> $ make all test install USE_READLINE=1
 > ```
 
 ## License
