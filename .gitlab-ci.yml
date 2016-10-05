@@ -2,7 +2,7 @@ variables:
   LUA: "lua-5.3.3"
   SRC: "lua-5.3.3/src"
 
-job1:
+build:
   stage: build
   before_script:
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
@@ -16,7 +16,7 @@ job1:
     paths:
     - palantir
 
-job2:
+test:
   stage: test
   script:
   - make test HOST="127.0.0.1" PORT="60082"
