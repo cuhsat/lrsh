@@ -1,4 +1,4 @@
-# Palantir
+# Palantir ![Build](https://fxj.vela.uberspace.de/palantir/palantir/badges/master/build.svg)
 Palantir is a [Lua](https://www.lua.org) scriptable, extendable, tiny reverse
 shell, using a human readable protocol written in C and Lua.
 
