@@ -27,7 +27,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifndef NO_READLINE
+#ifdef READLINE
 #include <readline/readline.h>
 #include <readline/history.h>
 #endif
@@ -40,7 +40,7 @@
 extern int os_readline(readline_t *rl) {
     char *buffer = NULL;
 
-    #ifndef NO_READLINE
+    #ifdef READLINE
 
     if ((buffer = readline(rl->prompt)) != NULL) {
         add_history(buffer);
@@ -48,7 +48,7 @@ extern int os_readline(readline_t *rl) {
         return -1;        
     }
 
-    #else // NO_READLINE
+    #else // READLINE
 
     size_t size = 0;
 
@@ -58,7 +58,7 @@ extern int os_readline(readline_t *rl) {
         return -1;
     }
 
-    #endif // NO_READLINE
+    #endif // READLINE
 
     strncpy(rl->line, buffer, sizeof(rl->line));
     free(buffer);
