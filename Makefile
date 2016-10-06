@@ -8,7 +8,7 @@ OBJECTS=$(SOURCES:.c=.o)
 RESOURCES=$(SCRIPTS:.lua=.inc)
 EXECUTABLE=palantir
 
-ifeq (1,$(USE_READLINE))
+ifneq (1,$(NO_READLINE))
 override CFLAGS+=-DREADLINE
 override LDFLAGS+=-lreadline
 endif
