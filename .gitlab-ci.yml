@@ -19,4 +19,9 @@ build:
 test:
   stage: test
   script:
-  - make test HOST="127.0.0.1" PORT="60082"
+  - ./palantir -v
+
+deploy:
+  stage: deploy
+  script:
+  - cp palantir ~/bin/

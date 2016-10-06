@@ -23,7 +23,7 @@
 
 #include <lua.h>
 
-#define VERSION "1.8.1"
+#define VERSION "1.8.2"
 
 #if LUA_VERSION_NUM < 503
 #error "Lua 5.3 required"
@@ -34,4 +34,3 @@
 #endif
 
 #endif // PALANTIR_H
-

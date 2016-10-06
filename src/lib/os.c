@@ -25,6 +25,7 @@
 #include <readline/history.h>
 #endif
 
+#include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -89,13 +90,17 @@ extern int os_sleep(time_t time) {
  * @return success
  */ 
 extern int os_env(env_t *env) {
+    struct passwd *pw;
+
     if (strnlen(env->path, sizeof(env->path)) && chdir(env->path) < 0) {
         return -1;
-    }    
+    }
 
-    if (getlogin_r(env->user, sizeof(env->user)) < 0) {
+    if ((pw = getpwuid(getuid())) == NULL) {
         return -1;
     }
+
+    strncpy(env->user, pw->pw_name, strnlen(pw->pw_name, sizeof(env->user)));
 
     if (gethostname(env->host, sizeof(env->host)) < 0) {
         return -1;
