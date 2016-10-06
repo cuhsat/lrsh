@@ -211,7 +211,7 @@ The following libraries are required/supported:
 > with the `NO_READLINE` flag set:
 
 ```
-$ make all test install NO_READLINE=1
+$ make all NO_READLINE=1
 ```
 
 ## License
