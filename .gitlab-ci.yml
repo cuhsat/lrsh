@@ -11,7 +11,7 @@ build:
   - make linux test
   - cd ..
   script:
-  - make all LC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC"
+  - make all LC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC" USE_READLINE=1
   artifacts:
     paths:
     - palantir
