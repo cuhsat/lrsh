@@ -207,12 +207,12 @@ The following libraries are required/supported:
 * [Lua 5.3](https://www.lua.org)
 * [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
 
-> The `readline` support is optional and can be turned on by calling `make`
-> with the `USE_READLINE` flag set:
->
-> ```
-> $ make all test install USE_READLINE=1
-> ```
+> The `readline` support is optional and can be turned off by calling `make`
+> with the `NO_READLINE` flag set:
+
+```
+$ make all test install NO_READLINE=1
+```
 
 ## License
 Licensed under the terms of the [MIT License](LICENSE).
