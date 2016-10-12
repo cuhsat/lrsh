@@ -24,6 +24,22 @@
 #include <limits.h>
 #include <time.h>
 
+#ifndef __APPLE__
+#define DAEMON
+#endif
+
+#ifndef LOGIN_NAME_MAX
+#define LOGIN_NAME_MAX 255
+#endif
+
+#ifndef HOST_NAME_MAX
+#define HOST_NAME_MAX 255
+#endif
+
+#ifndef PATH_MAX
+#define PATH_MAX 255
+#endif
+
 #define MAX_LINE 1024
 #define MAX_USER (LOGIN_NAME_MAX + 1)
 #define MAX_HOST (HOST_NAME_MAX + 1)
@@ -43,5 +59,6 @@ typedef struct {
 extern int os_readline(readline_t *rl);
 extern int os_sleep(time_t time);
 extern int os_env(env_t *env);
+extern int os_daemon();
 
 #endif // LIB_OS_H

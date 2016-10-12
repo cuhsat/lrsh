@@ -40,7 +40,7 @@
 extern int os_readline(readline_t *rl) {
     char *buffer = NULL;
 
-    #ifdef READLINE
+#ifdef READLINE
 
     if ((buffer = readline(rl->prompt)) != NULL) {
         add_history(buffer);
@@ -48,7 +48,7 @@ extern int os_readline(readline_t *rl) {
         return -1;        
     }
 
-    #else // READLINE
+#else // READLINE
 
     size_t size = 0;
 
@@ -58,7 +58,7 @@ extern int os_readline(readline_t *rl) {
         return -1;
     }
 
-    #endif // READLINE
+#endif // READLINE
 
     strncpy(rl->line, buffer, sizeof(rl->line));
     free(buffer);
@@ -111,4 +111,20 @@ extern int os_env(env_t *env) {
     }
 
     return 0;
+}
+
+/**
+ * OS daemon
+ * @return success
+ */
+extern int os_daemon() {
+#ifdef DAEMON
+
+    return daemon(0, 0);
+    
+#else // DAEMON
+
+    return chdir("/");
+
+#endif // DAEMON
 }

@@ -20,6 +20,7 @@
  */
 #include "palantir.h"
 #include "lib/net.h"
+#include "lib/os.h"
 #include "lua/lua.h"
 
 #include <lua.h>
@@ -157,7 +158,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (mode == MODE_PASSIVE && daemon(0, (DEBUG ? 1 : 0)) < 0) {
+    if (mode == MODE_PASSIVE && os_daemon() < 0) {
         perror("Palantir error");
         exit(EXIT_FAILURE);
     }
@@ -165,7 +166,7 @@ int main(int argc, char *argv[]) {
     atexit(palantir_exit);
 
     if (palantir_start(argv[optind], (uint16_t)port) < 0) {
-        perror("Palantir error");
+        perror("Palantir error");           
         exit(EXIT_FAILURE);
     }
 

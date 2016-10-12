@@ -35,7 +35,9 @@ remove:
 	rm /usr/bin/$(EXECUTABLE)
 
 clean:
-	-@find . -regex ".*\.\(luac\|inc\|o\)" -delete
+	-@find src -regex ".*\.luac" -delete
+	-@find src -regex ".*\.inc" -delete
+	-@find src -regex ".*\.o" -delete
 	-@rm -f $(EXECUTABLE)
 
 test:
