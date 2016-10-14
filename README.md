@@ -15,7 +15,7 @@ $ palantir [-dhlv] [-c COMMAND] [-f FILE] HOST PORT
 * `-c` Executes the command
 * `-f` Executes the file
 
-The option `FILE` has precedence over the option `COMMAND`.
+The `FILE` option has precedence over the `COMMAND` option.
 
 ### Commands:
 * `-- exit` Shutdown client
