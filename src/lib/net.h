@@ -26,7 +26,7 @@
 
 typedef struct {
     const char *name;
-    uint16_t port;
+    const uint16_t port;
 } host_t;
 
 typedef struct {

@@ -24,8 +24,8 @@
 #include <limits.h>
 #include <time.h>
 
-#ifndef __APPLE__
-#define DAEMON
+#ifdef __APPLE__
+#undef DAEMON
 #endif
 
 #ifndef LOGIN_NAME_MAX

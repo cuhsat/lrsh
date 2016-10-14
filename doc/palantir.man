@@ -3,18 +3,22 @@
 .SH NAME
 Palantir \- A Lua Reverse Shell
 .SH SYNOPSIS
-palantir [-hlv] [-d] HOST PORT
+palantir [-dhlv] [-c COMMAND] [-f FILE] HOST PORT
 .SH DESCRIPTION
 Palantir is a Lua scriptable, extendable, tiny reverse shell.
 .SH OPTIONS
+.IP "-d"
+Starts in passive mode (listen)
 .IP "-h"
 Shows the usage information
 .IP "-l"
 Shows the license
 .IP "-v"
 Shows the version
-.IP "-d"
-Starts in passive mode (listen)
+.IP "-c"
+Executes the command
+.IP "-f"
+Executes the file
 .SH FILES
 .I ~/.palantir.lua
 .RS

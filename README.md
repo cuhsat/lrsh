@@ -4,14 +4,18 @@ shell, using a human readable protocol written in C and Lua.
 
 ## Usage
 ```
-$ palantir [-hlv] [-d] HOST PORT
+$ palantir [-dhlv] [-c COMMAND] [-f FILE] HOST PORT
 ```
 
 ### Options:
-* `-d` Start in passive mode (listen)
+* `-d` Starts in passive mode (listen)
 * `-h` Shows the usage information
 * `-l` Shows the license
 * `-v` Shows the version
+* `-c` Executes the command
+* `-f` Executes the file
+
+The option `FILE` has precedence over the option `COMMAND`.
 
 ### Commands:
 * `-- exit` Shutdown client
@@ -98,10 +102,10 @@ Sleeps for the given `milliseconds`.
 The default shell functionality can be extended by creating custom event
 callbacks in the users profile. There are four different event sources:
 
-* `client_connected` called when the client connects
-* `client_<command>` called when the client receives a `<command>`
-* `server_<command>` called when the server receives a `<command>`
-* `server_prompt`    called when the server processes a prompt
+* `client_connected` Called when the client connects
+* `client_<command>` Called when the client receives a `<command>`
+* `server_<command>` Called when the server receives a `<command>`
+* `server_prompt`    Called when the server processes a prompt
 
 All callbacks except `client_connect` must return a `boolean`. In case `true`
 is returned, all further processing will be prevented. The `client_connected`
@@ -201,18 +205,24 @@ Server: EXIT
 $ make all test install
 ```
 
-#### Dependancies
-The following libraries are required/supported:
+### Flags
+Use these flags when calling [`make`](Makefile):
+
+* `NO_DAEMON`   Disable daemonize support
+* `NO_READLINE` Disable `readline` support
+
+```
+$ make all test install <flag>=1
+```
+
+### Dependancies
+The following libraries are required:
 
 * [Lua 5.3](https://www.lua.org)
+
+The following libraries are supported:
+
 * [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
-
-> The `readline` support is optional and can be turned off by calling `make`
-> with the `NO_READLINE` flag set:
-
-```
-$ make all NO_READLINE=1
-```
 
 ## License
 Licensed under the terms of the [MIT License](LICENSE).

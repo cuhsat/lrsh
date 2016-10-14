@@ -8,6 +8,10 @@ OBJECTS=$(SOURCES:.c=.o)
 RESOURCES=$(SCRIPTS:.lua=.inc)
 EXECUTABLE=palantir
 
+ifneq (1,$(NO_DAEMON))
+override CFLAGS+=-DDAEMON
+endif
+
 ifneq (1,$(NO_READLINE))
 override CFLAGS+=-DREADLINE
 override LDFLAGS+=-lreadline

@@ -25,6 +25,9 @@ local profile = os.getenv('HOME') .. '/.palantir.lua'
 local raw_recv = palantir.net.recv
 local raw_send = palantir.net.send
 
+-- Input stack
+local stack = {}
+
 -- Palantir error handler
 -- @param error message
 function palantir.error(message)
@@ -99,7 +102,11 @@ function palantir.net.server(host, port)
         if palantir.event('server', command, param) then
 
         elseif command == 'HELO' then
-          local line = palantir.os.readline(param)
+          local line = table.remove(stack, 1)
+
+          if line == nil then
+            line = palantir.os.readline(param)
+          end
 
           if palantir.event('server', 'prompt', line) then
 
@@ -166,6 +173,20 @@ end
 
 -- Load user profile
 pcall(dofile, profile)
+
+-- Load input stack
+if palantir.STACK then
+  local file = io.open(palantir.STACK, 'r')
+
+  if file == nil then
+    stack = {palantir.STACK}
+  else
+    for line in file:lines() do
+      table.insert(stack, line)
+    end
+    io.close(file)
+  end
+end
 
 -- Start shell
 local main = (palantir.MODE and palantir.net.server or palantir.net.client)

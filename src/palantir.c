@@ -35,7 +35,7 @@
 
 #include "palantir.inc"
 
-#define LUA_CODE ((const char*)src_palantir_luac)
+#define LUA_CODE ((const char *)src_palantir_luac)
 #define LUA_SIZE ((size_t)src_palantir_luac_len)
 
 typedef enum {
@@ -44,6 +44,7 @@ typedef enum {
 } palantir_mode;
 
 static palantir_mode mode = MODE_ACTIVE;
+static const char *stack = NULL;
 
 /**
  * Palantir start
@@ -55,7 +56,7 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
-    lua_createtable(L, 0, 7);
+    lua_createtable(L, 0, 8);
 
     lua_pushboolean(L, mode);
     lua_setfield(L, -2, "MODE");
@@ -63,6 +64,8 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_setfield(L, -2, "HOST");
     lua_pushinteger(L, port);
     lua_setfield(L, -2, "PORT");
+    lua_pushstring(L, stack);
+    lua_setfield(L, -2, "STACK");
     lua_pushboolean(L, DEBUG);
     lua_setfield(L, -2, "DEBUG");
     lua_pushstring(L, VERSION);
@@ -125,8 +128,13 @@ static void palantir_exit() {
 int main(int argc, char *argv[]) {
     int opt, port = 0; char *t = NULL;
 
-    while ((opt = getopt(argc, argv, "dhlv")) != -1) {
+    while ((opt = getopt(argc, argv, "dhlvc:f:")) != -1) {
         switch (opt) {
+            case 'c':
+            case 'f':
+                stack = optarg;
+                break;
+
             case 'd':
                 mode = MODE_PASSIVE;
                 break;
