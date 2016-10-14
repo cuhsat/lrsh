@@ -8,8 +8,8 @@ PORT=${2:-8211}
 SERVER=~/.ci_palantird.pid
 CLIENT=~/.ci_palantir.pid
 
-SERVER_FLAGS=-d
-CLIENT_FLAGS=-c "--halt"
+SERVER_FLAGS="-d"
+CLIENT_FLAGS="-c --halt"
 
 main() {
     kill -9 $(cat $SERVER) 2> /dev/null || true
