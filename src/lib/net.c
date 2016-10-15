@@ -20,6 +20,7 @@
  */
 #include "net.h"
 
+#include <errno.h>
 #include <netdb.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -33,8 +34,8 @@
 #include <sys/socket.h>
 
 static char *buffer = NULL;
-static int s_socket = 0;
-static int c_socket = 0;
+static int server = 0;
+static int client = 0;
 
 /**
  * CRC32 (bitwise)
@@ -57,37 +58,77 @@ static uint32_t crc32(const char *data, size_t size) {
 }
 
 /**
- * Net connect
+ * Fill address
  * @param host the host address
+ * @param addr the address
  * @return success
- */ 
-extern int net_connect(host_t *host) {
-    if (c_socket && close(c_socket) < 0) {
-        return -1;
-    }
-
-    if ((c_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        return -1;
-    }
-
+ */
+static int address(host_t *host, struct sockaddr_in *addr) {
     struct hostent *he;
-    struct sockaddr_in addr;
 
     if ((he = gethostbyname2(host->name, AF_INET)) == NULL) {
         return -1;
     }
 
-    memset(&addr, 0, sizeof(addr));
-    memcpy(&addr.sin_addr, he->h_addr, he->h_length);
+    memset(addr, 0, sizeof(*addr));
+    memcpy(&(addr->sin_addr), he->h_addr, he->h_length);
 
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(host->port);
+    addr->sin_family = AF_INET;
+    addr->sin_port = htons(host->port);
 
-    if (inet_pton(AF_INET, host->name, &(addr.sin_addr)) <= 0) {
+    if (inet_pton(AF_INET, host->name, &(addr->sin_addr)) <= 0) {
         return -1;
     }
 
-    if (connect(c_socket, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+    return 0;
+}
+
+/**
+ * Terminate socket
+ * @param fd the socket
+ * @return success
+ */
+static int terminate(int fd) {
+    if (fd) {
+        socklen_t len = sizeof(errno);
+
+        if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &errno, &len) < 0) {
+            return -1;
+        }
+
+        if (shutdown(fd, SHUT_RDWR) < 0) {
+            return -1;
+        }
+
+        if (close(fd) < 0) {
+            return -1;
+        }    
+    }
+
+    return 0;
+}
+
+/**
+ * Net connect
+ * @param host the host address
+ * @return success
+ */ 
+extern int net_connect(host_t *host) {
+    if (terminate(client) < 0) {
+        return -1;
+    }
+
+    if ((client = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        return -1;
+    }
+
+    struct sockaddr_in addr;
+
+    if (address(host, &addr) < 0) {
+        return -1;
+    }
+
+    if (connect(client, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         return -1;
     }
 
@@ -100,32 +141,21 @@ extern int net_connect(host_t *host) {
  * @return success
  */ 
 extern int net_listen(host_t *host) {
-    if ((s_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((server = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         return -1;
     }
 
-    struct hostent *he;
     struct sockaddr_in addr;
 
-    if ((he = gethostbyname2(host->name, AF_INET)) == NULL) {
+    if (address(host, &addr) < 0) {
         return -1;
     }
 
-    memset(&addr, 0, sizeof(addr));
-    memcpy(&addr.sin_addr, he->h_addr, he->h_length);
-
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(host->port);
-
-    if (inet_pton(AF_INET, host->name, &(addr.sin_addr)) <= 0) {
+    if (bind(server, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         return -1;
     }
 
-    if (bind(s_socket, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-        return -1;
-    }
-
-    if (listen(s_socket, 1) < 0) {
+    if (listen(server, 1) < 0) {
         return -1;
     }
 
@@ -137,11 +167,11 @@ extern int net_listen(host_t *host) {
  * @return success
  */ 
 extern int net_accept() {
-    if (c_socket && close(c_socket) < 0) {
+    if (terminate(client) < 0) {
         return -1;
     }
 
-    if ((c_socket = accept(s_socket, NULL, NULL)) < 0) {
+    if ((client = accept(server, NULL, NULL)) < 0) {
         return -1;
     }
 
@@ -156,19 +186,21 @@ extern int net_accept() {
 extern int net_send(frame_t *frame) {
     uint32_t checksum = crc32(frame->data, frame->size);
 
-    #if (defined(DEBUG) && (DEBUG == 1))
+#if (defined(DEBUG) && (DEBUG == 1))
+
     printf(">> %.*s\n", (int)(frame->size), frame->data);
-    #endif
 
-    if (write(c_socket, (const char *)&checksum, 4) < 4) {
+#endif
+
+    if (write(client, (const char *)&checksum, 4) < 4) {
         return -1;
     }
 
-    if (write(c_socket, (const char *)&frame->size, 4) < 4) {
+    if (write(client, (const char *)&frame->size, 4) < 4) {
         return -1;
     }
 
-    if (write(c_socket, frame->data, frame->size) < frame->size) {
+    if (write(client, frame->data, frame->size) < frame->size) {
         return -1;
     }
 
@@ -183,11 +215,11 @@ extern int net_send(frame_t *frame) {
 extern int net_recv(frame_t *frame) {
     uint32_t checksum, size;
 
-    if (read(c_socket, (char *)&checksum, 4) < 4) {
+    if (read(client, (char *)&checksum, 4) < 4) {
         return -1;
     }
 
-    if (read(c_socket, (char *)&size, 4) < 4) {
+    if (read(client, (char *)&size, 4) < 4) {
         return -1;
     }
 
@@ -195,7 +227,7 @@ extern int net_recv(frame_t *frame) {
         return -1;
     }
 
-    if (read(c_socket, buffer, size) < size) {
+    if (read(client, buffer, size) < size) {
         return -1;
     }
 
@@ -206,9 +238,11 @@ extern int net_recv(frame_t *frame) {
     frame->data = buffer;
     frame->size = size;
 
-    #if (defined(DEBUG) && (DEBUG == 1))
+#if (defined(DEBUG) && (DEBUG == 1))
+
     printf("<< %.*s\n", (int)(frame->size), frame->data);
-    #endif
+
+#endif
 
     return 0;
 }
@@ -220,11 +254,11 @@ extern int net_recv(frame_t *frame) {
 extern int net_exit() {
     free(buffer);
 
-    if (s_socket && close(s_socket) < 0) {
+    if (terminate(server) < 0) {
         return -1;
     }
 
-    if (c_socket && close(c_socket) < 0) {
+    if (terminate(client) < 0) {
         return -1;
     }
 

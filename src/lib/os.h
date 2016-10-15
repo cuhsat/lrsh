@@ -24,6 +24,10 @@
 #include <limits.h>
 #include <time.h>
 
+#if (defined(DEBUG) && (DEBUG == 1))
+#undef DAEMON
+#endif
+
 #ifdef __APPLE__
 #undef DAEMON
 #endif
