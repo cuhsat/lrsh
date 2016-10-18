@@ -47,6 +47,7 @@ specific functions and properties.
 * `MODE`    The command line option `-d`
 * `HOST`    The command line argument `HOST`
 * `PORT`    The command line argument `PORT`
+* `STACK`   The command line argument `-c`/`-f`
 * `DEBUG`   The debug flag if compiled with `-DDEBUG=1`
 * `VERSION` The semantic version number
 
