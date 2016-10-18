@@ -36,7 +36,7 @@
  * OS readline
  * @param rl the readline address
  * @return success
- */ 
+ */
 extern int os_readline(readline_t *rl) {
     char *buffer = NULL;
 
@@ -45,7 +45,7 @@ extern int os_readline(readline_t *rl) {
     if ((buffer = readline(rl->prompt)) != NULL) {
         add_history(buffer);
     } else {
-        return -1;        
+        return -1;
     }
 
 #else // READLINE
@@ -70,7 +70,7 @@ extern int os_readline(readline_t *rl) {
  * OS sleep
  * @param time the time object
  * @return success
- */ 
+ */
 extern int os_sleep(time_t time) {
     struct timespec ts;
 
@@ -88,7 +88,7 @@ extern int os_sleep(time_t time) {
  * OS env
  * @param env the env address
  * @return success
- */ 
+ */
 extern int os_env(env_t *env) {
     struct passwd *pw;
 
@@ -121,7 +121,7 @@ extern int os_daemon() {
 #ifdef DAEMON
 
     return daemon(0, 0);
-    
+
 #else // DAEMON
 
     return chdir("/");

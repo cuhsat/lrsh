@@ -42,7 +42,7 @@ static int client = 0;
  * @param data the data address
  * @param size the data size
  * @return crc sum
- */ 
+ */
 static uint32_t crc32(const char *data, size_t size) {
     uint32_t sum = 0;
 
@@ -89,20 +89,20 @@ static int address(host_t *host, struct sockaddr_in *addr) {
  * @return success
  */
 static int terminate(int fd) {
-    if (fd) {
+    if (fd > 0) {
         socklen_t len = sizeof(errno);
 
         if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &errno, &len) < 0) {
             return -1;
         }
 
-        if (shutdown(fd, SHUT_RDWR) < 0) {
+        if ((shutdown(fd, SHUT_RDWR) < 0) && (errno != ENOTCONN)) {
             return -1;
         }
 
         if (close(fd) < 0) {
             return -1;
-        }    
+        }
     }
 
     return 0;
@@ -112,7 +112,7 @@ static int terminate(int fd) {
  * Net connect
  * @param host the host address
  * @return success
- */ 
+ */
 extern int net_connect(host_t *host) {
     if (terminate(client) < 0) {
         return -1;
@@ -139,7 +139,7 @@ extern int net_connect(host_t *host) {
  * Net listen
  * @param host the host address
  * @return success
- */ 
+ */
 extern int net_listen(host_t *host) {
     if ((server = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         return -1;
@@ -165,7 +165,7 @@ extern int net_listen(host_t *host) {
 /**
  * Net accept
  * @return success
- */ 
+ */
 extern int net_accept() {
     if (terminate(client) < 0) {
         return -1;
@@ -182,7 +182,7 @@ extern int net_accept() {
  * Net send
  * @param frame the frame address
  * @return success
- */ 
+ */
 extern int net_send(frame_t *frame) {
     uint32_t checksum = crc32(frame->data, frame->size);
 
@@ -211,7 +211,7 @@ extern int net_send(frame_t *frame) {
  * Net recv
  * @param frame the frame address
  * @return success
- */ 
+ */
 extern int net_recv(frame_t *frame) {
     uint32_t checksum, size;
 
@@ -250,7 +250,7 @@ extern int net_recv(frame_t *frame) {
 /**
  * Net exit
  * @return success
- */ 
+ */
 extern int net_exit() {
     free(buffer);
 

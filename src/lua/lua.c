@@ -37,7 +37,7 @@
  * Lua connect
  * @param L the Lua state address
  * @return stack count
- */ 
+ */
 extern int lua_connect(lua_State *L) {
     host_t host = {
         luaL_checkstring(L, 1),
@@ -55,7 +55,7 @@ extern int lua_connect(lua_State *L) {
  * Lua listen
  * @param L the Lua state address
  * @return stack count
- */ 
+ */
 extern int lua_listen(lua_State *L) {
     host_t host = {
         luaL_checkstring(L, 1),
@@ -73,7 +73,7 @@ extern int lua_listen(lua_State *L) {
  * Lua accept
  * @param L the Lua state address
  * @return stack count
- */ 
+ */
 extern int lua_accept(lua_State *L) {
     if (net_accept() < 0) {
         return LUA_ERRNO;
@@ -103,13 +103,13 @@ extern int lua_send(lua_State *L) {
  * Lua recv
  * @param L the Lua state address
  * @return stack count
- */ 
+ */
 extern int lua_recv(lua_State *L) {
     frame_t frame;
 
     if (net_recv(&frame) < 0) {
         return LUA_ERRNO;
-    }    
+    }
 
     lua_pushlstring(L, frame.data, frame.size);
 
@@ -120,7 +120,7 @@ extern int lua_recv(lua_State *L) {
  * Lua readline
  * @param L the Lua state address
  * @return stack count
- */ 
+ */
 extern int lua_readline(lua_State *L) {
     readline_t rl = {
         luaL_checkstring(L, 1)
@@ -129,7 +129,7 @@ extern int lua_readline(lua_State *L) {
     if (os_readline(&rl) < 0) {
         return LUA_ERRNO;
     }
-    
+
     lua_pushlstring(L, rl.line, strnlen(rl.line, sizeof(rl.line)));
 
     return 1;
@@ -139,7 +139,7 @@ extern int lua_readline(lua_State *L) {
  * Lua sleep
  * @param L the Lua state address
  * @return stack count
- */ 
+ */
 extern int lua_sleep(lua_State *L) {
     os_sleep(luaL_checkinteger(L, 1));
 
@@ -150,7 +150,7 @@ extern int lua_sleep(lua_State *L) {
  * Lua env
  * @param L the Lua state address
  * @return stack count
- */ 
+ */
 extern int lua_env(lua_State *L) {
     env_t env;
 

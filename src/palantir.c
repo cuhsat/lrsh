@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
     atexit(palantir_exit);
 
     if (palantir_start(argv[optind], (uint16_t)port) < 0) {
-        perror("Palantir error");           
+        perror("Palantir error");
         exit(EXIT_FAILURE);
     }
 
