@@ -23,6 +23,8 @@
 
 #include <lua.h>
 
+extern int lua_panic(lua_State *L);
+
 extern int lua_connect(lua_State *L);
 extern int lua_listen(lua_State *L);
 extern int lua_accept(lua_State *L);

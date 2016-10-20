@@ -4,22 +4,24 @@ shell, using a human readable protocol written in C and Lua.
 
 ## Usage
 ```
-$ palantir [-dhlv] [-c COMMAND] [-f FILE] HOST PORT
+$ palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT
 ```
 
 ### Options:
-* `-d` Starts in passive mode (listen)
+* `-d` Starts in client mode _(passive)_
 * `-h` Shows the usage information
 * `-l` Shows the license
 * `-v` Shows the version
+* `-a` Authentication token
 * `-c` Executes the command
 * `-f` Executes the file
 
-The `FILE` option has precedence over the `COMMAND` option.
+> The option `-f` has precedence over the option `-c`. The program will not 
+> exit after all commands, either specified by `-c` or `-f`, are processed.
 
 ### Commands:
-* `-- exit` Shutdown client
-* `-- halt` Shutdown server
+* `-- exit` Shutdown server
+* `-- halt` Shutdown client
 
 All other input will be evaluated and execute as Lua commands. The internal
 function `shell` will execute system commands by using the users default
@@ -40,13 +42,14 @@ print('Profile loaded')
 ```
 
 ### Globals
-A new global table named `palantir` will be defined which contains all shell
-specific functions and properties.
+A new global table named `P` will be defined which contains all shell specific
+functions and properties.
 
 #### Constants
 * `MODE`    The command line option `-d`
 * `HOST`    The command line argument `HOST`
 * `PORT`    The command line argument `PORT`
+* `TOKEN`   The command line argument `-a`
 * `STACK`   The command line argument `-c`/`-f`
 * `DEBUG`   The debug flag if compiled with `-DDEBUG=1`
 * `VERSION` The semantic version number
@@ -65,10 +68,10 @@ Returns the output of the executed `chunk` (global environment).
 #### Network
 
 ##### `net.server(host, port)`
-Starts on `host` and `port` in _active mode_.
+Starts on `host` and `port` in _server mode_.
 
 ##### `net.client(host, port)`
-Starts on `host` and `port` in _passive mode_.
+Starts on `host` and `port` in _client mode_.
 
 ##### `net.connect(host, port)`
 Connects to `host` and `port`.
@@ -122,7 +125,7 @@ end
 ```
 ```
 function client_echo(param)
-  palantir.net.send('ECHO', param)
+  P.net.send('ECHO', param)
   return true
 end
 ```
@@ -134,13 +137,13 @@ end
 ```
 ```
 function server_prompt(line)
-  palantir.net.send('ECHO', line)
+  P.net.send('ECHO', line)
   return true
 end
 ```
 
 ### Shortcuts
-The shortcut `shell` is provided as an alias of `palantir.os.execute`:
+The shortcut `shell` is provided as an alias of `P.os.execute`:
 ```
 return shell('echo hello')
 ```
@@ -158,6 +161,10 @@ CHECKSUM (4 bytes) | SIZE (4 bytes) | DATA (n bytes)
 ```
 The `CHECKSUM` is a bitwise CRC-32 only over the `DATA` field.
 
+#### Authentication
+If an authentication `TOKEN` was provided, the network frames checksum will be 
+pre-feed with the CRC-32 of the token before calculation.
+
 ### Command Layer
 A command is build according to the following format:
 ```
@@ -173,7 +180,7 @@ for better readability.
 
 #### Commands issued by the server:
 * `EXEC` Executes the parameter
-* `EXIT` Exits the client
+* `HALT` Halts the client
 * `PATH` Changes the path
 
 ### Examples

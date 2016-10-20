@@ -33,6 +33,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+static uint32_t auth = 0;
 static char *buffer = NULL;
 static int server = 0;
 static int client = 0;
@@ -41,10 +42,11 @@ static int client = 0;
  * CRC32 (bitwise)
  * @param data the data address
  * @param size the data size
+ * @param auth the authentication
  * @return crc sum
  */
-static uint32_t crc32(const char *data, size_t size) {
-    uint32_t sum = 0;
+static uint32_t crc32(const char *data, size_t size, uint32_t auth) {
+    uint32_t sum = auth;
 
     while (size--) {
         sum ^= *data++;
@@ -104,6 +106,17 @@ static int terminate(int fd) {
             return -1;
         }
     }
+
+    return 0;
+}
+
+/**
+ * Net authentication
+ * @param token the token
+ * @return success
+ */
+extern int net_auth(const char *token) {
+    auth = crc32(token, strnlen(token, MAX_TOKEN), 0);
 
     return 0;
 }
@@ -184,7 +197,7 @@ extern int net_accept() {
  * @return success
  */
 extern int net_send(frame_t *frame) {
-    uint32_t checksum = crc32(frame->data, frame->size);
+    uint32_t checksum = crc32(frame->data, frame->size, auth);
 
 #if (defined(DEBUG) && (DEBUG == 1))
 
@@ -231,7 +244,7 @@ extern int net_recv(frame_t *frame) {
         return -1;
     }
 
-    if (checksum != crc32(buffer, size)) {
+    if (checksum != crc32(buffer, size, auth)) {
         return -1;
     }
 

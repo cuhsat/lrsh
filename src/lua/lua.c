@@ -31,7 +31,22 @@
 #include <stdint.h>
 #include <string.h>
 
-#define LUA_ERRNO (luaL_error(L, strerror(errno)))
+/**
+ * Lua panic
+ * @param L the Lua state address
+ * @return stack count
+ */
+extern int lua_panic(lua_State *L) {
+#if (defined(DEBUG) && (DEBUG == 1))
+
+    printf(".. %s\n", __FUNCTION__);
+
+#endif
+
+    fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
+
+    return 0;
+}
 
 /**
  * Lua connect
@@ -39,13 +54,19 @@
  * @return stack count
  */
 extern int lua_connect(lua_State *L) {
+#if (defined(DEBUG) && (DEBUG == 1))
+
+    printf(".. %s\n", __FUNCTION__);
+
+#endif
+
     host_t host = {
         luaL_checkstring(L, 1),
         luaL_checkinteger(L, 2)
     };
 
     if (net_connect(&host) < 0) {
-        return LUA_ERRNO;
+        return luaL_error(L, strerror(errno));
     }
 
     return 0;
@@ -57,13 +78,19 @@ extern int lua_connect(lua_State *L) {
  * @return stack count
  */
 extern int lua_listen(lua_State *L) {
+#if (defined(DEBUG) && (DEBUG == 1))
+
+    printf(".. %s\n", __FUNCTION__);
+
+#endif
+
     host_t host = {
         luaL_checkstring(L, 1),
         luaL_checkinteger(L, 2)
     };
 
     if (net_listen(&host) < 0) {
-        return LUA_ERRNO;
+        return luaL_error(L, strerror(errno));
     }
 
     return 0;
@@ -75,8 +102,14 @@ extern int lua_listen(lua_State *L) {
  * @return stack count
  */
 extern int lua_accept(lua_State *L) {
+#if (defined(DEBUG) && (DEBUG == 1))
+
+    printf(".. %s\n", __FUNCTION__);
+
+#endif
+
     if (net_accept() < 0) {
-        return LUA_ERRNO;
+        return luaL_error(L, strerror(errno));
     }
 
     return 0;
@@ -88,12 +121,18 @@ extern int lua_accept(lua_State *L) {
  * @return stack count
  */ 
 extern int lua_send(lua_State *L) {
+#if (defined(DEBUG) && (DEBUG == 1))
+
+    printf(".. %s\n", __FUNCTION__);
+
+#endif
+
     frame_t frame;
 
     frame.data = (char *)luaL_checklstring(L, 1, &(frame.size));
 
     if (net_send(&frame) < 0) {
-        return LUA_ERRNO;
+        return luaL_error(L, strerror(errno));
     }
 
     return 0;
@@ -105,10 +144,16 @@ extern int lua_send(lua_State *L) {
  * @return stack count
  */
 extern int lua_recv(lua_State *L) {
+#if (defined(DEBUG) && (DEBUG == 1))
+
+    printf(".. %s\n", __FUNCTION__);
+
+#endif
+
     frame_t frame;
 
     if (net_recv(&frame) < 0) {
-        return LUA_ERRNO;
+        return luaL_error(L, strerror(errno));
     }
 
     lua_pushlstring(L, frame.data, frame.size);
@@ -122,12 +167,18 @@ extern int lua_recv(lua_State *L) {
  * @return stack count
  */
 extern int lua_readline(lua_State *L) {
+#if (defined(DEBUG) && (DEBUG == 1))
+
+    printf(".. %s\n", __FUNCTION__);
+
+#endif
+
     readline_t rl = {
         luaL_checkstring(L, 1)
     };
 
     if (os_readline(&rl) < 0) {
-        return LUA_ERRNO;
+        return luaL_error(L, strerror(errno));
     }
 
     lua_pushlstring(L, rl.line, strnlen(rl.line, sizeof(rl.line)));
@@ -141,6 +192,12 @@ extern int lua_readline(lua_State *L) {
  * @return stack count
  */
 extern int lua_sleep(lua_State *L) {
+#if (defined(DEBUG) && (DEBUG == 1))
+
+    printf(".. %s\n", __FUNCTION__);
+
+#endif
+
     os_sleep(luaL_checkinteger(L, 1));
 
     return 0;
@@ -152,6 +209,12 @@ extern int lua_sleep(lua_State *L) {
  * @return stack count
  */
 extern int lua_env(lua_State *L) {
+#if (defined(DEBUG) && (DEBUG == 1))
+
+    printf(".. %s\n", __FUNCTION__);
+
+#endif
+
     env_t env;
 
     if (lua_gettop(L) > 0) {
@@ -161,7 +224,7 @@ extern int lua_env(lua_State *L) {
     }
 
     if (os_env(&env)) {
-        return LUA_ERRNO;
+        return luaL_error(L, strerror(errno));
     }
 
     lua_pushlstring(L, env.user, strnlen(env.user, sizeof(env.user)));

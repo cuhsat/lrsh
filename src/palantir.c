@@ -39,12 +39,13 @@
 #define LUA_SIZE ((size_t)src_palantir_luac_len)
 
 typedef enum {
-    MODE_PASSIVE,
-    MODE_ACTIVE
+    MODE_CLIENT,
+    MODE_SERVER
 } palantir_mode;
 
-static palantir_mode mode = MODE_ACTIVE;
+static palantir_mode mode = MODE_SERVER;
 static const char *stack = NULL;
+static const char *token = NULL;
 
 /**
  * Palantir start
@@ -54,10 +55,13 @@ static const char *stack = NULL;
  */
 static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
+    lua_atpanic(L, lua_panic);
+
+    net_auth(token);
+
     luaL_openlibs(L);
 
-    lua_createtable(L, 0, 8);
-
+    lua_createtable(L, 0, 9);
     lua_pushboolean(L, mode);
     lua_setfield(L, -2, "MODE");
     lua_pushstring(L, host);
@@ -66,6 +70,8 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_setfield(L, -2, "PORT");
     lua_pushstring(L, stack);
     lua_setfield(L, -2, "STACK");
+    lua_pushstring(L, token);
+    lua_setfield(L, -2, "TOKEN");
     lua_pushboolean(L, DEBUG);
     lua_setfield(L, -2, "DEBUG");
     lua_pushstring(L, VERSION);
@@ -94,7 +100,7 @@ static int palantir_start(const char *host, uint16_t port) {
 
     lua_setfield(L, -2, "os");
 
-    lua_setglobal(L, "palantir");
+    lua_setglobal(L, "P");
 
     if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != LUA_OK) {
         fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
@@ -128,15 +134,19 @@ static void palantir_exit() {
 int main(int argc, char *argv[]) {
     int opt, port = 0; char *t = NULL;
 
-    while ((opt = getopt(argc, argv, "dhlvc:f:")) != -1) {
+    while ((opt = getopt(argc, argv, "dhlva:c:f:")) != -1) {
         switch (opt) {
             case 'c':
             case 'f':
                 stack = optarg;
                 break;
 
+            case 'a':
+                token = optarg;
+                break;
+
             case 'd':
-                mode = MODE_PASSIVE;
+                mode = MODE_CLIENT;
                 break;
 
             case 'h':
@@ -166,7 +176,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (mode == MODE_PASSIVE && os_daemon() < 0) {
+    if (mode == MODE_CLIENT && os_daemon() < 0) {
         perror("Palantir error");
         exit(EXIT_FAILURE);
     }

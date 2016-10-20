@@ -16,21 +16,21 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
-io.write(string.format('Palantir %s (%s)\n', palantir.VERSION, _VERSION))
+io.write(string.format('Palantir %s (%s)\n', P.VERSION, _VERSION))
 
 -- User profile
 local profile = os.getenv('HOME') .. '/.palantir.lua'
 
 -- Raw protocol
-local raw_recv = palantir.net.recv
-local raw_send = palantir.net.send
+local raw_recv = P.net.recv
+local raw_send = P.net.send
 
 -- Input stack
 local stack = {}
 
 -- Palantir error handler
 -- @param error message
-function palantir.error(message)
+function P.error(message)
   if message ~= 'Success' then
     io.stderr:write(string.format('Palantir error: %s\n', message))
   end
@@ -41,14 +41,30 @@ end
 -- @param event name
 -- @param event param
 -- @return callback result
-function palantir.event(source, event, param)
+function P.event(source, event, param)
   return pcall(_G[source .. '_' .. event:lower()], param)
+end
+
+-- Palantir input stack
+-- @param input source
+function P.input(source)
+  local file = io.open(source, 'r')
+
+  if file == nil then
+    stack = {source}
+  else
+    for line in file:lines() do
+      table.insert(stack, line)
+    end
+
+    io.close(file)
+  end
 end
 
 -- Palantir execute script
 -- @param chunk to load
 -- @return result or error
-function palantir.load(chunk)
+function P.load(chunk)
   local f, err = load(chunk, 'load', 't')
 
   if f then
@@ -61,7 +77,7 @@ end
 -- Palantir execute shell
 -- @param command to execute
 -- @return result or error
-function palantir.os.execute(command)
+function P.os.execute(command)
   local handle = io.popen(command .. ' 2>&1')
   local result = handle:read('*a')
 
@@ -71,7 +87,7 @@ end
 
 -- Palantir receive frame
 -- @return command and param
-function palantir.net.recv()
+function P.net.recv()
   local frame = raw_recv()
   return frame:sub(1, 4), frame:sub(6)
 end
@@ -80,7 +96,7 @@ end
 -- @param command
 -- @param param
 -- @return result
-function palantir.net.send(command, param)
+function P.net.send(command, param)
   local frame = command .. ' ' .. (param or '')
   return raw_send(frame)
 end
@@ -88,40 +104,36 @@ end
 -- Palantir main server loop
 -- @param host address
 -- @param port number
-function palantir.net.server(host, port)
-  while not xpcall(palantir.net.listen, palantir.error, host, port) do
-    palantir.os.sleep(1000)
+function P.net.server(host, port)
+  while not xpcall(P.net.listen, P.error, host, port) do
+    P.os.sleep(1000)
   end
 
   while true do
-    if xpcall(palantir.net.accept, palantir.error) then
+    if xpcall(P.net.accept, P.error) then
 
       while true do
-        local command, param = palantir.net.recv()
+        local command, param = P.net.recv()
 
-        if palantir.event('server', command, param) then
+        if P.event('server', command, param) then
 
         elseif command == 'HELO' then
-          local line = table.remove(stack, 1)
+          local line = table.remove(stack, 1) or P.os.readline(param)
 
-          if line == nil then
-            line = palantir.os.readline(param)
-          end
-
-          if palantir.event('server', 'prompt', line) then
+          if P.event('server', 'prompt', line) then
 
           elseif line:lower():match('^cd%s+') then
-            palantir.net.send('PATH', line:sub(4))
-
-          elseif line:lower():match('^--%s*exit$') then
-            palantir.net.send('EXIT')
-            break
+            P.net.send('PATH', line:sub(4))
 
           elseif line:lower():match('^--%s*halt$') then
+            P.net.send('HALT')
+            return
+
+          elseif line:lower():match('^--%s*exit$') then
             return
 
           else
-            palantir.net.send('EXEC', line)
+            P.net.send('EXEC', line)
           end
 
         elseif command == 'TEXT' then
@@ -135,32 +147,36 @@ end
 -- Palantir main client loop
 -- @param host address
 -- @param port number
-function palantir.net.client(host, port)
+function P.net.client(host, port)
   while true do
-    if xpcall(palantir.net.connect, palantir.error, host, port) then
+    if xpcall(P.net.connect, P.error, host, port) then
       if client_connected then
-        palantir.net.send('TEXT', client_connected())
+        P.net.send('TEXT', client_connected())
       end
 
       while true do
-        palantir.net.send('HELO', string.format('%s@%s:%s ', palantir.os.env()))
+        P.net.send('HELO', string.format('%s@%s:%s ', P.os.env()))
 
-        local command, param = palantir.net.recv()
+        local ok, command, param = xpcall(P.net.recv, P.error)
 
-        if palantir.event('client', command, param) then
+        if not ok then
+          break
+        end
+
+        if P.event('client', command, param) then
 
         elseif command == 'PATH' then
-          palantir.os.env(param)
+          P.os.env(param)
 
         elseif command == 'EXEC' then
-          palantir.net.send('TEXT', palantir.load(param))
+          P.net.send('TEXT', P.load(param))
 
-        elseif command == 'EXIT' then
+        elseif command == 'HALT' then
           os.exit()
         end
       end
 
-    else palantir.os.sleep(1000) end
+    else P.os.sleep(1000) end
   end
 end
 
@@ -168,29 +184,18 @@ end
 -- @param command to execute
 -- @return result or error
 function shell(command)
-  return palantir.os.execute(command)
+  return P.os.execute(command)
 end
 
 -- Load user profile
 pcall(dofile, profile)
 
 -- Load input stack
-if palantir.STACK then
-  local file = io.open(palantir.STACK, 'r')
-
-  if file == nil then
-    stack = {palantir.STACK}
-  else
-    for line in file:lines() do
-      table.insert(stack, line)
-    end
-    io.close(file)
-  end
-end
+pcall(P.input, P.STACK)
 
 -- Start shell
-local main = (palantir.MODE and palantir.net.server or palantir.net.client)
+local main = (P.MODE and P.net.server or P.net.client)
 
-if xpcall(main, palantir.error, palantir.HOST, palantir.PORT) then
+if xpcall(main, P.error, P.HOST, P.PORT) then
   io.write('Palantir exit\n')
 end

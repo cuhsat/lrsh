@@ -24,6 +24,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef ARG_MAX
+#define ARG_MAX 255
+#endif
+
+#define MAX_TOKEN ARG_MAX
+
 typedef struct {
     const char *name;
     const uint16_t port;
@@ -34,6 +40,7 @@ typedef struct {
     size_t size;
 } frame_t;
 
+extern int net_auth(const char *token);
 extern int net_connect(host_t *addr);
 extern int net_listen(host_t *addr);
 extern int net_accept();
