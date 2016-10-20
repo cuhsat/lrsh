@@ -16,8 +16,8 @@ $ palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT
 * `-c` Executes the command
 * `-f` Executes the file
 
-> The option `-f` has precedence over the option `-c`. The program will not 
-> exit after all commands, either specified by `-c` or `-f`, are processed.
+The option `-f` has precedence over the option `-c`. The program will not exit 
+after all commands, either specified by `-c` or `-f`, are processed.
 
 ### Commands:
 * `-- exit` Shutdown server
@@ -162,7 +162,7 @@ CHECKSUM (4 bytes) | SIZE (4 bytes) | DATA (n bytes)
 The `CHECKSUM` is a bitwise CRC-32 only over the `DATA` field.
 
 #### Authentication
-If an authentication `TOKEN` was provided, the network frames checksum will be 
+If an authentication `TOKEN` is provided, the network frames checksum will be 
 pre-feed with the CRC-32 of the token before calculation.
 
 ### Command Layer
