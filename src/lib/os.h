@@ -60,6 +60,7 @@ typedef struct {
     char path[MAX_PATH];
 } env_t;
 
+extern int os_bind();
 extern int os_readline(readline_t *rl);
 extern int os_sleep(time_t time);
 extern int os_env(env_t *env);

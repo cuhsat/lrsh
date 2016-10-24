@@ -44,8 +44,8 @@ typedef enum {
 } palantir_mode;
 
 static palantir_mode mode = MODE_SERVER;
-static const char *stack = NULL;
-static const char *token = NULL;
+static const char *token = "";
+static const char *stack = "";
 
 /**
  * Palantir start
@@ -57,7 +57,13 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     lua_atpanic(L, lua_panic);
 
-    net_auth(token);
+    if (os_bind() < 0) {
+        return -1;
+    }
+
+    if (net_auth(token) < 0) {
+        return -1;
+    }
 
     luaL_openlibs(L);
 

@@ -116,7 +116,11 @@ static int terminate(int fd) {
  * @return success
  */
 extern int net_auth(const char *token) {
-    auth = crc32(token, strnlen(token, MAX_TOKEN), 0);
+    if (strlen(token) > 0) {
+        auth = crc32(token, strnlen(token, MAX_TOKEN), 0);
+    } else {
+        auth = 0;
+    }
 
     return 0;
 }
@@ -201,7 +205,7 @@ extern int net_send(frame_t *frame) {
 
 #if (defined(DEBUG) && (DEBUG == 1))
 
-    printf(">> %.*s\n", (int)(frame->size), frame->data);
+    fprintf(stderr, ">> %.*s\n", (int)(frame->size), frame->data);
 
 #endif
 
@@ -245,6 +249,7 @@ extern int net_recv(frame_t *frame) {
     }
 
     if (checksum != crc32(buffer, size, auth)) {
+        errno = ((auth > 0) ? EACCES : EBADMSG);
         return -1;
     }
 
@@ -253,7 +258,7 @@ extern int net_recv(frame_t *frame) {
 
 #if (defined(DEBUG) && (DEBUG == 1))
 
-    printf("<< %.*s\n", (int)(frame->size), frame->data);
+    fprintf(stderr, "<< %.*s\n", (int)(frame->size), frame->data);
 
 #endif
 

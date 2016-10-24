@@ -31,19 +31,19 @@
 #include <stdint.h>
 #include <string.h>
 
+#if (defined(DEBUG) && (DEBUG == 1))
+#define LUA_TRACE() fprintf(stderr, ".. %s\n", __FUNCTION__)
+#else
+#define LUA_TRACE()
+#endif
+
 /**
  * Lua panic
  * @param L the Lua state address
  * @return stack count
  */
 extern int lua_panic(lua_State *L) {
-#if (defined(DEBUG) && (DEBUG == 1))
-
-    printf(".. %s\n", __FUNCTION__);
-
-#endif
-
-    fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
+    fprintf(stderr, "Palantir panic: %s\n", lua_tostring(L, -1));
 
     return 0;
 }
@@ -54,11 +54,7 @@ extern int lua_panic(lua_State *L) {
  * @return stack count
  */
 extern int lua_connect(lua_State *L) {
-#if (defined(DEBUG) && (DEBUG == 1))
-
-    printf(".. %s\n", __FUNCTION__);
-
-#endif
+    LUA_TRACE();
 
     host_t host = {
         luaL_checkstring(L, 1),
@@ -78,11 +74,7 @@ extern int lua_connect(lua_State *L) {
  * @return stack count
  */
 extern int lua_listen(lua_State *L) {
-#if (defined(DEBUG) && (DEBUG == 1))
-
-    printf(".. %s\n", __FUNCTION__);
-
-#endif
+    LUA_TRACE();
 
     host_t host = {
         luaL_checkstring(L, 1),
@@ -102,11 +94,7 @@ extern int lua_listen(lua_State *L) {
  * @return stack count
  */
 extern int lua_accept(lua_State *L) {
-#if (defined(DEBUG) && (DEBUG == 1))
-
-    printf(".. %s\n", __FUNCTION__);
-
-#endif
+    LUA_TRACE();
 
     if (net_accept() < 0) {
         return luaL_error(L, strerror(errno));
@@ -121,11 +109,7 @@ extern int lua_accept(lua_State *L) {
  * @return stack count
  */ 
 extern int lua_send(lua_State *L) {
-#if (defined(DEBUG) && (DEBUG == 1))
-
-    printf(".. %s\n", __FUNCTION__);
-
-#endif
+    LUA_TRACE();
 
     frame_t frame;
 
@@ -144,11 +128,7 @@ extern int lua_send(lua_State *L) {
  * @return stack count
  */
 extern int lua_recv(lua_State *L) {
-#if (defined(DEBUG) && (DEBUG == 1))
-
-    printf(".. %s\n", __FUNCTION__);
-
-#endif
+    LUA_TRACE();
 
     frame_t frame;
 
@@ -167,11 +147,7 @@ extern int lua_recv(lua_State *L) {
  * @return stack count
  */
 extern int lua_readline(lua_State *L) {
-#if (defined(DEBUG) && (DEBUG == 1))
-
-    printf(".. %s\n", __FUNCTION__);
-
-#endif
+    LUA_TRACE();
 
     readline_t rl = {
         luaL_checkstring(L, 1)
@@ -192,11 +168,7 @@ extern int lua_readline(lua_State *L) {
  * @return stack count
  */
 extern int lua_sleep(lua_State *L) {
-#if (defined(DEBUG) && (DEBUG == 1))
-
-    printf(".. %s\n", __FUNCTION__);
-
-#endif
+    LUA_TRACE();
 
     os_sleep(luaL_checkinteger(L, 1));
 
@@ -209,11 +181,7 @@ extern int lua_sleep(lua_State *L) {
  * @return stack count
  */
 extern int lua_env(lua_State *L) {
-#if (defined(DEBUG) && (DEBUG == 1))
-
-    printf(".. %s\n", __FUNCTION__);
-
-#endif
+    LUA_TRACE();
 
     env_t env;
 

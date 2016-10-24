@@ -52,13 +52,14 @@ function P.input(source)
 
   if file == nil then
     stack = {source}
-  else
-    for line in file:lines() do
-      table.insert(stack, line)
-    end
-
-    io.close(file)
+    return
   end
+
+  for line in file:lines() do
+    table.insert(stack, line)
+  end
+
+  io.close(file)
 end
 
 -- Palantir execute script
@@ -113,7 +114,9 @@ function P.net.server(host, port)
     if xpcall(P.net.accept, P.error) then
 
       while true do
-        local command, param = P.net.recv()
+        local status, command, param = xpcall(P.net.recv, P.error)
+
+        if not status then break end
 
         if P.event('server', command, param) then
 
@@ -125,11 +128,11 @@ function P.net.server(host, port)
           elseif line:lower():match('^cd%s+') then
             P.net.send('PATH', line:sub(4))
 
-          elseif line:lower():match('^--%s*halt$') then
+          elseif line:lower():match('^--%s*halt%s*$') then
             P.net.send('HALT')
             return
 
-          elseif line:lower():match('^--%s*exit$') then
+          elseif line:lower():match('^--%s*exit%s*$') then
             return
 
           else
@@ -137,7 +140,11 @@ function P.net.server(host, port)
           end
 
         elseif command == 'TEXT' then
-          io.write(param or '\n')
+          if param:sub(-1) ~= '\n' then
+            param = param .. '\n'
+          end
+          
+          io.write(param)
         end
       end
     end
@@ -157,11 +164,7 @@ function P.net.client(host, port)
       while true do
         P.net.send('HELO', string.format('%s@%s:%s ', P.os.env()))
 
-        local ok, command, param = xpcall(P.net.recv, P.error)
-
-        if not ok then
-          break
-        end
+        local command, param = P.net.recv()
 
         if P.event('client', command, param) then
 

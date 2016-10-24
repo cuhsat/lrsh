@@ -30,7 +30,38 @@
 #ifdef READLINE
 #include <readline/readline.h>
 #include <readline/history.h>
-#endif
+
+/**
+ * Insert line break
+ * @param count parameter
+ * @param key code
+ * @return success
+ */
+static int insert(int count, int key) {
+    return rl_insert_text("\n");
+}
+
+#endif // READLINE
+
+/**
+ * OS bind
+ * @return success
+ */
+extern int os_bind() {
+    if (isatty(STDIN_FILENO) == 0) {
+        return -1;
+    }
+
+#ifdef READLINE
+
+    if (rl_bind_keyseq("\\C-n", insert) != 0) {
+        return -1;
+    }
+
+#endif // READLINE
+
+    return 0;    
+}
 
 /**
  * OS readline

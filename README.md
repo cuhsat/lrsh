@@ -23,9 +23,11 @@ after all commands, either specified by `-c` or `-f`, are processed.
 * `-- exit` Shutdown server
 * `-- halt` Shutdown client
 
-All other input will be evaluated and execute as Lua commands. The internal
-function `shell` will execute system commands by using the users default
-shell and return the results where `strerr` will be mapped to `stdout`.
+All input will be evaluated and execute as Lua commands. The internal function
+`shell` will execute system commands by using the users default shell and 
+return the results where `strerr` will be mapped to `stdout`.
+
+Use <kbd>Ctrl</kbd>+<kbd>n</kbd> to insert a new line.
 
 ## Environment
 An user specific profile can be place under `~/.palantir.lua`.
@@ -174,14 +176,26 @@ Each command consists of a `5` byte command header followed by `0` to `n`
 bytes of `param`. A command header will end with a single blank ` ` character
 for better readability.
 
-#### Commands issued by the client:
-* `HELO` Shows the command prompt
-* `TEXT` Prints the parameter
+#### Client
+Commands issued by the client:
 
-#### Commands issued by the server:
-* `EXEC` Executes the parameter
-* `HALT` Halts the client
-* `PATH` Changes the path
+##### `HELO <user>@<host>:<path>`
+Shows the command prompt.
+
+##### `TEXT <text>`
+Prints the text.
+
+#### Server
+Commands issued by the server:
+
+##### `EXEC <command>`
+Executes the command.
+
+##### `PATH <path>`
+Changes the path.
+
+##### `HALT`
+Halts the client.
 
 ### Examples
 ```
