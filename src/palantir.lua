@@ -121,7 +121,7 @@ function P.net.server(host, port)
         if P.event('server', command, param) then
 
         elseif command == 'HELO' then
-          local line = table.remove(stack, 1) or P.os.readline(param)
+          local line = table.remove(stack, 1) or P.os.prompt(param)
 
           if P.event('server', 'prompt', line) then
 

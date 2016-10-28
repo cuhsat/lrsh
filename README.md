@@ -8,7 +8,7 @@ $ palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT
 ```
 
 ### Options:
-* `-d` Starts in client mode _(passive)_
+* `-d` Starts in passive mode _(listen)_
 * `-h` Shows the usage information
 * `-l` Shows the license
 * `-v` Shows the version
@@ -27,7 +27,11 @@ All input will be evaluated and execute as Lua commands. The internal function
 `shell` will execute system commands by using the users default shell and 
 return the results where `strerr` will be mapped to `stdout`.
 
-Use <kbd>Ctrl</kbd>+<kbd>n</kbd> to insert a new line.
+### Shortcuts:
+Only available if `readline` support was enabled:
+
+* <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
+* <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
 
 ## Environment
 An user specific profile can be place under `~/.palantir.lua`.
@@ -64,6 +68,9 @@ Prints the error `message`.
 ##### `event(source, event, param)`
 Calls the function `<source>_<event>(<param>)` if exists.
 
+##### `input(source)`
+Builds the input stack from `source`.
+
 ##### `load(chunk)`
 Returns the output of the executed `chunk` (global environment).
 
@@ -98,7 +105,7 @@ Returns the `user`, `host` and `path` variables, sets the `path` if given.
 ##### `os.execute(command)`
 Returns the `command` output executed by the users default shell.
 
-##### `os.readline(prompt)`
+##### `os.prompt(prompt)`
 Prints `prompt` and returns the users input.
 
 ##### `os.sleep(milliseconds)`
@@ -108,10 +115,10 @@ Sleeps for the given `milliseconds`.
 The default shell functionality can be extended by creating custom event
 callbacks in the users profile. There are four different event sources:
 
-* `client_connected` Called when the client connects
-* `client_<command>` Called when the client receives a `<command>`
-* `server_<command>` Called when the server receives a `<command>`
-* `server_prompt`    Called when the server processes a prompt
+* `client_connected()`      Called when the client connects
+* `client_<command>(param)` Called when the client receives a `<command>`
+* `server_<command>(param)` Called when the server receives a `<command>`
+* `server_prompt(line)`     Called when the server processes a prompt
 
 All callbacks except `client_connect` must return a `boolean`. In case `true`
 is returned, all further processing will be prevented. The `client_connected`

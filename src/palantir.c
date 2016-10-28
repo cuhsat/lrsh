@@ -57,7 +57,7 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     lua_atpanic(L, lua_panic);
 
-    if (os_bind() < 0) {
+    if (os_start() < 0) {
         return -1;
     }
 
@@ -97,8 +97,8 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_setfield(L, -2, "net");
 
     lua_createtable(L, 0, 3);
-    lua_pushcfunction(L, lua_readline);
-    lua_setfield(L, -2, "readline");
+    lua_pushcfunction(L, lua_prompt);
+    lua_setfield(L, -2, "prompt");
     lua_pushcfunction(L, lua_sleep);
     lua_setfield(L, -2, "sleep");
     lua_pushcfunction(L, lua_env);
@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
                 break;
 
             case 'h':
-                printf("Usage: %s [-hlv] [-d] HOST PORT\n", argv[0]);
+                printf("Usage: %s [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT\n", argv[0]);
                 exit(EXIT_SUCCESS);
 
             case 'l':

@@ -18,21 +18,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LUA_LUA_H
-#define LUA_LUA_H
+#ifndef LIB_CRC_H
+#define LIB_CRC_H
 
-#include <lua.h>
+#include <stddef.h>
+#include <stdint.h>
 
-extern int lua_panic(lua_State *L);
+extern uint32_t crc32(const char *data, size_t size, uint32_t auth);
 
-extern int lua_connect(lua_State *L);
-extern int lua_listen(lua_State *L);
-extern int lua_accept(lua_State *L);
-extern int lua_send(lua_State *L);
-extern int lua_recv(lua_State *L);
-
-extern int lua_prompt(lua_State *L);
-extern int lua_sleep(lua_State *L);
-extern int lua_env(lua_State *L);
-
-#endif // LUA_LUA_H
+#endif // LIB_CRC_H

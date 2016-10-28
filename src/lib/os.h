@@ -50,9 +50,9 @@
 #define MAX_PATH (PATH_MAX + 1)
 
 typedef struct {
-    const char* prompt;
+    const char *prompt;
     char line[MAX_LINE];
-} readline_t;
+} prompt_t;
 
 typedef struct {
     char user[MAX_USER];
@@ -60,8 +60,8 @@ typedef struct {
     char path[MAX_PATH];
 } env_t;
 
-extern int os_bind();
-extern int os_readline(readline_t *rl);
+extern int os_start();
+extern int os_prompt(prompt_t *prompt);
 extern int os_sleep(time_t time);
 extern int os_env(env_t *env);
 extern int os_daemon();

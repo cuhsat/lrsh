@@ -142,22 +142,22 @@ extern int lua_recv(lua_State *L) {
 }
 
 /**
- * Lua readline
+ * Lua prompt
  * @param L the Lua state address
  * @return stack count
  */
-extern int lua_readline(lua_State *L) {
+extern int lua_prompt(lua_State *L) {
     LUA_TRACE();
 
-    readline_t rl = {
+    prompt_t prompt = {
         luaL_checkstring(L, 1)
     };
 
-    if (os_readline(&rl) < 0) {
+    if (os_prompt(&prompt) < 0) {
         return luaL_error(L, strerror(errno));
     }
 
-    lua_pushlstring(L, rl.line, strnlen(rl.line, sizeof(rl.line)));
+    lua_pushlstring(L, prompt.line, strnlen(prompt.line, MAX_LINE));
 
     return 1;
 }
@@ -195,9 +195,9 @@ extern int lua_env(lua_State *L) {
         return luaL_error(L, strerror(errno));
     }
 
-    lua_pushlstring(L, env.user, strnlen(env.user, sizeof(env.user)));
-    lua_pushlstring(L, env.host, strnlen(env.host, sizeof(env.host)));
-    lua_pushlstring(L, env.path, strnlen(env.path, sizeof(env.path)));
+    lua_pushlstring(L, env.user, strnlen(env.user, MAX_USER));
+    lua_pushlstring(L, env.host, strnlen(env.host, MAX_HOST));
+    lua_pushlstring(L, env.path, strnlen(env.path, MAX_PATH));
 
     return 3;
 }

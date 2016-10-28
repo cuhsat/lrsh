@@ -20,6 +20,10 @@
  */
 #include "os.h"
 
+#ifdef READLINE
+#include "readline.h"
+#endif
+
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,55 +31,37 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifdef READLINE
-#include <readline/readline.h>
-#include <readline/history.h>
-
 /**
- * Insert line break
- * @param count parameter
- * @param key code
+ * OS start
  * @return success
  */
-static int insert(int count, int key) {
-    return rl_insert_text("\n");
-}
-
-#endif // READLINE
-
-/**
- * OS bind
- * @return success
- */
-extern int os_bind() {
+extern int os_start() {
     if (isatty(STDIN_FILENO) == 0) {
         return -1;
     }
 
 #ifdef READLINE
 
-    if (rl_bind_keyseq("\\C-n", insert) != 0) {
+    if (readline_init() < 0) {
         return -1;
     }
 
 #endif // READLINE
 
-    return 0;    
+    return 0;
 }
 
 /**
- * OS readline
- * @param rl the readline address
+ * OS prompt
+ * @param prompt the prompt address
  * @return success
  */
-extern int os_readline(readline_t *rl) {
+extern int os_prompt(prompt_t *prompt) {
     char *buffer = NULL;
 
 #ifdef READLINE
 
-    if ((buffer = readline(rl->prompt)) != NULL) {
-        add_history(buffer);
-    } else {
+    if (readline_prompt(prompt->prompt, &buffer) < 0) {
         return -1;
     }
 
@@ -83,7 +69,7 @@ extern int os_readline(readline_t *rl) {
 
     size_t size = 0;
 
-    printf("%s ", rl->prompt);
+    printf("%s ", prompt->prompt);
 
     if (getline(&buffer, &size, stdin) < 0) {
         return -1;
@@ -91,7 +77,7 @@ extern int os_readline(readline_t *rl) {
 
 #endif // READLINE
 
-    strncpy(rl->line, buffer, sizeof(rl->line));
+    strncpy(prompt->line, buffer, sizeof(prompt->line));
     free(buffer);
 
     return 0;

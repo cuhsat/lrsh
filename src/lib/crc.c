@@ -18,21 +18,27 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LUA_LUA_H
-#define LUA_LUA_H
+#include "crc.h"
 
-#include <lua.h>
+#define POLYNOMIAL 0xEDB88320
 
-extern int lua_panic(lua_State *L);
+/**
+ * CRC32 (bitwise)
+ * @param data the data address
+ * @param size the data size
+ * @param auth the authentication
+ * @return crc sum
+ */
+extern uint32_t crc32(const char *data, size_t size, uint32_t auth) {
+    uint32_t sum = auth;
 
-extern int lua_connect(lua_State *L);
-extern int lua_listen(lua_State *L);
-extern int lua_accept(lua_State *L);
-extern int lua_send(lua_State *L);
-extern int lua_recv(lua_State *L);
+    while (size--) {
+        sum ^= *data++;
 
-extern int lua_prompt(lua_State *L);
-extern int lua_sleep(lua_State *L);
-extern int lua_env(lua_State *L);
+        for (uint8_t i = 0; i < 8; i++) {
+            sum = (sum >> 1) ^ ((sum & 1) ? POLYNOMIAL : 0);
+        }
+    }
 
-#endif // LUA_LUA_H
+    return sum;
+}

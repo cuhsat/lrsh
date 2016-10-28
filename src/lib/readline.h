@@ -18,21 +18,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LUA_LUA_H
-#define LUA_LUA_H
+#ifndef LIB_READLINE_H
+#define LIB_READLINE_H
 
-#include <lua.h>
+extern int readline_init();
+extern int readline_prompt(const char *prompt, char **line);
 
-extern int lua_panic(lua_State *L);
-
-extern int lua_connect(lua_State *L);
-extern int lua_listen(lua_State *L);
-extern int lua_accept(lua_State *L);
-extern int lua_send(lua_State *L);
-extern int lua_recv(lua_State *L);
-
-extern int lua_prompt(lua_State *L);
-extern int lua_sleep(lua_State *L);
-extern int lua_env(lua_State *L);
-
-#endif // LUA_LUA_H
+#endif // LIB_READLINE_H

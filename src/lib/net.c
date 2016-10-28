@@ -19,6 +19,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "net.h"
+#include "crc.h"
 
 #include <errno.h>
 #include <netdb.h>
@@ -37,27 +38,6 @@ static uint32_t auth = 0;
 static char *buffer = NULL;
 static int server = 0;
 static int client = 0;
-
-/**
- * CRC32 (bitwise)
- * @param data the data address
- * @param size the data size
- * @param auth the authentication
- * @return crc sum
- */
-static uint32_t crc32(const char *data, size_t size, uint32_t auth) {
-    uint32_t sum = auth;
-
-    while (size--) {
-        sum ^= *data++;
-
-        for (uint8_t i = 0; i < 8; i++) {
-            sum = (sum >> 1) ^ ((sum & 1) ? 0xEDB88320 : 0);
-        }
-    }
-
-    return sum;
-}
 
 /**
  * Fill address
