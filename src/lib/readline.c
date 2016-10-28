@@ -21,7 +21,7 @@
 #include "readline.h"
 #include "dict.h"
 
-#include <stdlib.h>
+#include <stdio.h>
 
 #include <readline/readline.h>
 #include <readline/history.h>
