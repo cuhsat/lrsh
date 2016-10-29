@@ -60,7 +60,7 @@ typedef struct {
     char path[MAX_PATH];
 } env_t;
 
-extern int os_start();
+extern int os_start(int mode);
 extern int os_prompt(prompt_t *prompt);
 extern int os_sleep(time_t time);
 extern int os_env(env_t *env);

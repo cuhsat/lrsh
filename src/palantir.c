@@ -57,7 +57,7 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     lua_atpanic(L, lua_panic);
 
-    if (os_start() < 0) {
+    if (os_start(mode) < 0) {
         return -1;
     }
 

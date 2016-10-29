@@ -33,20 +33,23 @@
 
 /**
  * OS start
+ * @param mode the mode
  * @return success
  */
-extern int os_start() {
-    if (isatty(STDIN_FILENO) == 0) {
-        return -1;
-    }
+extern int os_start(int mode) {
+    if (mode == 1) {
+        if (isatty(STDIN_FILENO) == 0) {
+            return -1;
+        }
 
 #ifdef READLINE
 
-    if (readline_init() < 0) {
-        return -1;
-    }
+        if (readline_init() < 0) {
+            return -1;
+        }
 
 #endif // READLINE
+    }
 
     return 0;
 }
