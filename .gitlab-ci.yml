@@ -19,7 +19,7 @@ build:
 test:
   stage: test
   script:
-  - make test
+  - ./palantir -v
 
 deploy:
   stage: deploy

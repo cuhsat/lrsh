@@ -39,8 +39,8 @@
 #define LUA_SIZE ((size_t)src_palantir_luac_len)
 
 typedef enum {
-    MODE_CLIENT,
-    MODE_SERVER
+    MODE_CLIENT = 0,
+    MODE_SERVER = 1
 } palantir_mode;
 
 static palantir_mode mode = MODE_SERVER;
