@@ -137,7 +137,7 @@ extern int os_env(env_t *env) {
 extern int os_daemon() {
 #ifdef DAEMON
 
-    return daemon(0, 0);
+    return daemon(0, 1);
 
 #else // DAEMON
 
