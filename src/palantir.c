@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (mode == MODE_CLIENT && os_daemon() < 0) {
+    if (mode == MODE_CLIENT && os_daemon(DEBUG) < 0) {
         perror("Palantir error");
         exit(EXIT_FAILURE);
     }

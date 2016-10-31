@@ -239,8 +239,6 @@ const char *dict[] = {
     // Palantir commands
     "--exit",
     "--halt",
-
-    // Terminator
     NULL
 };
 

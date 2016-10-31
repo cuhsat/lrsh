@@ -135,12 +135,13 @@ extern int os_env(env_t *env) {
 
 /**
  * OS daemon
+ * @param debug the debug flag
  * @return success
  */
-extern int os_daemon() {
+extern int os_daemon(int debug) {
 #ifdef DAEMON
 
-    return daemon(0, 0);
+    return daemon(0, debug);
 
 #else // DAEMON
 

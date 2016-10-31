@@ -24,10 +24,6 @@
 #include <limits.h>
 #include <time.h>
 
-#if (defined(DEBUG) && (DEBUG == 1))
-#undef DAEMON
-#endif
-
 #ifdef __APPLE__
 #undef DAEMON
 #endif
@@ -64,6 +60,6 @@ extern int os_start(int mode);
 extern int os_prompt(prompt_t *prompt);
 extern int os_sleep(time_t time);
 extern int os_env(env_t *env);
-extern int os_daemon();
+extern int os_daemon(int debug);
 
 #endif // LIB_OS_H
