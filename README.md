@@ -39,7 +39,7 @@ An user specific profile can be place under `~/.palantir.lua`.
 Here is an example profile:
 ```
 -- greet client
-function client_connected()
+function client_ready()
   return 'Hello\n'
 end
 
@@ -115,20 +115,20 @@ Sleeps for the given `milliseconds`.
 The default shell functionality can be extended by creating custom event
 callbacks in the users profile. There are four different event sources:
 
-* `client_connected()`      Called when the client connects
+* `client_ready()`          Called when the client is connected
 * `client_<command>(param)` Called when the client receives a `<command>`
 * `server_<command>(param)` Called when the server receives a `<command>`
 * `server_prompt(line)`     Called when the server processes a prompt
 
-All callbacks except `client_connect` must return a `boolean`. In case `true`
-is returned, all further processing will be prevented. The `client_connected`
+All callbacks except `client_ready` must return a `boolean`. In case `true`
+is returned, all further processing will be prevented. The `client_ready`
 callback must return a `string`, which will be displayed by the client.
 
 The `<command>` names will be converted to lowercase.
 
 Here is an example on how to implement an simple echo server:
 ```
-function client_connected()
+function client_ready()
   return 'This is an echo server'
 end
 ```

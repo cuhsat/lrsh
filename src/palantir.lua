@@ -158,7 +158,7 @@ function P.net.client(host, port)
   while true do
     if xpcall(P.net.connect, P.error, host, port) then
       if client_connected then
-        P.net.send('TEXT', client_connected())
+        P.net.send('TEXT', client_ready())
       end
 
       while true do
