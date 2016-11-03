@@ -2,7 +2,7 @@ variables:
   LUA: "lua-5.3.3"
   SRC: "lua-5.3.3/src"
 
-build:
+all:
   stage: build
   before_script:
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
@@ -12,17 +12,19 @@ build:
   - cd ..
   script:
   - make all LC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC"
+  - make test
+  - cp palantir ~/bin/
   artifacts:
     paths:
     - palantir
 
-test:
-  stage: test
-  script:
-  - make test
+#test:
+#  stage: test
+#  script:
+#  - make test
 
-deploy:
-  stage: deploy
-  script:
-  - cp palantir ~/bin/
-  environment: uberspace
+#deploy:
+#  stage: deploy
+#  script:
+#  - cp palantir ~/bin/
+#  environment: uberspace
