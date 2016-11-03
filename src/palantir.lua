@@ -52,14 +52,13 @@ function P.input(source)
 
   if file == nil then
     stack = {source}
-    return
+  else
+    stack = {}
+    for line in file:lines() do
+      table.insert(stack, line)
+    end
+    io.close(file)
   end
-
-  for line in file:lines() do
-    table.insert(stack, line)
-  end
-
-  io.close(file)
 end
 
 -- Palantir execute script

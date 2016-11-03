@@ -38,10 +38,6 @@
  */
 extern int os_start(int mode) {
     if (mode == 1) {
-        if (isatty(STDIN_FILENO) == 0) {
-            return -1;
-        }
-
 #ifdef READLINE
 
         if (readline_init() < 0) {

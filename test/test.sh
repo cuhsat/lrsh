@@ -5,7 +5,7 @@ set -o nounset
 HOST=${1:-127.0.0.1}
 PORT=${2:-8211}
 
-TOKEN=$(git rev-parse HEAD | head -c 8)
+TOKEN=$(git rev-parse HEAD)
 
 SERVER=~/.ci_palantird.pid
 CLIENT=~/.ci_palantir.pid
