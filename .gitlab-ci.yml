@@ -17,14 +17,3 @@ all:
   artifacts:
     paths:
     - palantir
-
-#test:
-#  stage: test
-#  script:
-#  - make test
-
-#deploy:
-#  stage: deploy
-#  script:
-#  - cp palantir ~/bin/
-#  environment: uberspace
