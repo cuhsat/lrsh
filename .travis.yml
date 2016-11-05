@@ -1,0 +1,23 @@
+language: c
+branches:
+  only:
+    - master
+compiler:
+  - gcc
+  - clang
+os:
+  - linux
+  - osx
+env:
+  global:
+    - LUA=lua-5.3.3
+    - SRC=lua-5.3.3/src
+install:
+  - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
+  - tar zxf $LUA.tar.gz
+  - cd $LUA
+  - make linux test
+  - cd ..
+script:
+  - make all LC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC"
+  - ./palantir -v
