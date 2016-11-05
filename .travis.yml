@@ -12,7 +12,11 @@ env:
   global:
     - LUA=lua-5.3.3
     - SRC=lua-5.3.3/src
+  matrix:
+    - BUILD=
+    - 
 install:
+  - [ TRAVIS_OS_NAME == 'osx' ] && TARGET='macosx' || TARGET='linux'
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
   - tar zxf $LUA.tar.gz
   - cd $LUA
