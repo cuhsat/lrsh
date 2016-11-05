@@ -25,6 +25,7 @@
 #include <time.h>
 
 #ifdef __APPLE__
+#undef READLINE
 #undef DAEMON
 #endif
 
