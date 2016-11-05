@@ -7,19 +7,15 @@ compiler:
   - clang
 os:
   - linux
-  - osx
 env:
   global:
     - LUA=lua-5.3.3
     - SRC=lua-5.3.3/src
-  matrix:
-    - TARGET=linux
-    - TARGET=macosx
 install:
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
   - tar zxf $LUA.tar.gz
   - cd $LUA
-  - make $TARGET test
+  - make linux test
   - cd ..
 script:
   - make all LC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC"
