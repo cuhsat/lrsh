@@ -7,15 +7,17 @@ compiler:
   - clang
 os:
   - linux
+  - osx
 env:
   global:
     - LUA=lua-5.3.3
     - SRC=lua-5.3.3/src
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then TARGET=macosx; else TARGET=linux; fi
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
   - tar zxf $LUA.tar.gz
   - cd $LUA
-  - make linux test
+  - make $TARGET test
   - cd ..
 script:
   - make all LC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC"
