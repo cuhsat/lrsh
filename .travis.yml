@@ -7,7 +7,6 @@ compiler:
   - clang
 os:
   - linux
-  - osx
 env:
   global:
     - LUA=lua-5.3.3
