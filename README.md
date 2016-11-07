@@ -27,13 +27,18 @@ All input will be evaluated and execute as Lua commands. The internal function
 `shell` will execute system commands by using the users default shell and 
 return the results where `strerr` will be mapped to `stdout`.
 
-### Shortcuts:
+### Shortcuts
 Only available if `readline` support was enabled:
 
 * <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
 * <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
 
 ## Environment
+
+### Modules
+Palantir extension modules can be place under `~/.palantir/`.
+
+### Profile
 An user specific profile can be place under `~/.palantir.lua`.
 
 Here is an example profile:

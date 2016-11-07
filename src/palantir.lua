@@ -18,6 +18,9 @@
 -- DEALINGS IN THE SOFTWARE.
 io.write(string.format('Palantir %s (%s)\n', P.VERSION, _VERSION))
 
+-- User modules
+local modules = os.getenv('HOME') .. '/.palantir/?.lua'
+
 -- User profile
 local profile = os.getenv('HOME') .. '/.palantir.lua'
 
@@ -188,6 +191,9 @@ end
 function shell(command)
   return P.os.execute(command)
 end
+
+-- Load user modules
+package.path = package.path .. ';' .. modules
 
 -- Load user profile
 pcall(dofile, profile)
