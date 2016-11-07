@@ -23,7 +23,6 @@ all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(RESOURCES) $(OBJECTS)
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $(EXECUTABLE)
-	./$(EXECUTABLE) -v
 
 %.inc: %.lua
 	$(LC) -s -o $<c $< && xxd -i $<c $@
