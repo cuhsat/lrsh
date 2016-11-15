@@ -35,78 +35,78 @@ Only available if `readline` support was enabled:
 
 ## Environment
 A new global table named `P` will be defined which contains all shell specific
-functions and properties:
+functions and properties listed below:
 
 ### Constants:
-* `P.MODE`    The command line option `-d`
-* `P.HOST`    The command line argument `HOST`
-* `P.PORT`    The command line argument `PORT`
-* `P.TOKEN`   The command line argument `-a`
-* `P.STACK`   The command line argument `-c`/`-f`
-* `P.DEBUG`   The debug flag if compiled with `-DDEBUG=1`
-* `P.VERSION` The semantic version number
+* `MODE`    The command line option `-d`
+* `HOST`    The command line argument `HOST`
+* `PORT`    The command line argument `PORT`
+* `TOKEN`   The command line argument `-a`
+* `STACK`   The command line argument `-c`/`-f`
+* `DEBUG`   The debug flag if compiled with `-DDEBUG=1`
+* `VERSION` The semantic version number
 
 ### Functions (Common):
 
-#### P.error(message)
+#### error(message)
 Prints the error `message`.
 
-#### P.event(source, event, param)
+#### event(source, event, param)
 Calls the function `<source>_<event>(<param>)` if exists.
 
-#### P.input(source)
+#### input(source)
 Builds the input stack from `source`.
 
-#### P.load(chunk)
+#### load(chunk)
 Returns the output of the executed `chunk` (global environment).
 
 ### Functions (Network):
 
-#### P.net.server(host, port)
+#### net.server(host, port)
 Starts on `host` and `port` in _server mode_.
 
-#### P.net.client(host, port)
+#### net.client(host, port)
 Starts on `host` and `port` in _client mode_.
 
-#### P.net.connect(host, port)
+#### net.connect(host, port)
 Connects to `host` and `port`.
 
-#### P.net.listen(host, port)
+#### net.listen(host, port)
 Listens on `host` and `port`.
 
-#### P.net.accept()
+#### net.accept()
 Accepts incoming connections. _(blocking)_
 
-#### P.net.recv()
+#### net.recv()
 Returns the received `command` and `param`. _(blocking)_
 
-#### P.net.send(command, param)
+#### net.send(command, param)
 Sends the given `command` and `param`. _(blocking)_
 
 ### Functions (Operating System):
 
-#### P.os.env(path)
+#### os.env(path)
 Returns the `user`, `host` and `path` variables, sets the `path` if given.
 
-#### P.os.execute(command)
+#### os.execute(command)
 Returns the `command` output executed by the users default shell.
 
-#### P.os.prompt(prompt)
+#### os.prompt(prompt)
 Prints `prompt` and returns the users input.
 
-#### P.os.sleep(milliseconds)
+#### os.sleep(milliseconds)
 Sleeps for the given `milliseconds`.
 
 ### Callbacks
 The default shell functionality can be extended by creating custom event
 callbacks in the users profile. There are four different event sources:
 
-* `P.client_ready()`          Called when the client is connected
-* `P.client_<command>(param)` Called when the client receives a `<command>`
-* `P.server_<command>(param)` Called when the server receives a `<command>`
-* `P.server_prompt(line)`     Called when the server processes a prompt
+* `client_ready()`          Called when the client is connected
+* `client_<command>(param)` Called when the client receives a `<command>`
+* `server_<command>(param)` Called when the server receives a `<command>`
+* `server_prompt(line)`     Called when the server processes a prompt
 
-All callbacks except `P.client_ready` must return a `boolean`. In case `true`
+All callbacks except `client_ready` must return a `boolean`. In case `true`
 is returned, all further processing will be prevented. The `client_ready`
 callback must return a `string`, which will be displayed by the client.
 
@@ -138,7 +138,7 @@ end
 ```
 
 ### Aliases
-The alias `shell` is provided as a shortcut of `P.os.execute`:
+The alias `shell` is provided as a shortcut of `os.execute`:
 ```
 return shell('echo hello')
 ```
@@ -186,21 +186,24 @@ Each command consists of a `5` byte command header followed by `0` to `n`
 bytes of `param`. A command header will end with a single blank ` ` character
 for better readability.
 
-Commands processed by the server: _(others will be ignored)_
+If an unknown command is received, no error will be raised, instead it will be
+ignored by the server and client.
 
-#### HELO <user>@<host>:<path>
-Shows the command prompt.
+Commands processed by the server:
 
-#### TEXT <text>
-Prints the text.
+#### HELO _user_@_host_:_path_
+Shows the command prompt (_user@host:path_).
 
-Commands processed by the client: _(others will be ignored)_
+#### TEXT _text_
+Prints the _text_.
 
-#### EXEC <command>
-Executes the command.
+Commands processed by the client:
 
-#### PATH <path>
-Changes the path.
+#### EXEC _command_
+Executes the _command_.
+
+#### PATH _path_
+Changes the _path_.
 
 #### HALT
 Halts the client.
