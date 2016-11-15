@@ -45,7 +45,7 @@ end
 -- @param event param
 -- @return callback result
 function P.event(source, event, param)
-  return pcall(_G[source .. '_' .. event:lower()], param)
+  return pcall(P[source .. '_' .. event:lower()], param)
 end
 
 -- Palantir input stack

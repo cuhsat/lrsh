@@ -23,7 +23,7 @@
 
 #include <lua.h>
 
-#define VERSION "1.14.4"
+#define VERSION "1.14.5"
 
 #if LUA_VERSION_NUM < 503
 #error "Lua 5.3 required"

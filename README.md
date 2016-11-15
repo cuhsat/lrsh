@@ -34,6 +34,114 @@ Only available if `readline` support was enabled:
 * <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
 
 ## Environment
+A new global table named `P` will be defined which contains all shell specific
+functions and properties:
+
+### Constants:
+* `P.MODE`    The command line option `-d`
+* `P.HOST`    The command line argument `HOST`
+* `P.PORT`    The command line argument `PORT`
+* `P.TOKEN`   The command line argument `-a`
+* `P.STACK`   The command line argument `-c`/`-f`
+* `P.DEBUG`   The debug flag if compiled with `-DDEBUG=1`
+* `P.VERSION` The semantic version number
+
+### Functions (Common):
+
+#### P.error(message)
+Prints the error `message`.
+
+#### P.event(source, event, param)
+Calls the function `<source>_<event>(<param>)` if exists.
+
+#### P.input(source)
+Builds the input stack from `source`.
+
+#### P.load(chunk)
+Returns the output of the executed `chunk` (global environment).
+
+### Functions (Network):
+
+#### P.net.server(host, port)
+Starts on `host` and `port` in _server mode_.
+
+#### P.net.client(host, port)
+Starts on `host` and `port` in _client mode_.
+
+#### P.net.connect(host, port)
+Connects to `host` and `port`.
+
+#### P.net.listen(host, port)
+Listens on `host` and `port`.
+
+#### P.net.accept()
+Accepts incoming connections. _(blocking)_
+
+#### P.net.recv()
+Returns the received `command` and `param`. _(blocking)_
+
+#### P.net.send(command, param)
+Sends the given `command` and `param`. _(blocking)_
+
+### Functions (Operating System):
+
+#### P.os.env(path)
+Returns the `user`, `host` and `path` variables, sets the `path` if given.
+
+#### P.os.execute(command)
+Returns the `command` output executed by the users default shell.
+
+#### P.os.prompt(prompt)
+Prints `prompt` and returns the users input.
+
+#### P.os.sleep(milliseconds)
+Sleeps for the given `milliseconds`.
+
+### Callbacks
+The default shell functionality can be extended by creating custom event
+callbacks in the users profile. There are four different event sources:
+
+* `P.client_ready()`          Called when the client is connected
+* `P.client_<command>(param)` Called when the client receives a `<command>`
+* `P.server_<command>(param)` Called when the server receives a `<command>`
+* `P.server_prompt(line)`     Called when the server processes a prompt
+
+All callbacks except `P.client_ready` must return a `boolean`. In case `true`
+is returned, all further processing will be prevented. The `client_ready`
+callback must return a `string`, which will be displayed by the client.
+
+The `<command>` names will be converted to lowercase.
+
+Here is an example on how to implement an simple echo server:
+```
+function P.client_ready()
+  return 'This is an echo server'
+end
+```
+```
+function P.client_echo(param)
+  P.net.send('ECHO', param)
+  return true
+end
+```
+```
+function P.server_echo(param)
+  io.write(param .. '\n')
+  return true
+end
+```
+```
+function P.server_prompt(line)
+  P.net.send('ECHO', line)
+  return true
+end
+```
+
+### Aliases
+The alias `shell` is provided as a shortcut of `P.os.execute`:
+```
+return shell('echo hello')
+```
 
 ### Modules
 Palantir extension modules can be place under `~/.palantir/`.
@@ -44,122 +152,12 @@ An user specific profile can be place under `~/.palantir.lua`.
 Here is an example profile:
 ```
 -- greet client
-function client_ready()
+function P.client_ready()
   return 'Hello\n'
 end
 
 -- debug
 print('Profile loaded')
-```
-
-### Globals
-A new global table named `P` will be defined which contains all shell specific
-functions and properties.
-
-#### Constants
-* `MODE`    The command line option `-d`
-* `HOST`    The command line argument `HOST`
-* `PORT`    The command line argument `PORT`
-* `TOKEN`   The command line argument `-a`
-* `STACK`   The command line argument `-c`/`-f`
-* `DEBUG`   The debug flag if compiled with `-DDEBUG=1`
-* `VERSION` The semantic version number
-
-#### Functions
-
-##### `error(message)`
-Prints the error `message`.
-
-##### `event(source, event, param)`
-Calls the function `<source>_<event>(<param>)` if exists.
-
-##### `input(source)`
-Builds the input stack from `source`.
-
-##### `load(chunk)`
-Returns the output of the executed `chunk` (global environment).
-
-#### Network
-
-##### `net.server(host, port)`
-Starts on `host` and `port` in _server mode_.
-
-##### `net.client(host, port)`
-Starts on `host` and `port` in _client mode_.
-
-##### `net.connect(host, port)`
-Connects to `host` and `port`.
-
-##### `net.listen(host, port)`
-Listens on `host` and `port`.
-
-##### `net.accept()`
-Accepts incoming connections. _(blocking)_
-
-##### `net.recv()`
-Returns the received `command` and `param`. _(blocking)_
-
-##### `net.send(command, param)`
-Sends the given `command` and `param`. _(blocking)_
-
-#### Operating System
-
-##### `os.env(path)`
-Returns the `user`, `host` and `path` variables, sets the `path` if given.
-
-##### `os.execute(command)`
-Returns the `command` output executed by the users default shell.
-
-##### `os.prompt(prompt)`
-Prints `prompt` and returns the users input.
-
-##### `os.sleep(milliseconds)`
-Sleeps for the given `milliseconds`.
-
-### Callbacks
-The default shell functionality can be extended by creating custom event
-callbacks in the users profile. There are four different event sources:
-
-* `client_ready()`          Called when the client is connected
-* `client_<command>(param)` Called when the client receives a `<command>`
-* `server_<command>(param)` Called when the server receives a `<command>`
-* `server_prompt(line)`     Called when the server processes a prompt
-
-All callbacks except `client_ready` must return a `boolean`. In case `true`
-is returned, all further processing will be prevented. The `client_ready`
-callback must return a `string`, which will be displayed by the client.
-
-The `<command>` names will be converted to lowercase.
-
-Here is an example on how to implement an simple echo server:
-```
-function client_ready()
-  return 'This is an echo server'
-end
-```
-```
-function client_echo(param)
-  P.net.send('ECHO', param)
-  return true
-end
-```
-```
-function server_echo(param)
-  io.write(param .. '\n')
-  return true
-end
-```
-```
-function server_prompt(line)
-  P.net.send('ECHO', line)
-  return true
-end
-```
-
-### Shortcuts
-The shortcut `shell` is provided as an alias of `P.os.execute`:
-```
-return shell('echo hello')
 ```
 
 ## Protocol
@@ -188,25 +186,23 @@ Each command consists of a `5` byte command header followed by `0` to `n`
 bytes of `param`. A command header will end with a single blank ` ` character
 for better readability.
 
-#### Client
-Commands issued by the client:
+Commands processed by the server: _(others will be ignored)_
 
-##### `HELO <user>@<host>:<path>`
+#### HELO <user>@<host>:<path>
 Shows the command prompt.
 
-##### `TEXT <text>`
+#### TEXT <text>
 Prints the text.
 
-#### Server
-Commands issued by the server:
+Commands processed by the client: _(others will be ignored)_
 
-##### `EXEC <command>`
+#### EXEC <command>
 Executes the command.
 
-##### `PATH <path>`
+#### PATH <path>
 Changes the path.
 
-##### `HALT`
+#### HALT
 Halts the client.
 
 ### Examples
