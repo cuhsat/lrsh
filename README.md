@@ -46,7 +46,7 @@ functions and properties listed below:
 * `DEBUG`   The debug flag if compiled with `-DDEBUG=1`
 * `VERSION` The semantic version number
 
-### Functions (Common):
+### Functions:
 
 #### error(message)
 Prints the error `message`.
@@ -60,7 +60,7 @@ Builds the input stack from `source`.
 #### load(chunk)
 Returns the output of the executed `chunk` (global environment).
 
-### Functions (Network):
+### Network:
 
 #### net.server(host, port)
 Starts on `host` and `port` in _server mode_.
@@ -83,7 +83,7 @@ Returns the received `command` and `param`. _(blocking)_
 #### net.send(command, param)
 Sends the given `command` and `param`. _(blocking)_
 
-### Functions (Operating System):
+### Operating System:
 
 #### os.env(path)
 Returns the `user`, `host` and `path` variables, sets the `path` if given.
@@ -191,19 +191,19 @@ ignored by the server and client.
 
 Commands processed by the server:
 
-#### HELO _user_@_host_:_path_
-Shows the command prompt (_user@host:path_).
+#### HELO [user]@[host]:[path]
+Shows the command prompt.
 
-#### TEXT _text_
-Prints the _text_.
+#### TEXT [text]
+Prints the text.
 
 Commands processed by the client:
 
-#### EXEC _command_
-Executes the _command_.
+#### EXEC [command]
+Executes the command.
 
-#### PATH _path_
-Changes the _path_.
+#### PATH [path]
+Changes the path.
 
 #### HALT
 Halts the client.
