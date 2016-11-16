@@ -20,7 +20,7 @@ $ palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT
 > The option `-f` has precedence over the option `-c`. The shell will not exit 
 > after all commands, either specified by `-c` or `-f`, are processed.
 
-### Commands
+## Commands
 * `-- exit` Shutdown server
 * `-- halt` Shutdown client
 
@@ -28,7 +28,7 @@ All input will be evaluated and execute as Lua commands. The internal function
 `shell` will execute system commands by using the users default shell and 
 return the results where `strerr` will be mapped to `stdout`.
 
-### Keyboard
+## Keyboard
 * <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
 * <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
 
