@@ -1,5 +1,12 @@
-*.c         text
-*.h         text
-*.o         binary
-*.lua       text
-palantir    binary
+# C
+*.c text
+*.h text
+*.o binary
+
+# Lua
+*.inc text
+*.lua text
+*.luac binary
+
+# Palantir
+palantir binary
