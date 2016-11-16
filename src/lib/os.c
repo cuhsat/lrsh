@@ -37,15 +37,13 @@
  * @return success
  */
 extern int os_start(int mode) {
-    if (mode == 1) {
 #ifdef READLINE
 
-        if (readline_init() < 0) {
-            return -1;
-        }
+    if (mode == 1 && readline_init() < 0) {
+        return -1;
+    }
 
 #endif // READLINE
-    }
 
     return 0;
 }
