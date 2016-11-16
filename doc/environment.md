@@ -2,6 +2,23 @@
 A new global table named `P` will be defined which contains all shell specific
 functions and properties.
 
+## Modules
+[Extension modules](https://www.github.com/cuhsat/palantir-modules) can be place under `~/.palantir/`.
+
+## Profile
+An user specific profile can be place under `~/.palantir.lua`.
+
+Here is an example profile:
+```
+-- greet client
+function P.client_ready()
+  return 'Hello\n'
+end
+
+-- debug
+print('Profile loaded')
+```
+
 ## Constants
 * `MODE`    The command line option `-d`
 * `TOKEN`   The command line argument `-a`
