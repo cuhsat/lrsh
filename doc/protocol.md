@@ -9,11 +9,11 @@ A network frame is build according to the following format:
 ```
 CHECKSUM (4 bytes) | SIZE (4 bytes) | DATA (n bytes)
 ```
-The `CHECKSUM` is a bitwise CRC-32 over the `DATA` field only.
+The `CHECKSUM` is a _bitwise CRC-32_ over the `DATA` field only.
 
 ### Authentication
 If an authentication `TOKEN` is provided, the network frames checksum will be 
-pre-feed with the CRC-32 of the token before calculation.
+pre-feed with the _CRC-32_ of the token before calculation.
 
 ## Command Layer
 A command is build according to the following format:
