@@ -1,0 +1,5 @@
+*.c         text
+*.h         text
+*.o         binary
+*.lua       text
+palantir    binary
