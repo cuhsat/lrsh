@@ -27,7 +27,7 @@ for better readability.
 If an unknown command is received, no error will be raised, instead it will be
 ignored by the server and client.
 
-### Server Commands:
+### Server Commands
 
 #### HELO [user]@[host]:[path]
 Shows the command prompt.
@@ -35,7 +35,7 @@ Shows the command prompt.
 #### TEXT [text]
 Prints the text.
 
-### Client Commands:
+### Client Commands
 
 #### EXEC [command]
 Executes the command.
