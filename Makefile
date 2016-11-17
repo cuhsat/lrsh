@@ -1,20 +1,24 @@
-CC=gcc
-LC=luac
-override CFLAGS+=-c -ansi -pedantic -std=gnu99 -Wall -Werror
-override LDFLAGS+=-llua -lm -ldl
-SOURCES=$(shell find src -name '*.c')
-SCRIPTS=$(shell find src -name '*.lua')
-OBJECTS=$(SOURCES:.c=.o)
-RESOURCES=$(SCRIPTS:.lua=.inc)
-EXECUTABLE=palantir
+CC = gcc
+LC = luac
+SOURCES = $(shell find src -name '*.c')
+SCRIPTS = $(shell find src -name '*.lua')
+OBJECTS = $(SOURCES:.c=.o)
+RESOURCES = $(SCRIPTS:.lua=.inc)
+EXECUTABLE = palantir
+
+override CFLAGS  += -c -std=gnu99 -pedantic -Wall -Werror
+override LDFLAGS += -llua -lm -ldl
 
 ifneq (1,$(NO_DAEMON))
-override CFLAGS+=-DDAEMON
+override CFLAGS += -DDAEMON
 endif
 
 ifneq (1,$(NO_READLINE))
-override CFLAGS+=-DREADLINE
-override LDFLAGS+=-lreadline
+override CFLAGS  += -DREADLINE
+override LDFLAGS += -lreadline
+else
+SOURCES := $(filter-out src/lib/readline.c, ${SOURCES})
+OBJECTS := $(filter-out src/lib/readline.o, ${OBJECTS})
 endif
 
 .PHONY: all install remove clean test
