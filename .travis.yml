@@ -18,5 +18,5 @@ install:
   - make linux test
   - cd ..
 script:
-  - make all LC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC"
+  - make all LUA="$SRC/lua" LUAC="$SRC/luac" CFLAGS="-I$SRC" LDFLAGS="-L$SRC"
   - ./palantir -v

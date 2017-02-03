@@ -1,5 +1,6 @@
 CC = gcc
-LC = luac
+LUA = lua
+LUAC = luac
 SOURCES = $(shell find src -name '*.c')
 SCRIPTS = $(shell find src -name '*.lua')
 OBJECTS = $(SOURCES:.c=.o)
@@ -29,7 +30,7 @@ $(EXECUTABLE): $(RESOURCES) $(OBJECTS)
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $(EXECUTABLE)
 
 %.inc: %.lua
-	$(LC) -s -o $<c $< && xxd -i $<c $@
+	$(LUAC) -s -o $<c $< && $(LUA) build/xxd.lua $<c > $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) $< -o $@

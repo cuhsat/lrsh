@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 Christian Uhsat <christian@uhsat.de>
+ * Copyright (c) 2016-2017 Christian Uhsat <christian@uhsat.de>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -107,7 +107,7 @@ extern int lua_accept(lua_State *L) {
  * Lua send
  * @param L the Lua state address
  * @return stack count
- */ 
+ */
 extern int lua_send(lua_State *L) {
     LUA_TRACE();
 

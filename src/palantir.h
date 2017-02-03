@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 Christian Uhsat <christian@uhsat.de>
+ * Copyright (c) 2016-2017 Christian Uhsat <christian@uhsat.de>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -23,7 +23,7 @@
 
 #include <lua.h>
 
-#define VERSION "1.16.0"
+#define VERSION "1.17.0"
 
 #if LUA_VERSION_NUM < 503
 #error "Lua 5.3 required"
