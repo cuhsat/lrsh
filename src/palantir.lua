@@ -36,6 +36,10 @@ local stack = {}
 function P.error(message)
   if message ~= 'Success' then
     io.stderr:write(string.format('Palantir error: %s\n', message))
+
+    if P.DEBUG then
+      io.stderr:write(debug.traceback())
+    end
   end
 end
 
@@ -108,7 +112,7 @@ end
 -- @param host address
 -- @param port number
 function P.net.server(host, port)
-  while not xpcall(P.net.listen, P.error, host, port) do
+  while not xpcall(function() return P.net.listen(host, port) end, P.error) do
     P.os.sleep(1000)
   end
 
@@ -158,7 +162,7 @@ end
 -- @param port number
 function P.net.client(host, port)
   while true do
-    if xpcall(P.net.connect, P.error, host, port) then
+    if xpcall(function() return P.net.connect(host, port) end, P.error) then
       if client_connected then
         P.net.send('TEXT', client_ready())
       end
@@ -204,6 +208,6 @@ pcall(P.input, P.STACK)
 -- Start shell
 local main = (P.MODE and P.net.server or P.net.client)
 
-if xpcall(main, P.error, P.HOST, P.PORT) then
+if xpcall(function() return main(P.HOST, P.PORT) end, P.error) then
   io.write('Palantir exit\n')
 end

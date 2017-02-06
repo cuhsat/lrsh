@@ -108,12 +108,12 @@ static int palantir_start(const char *host, uint16_t port) {
 
     lua_setglobal(L, "P");
 
-    if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != LUA_OK) {
+    if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != 0) {
         fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
         return -1;
     }
 
-    if (lua_pcall(L, 0, LUA_MULTRET, 0) != LUA_OK) {
+    if (lua_pcall(L, 0, LUA_MULTRET, 0) != 0) {
         fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
         return -1;
     }

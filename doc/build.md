@@ -16,7 +16,7 @@ $ make all test install <flag>=1
 ## Dependancies
 The following libraries are required:
 
-* [Lua 5.3](https://www.lua.org)
+* [Lua 5.1](https://www.lua.org)
 
 The following libraries are supported:
 
