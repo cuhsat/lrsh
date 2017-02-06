@@ -1,6 +1,6 @@
 variables:
-  LUA: "lua-5.3.3"
-  SRC: "lua-5.3.3/src"
+  LUA: "lua-5.3.4"
+  SRC: "lua-5.3.4/src"
 all:
   stage: build
   before_script:

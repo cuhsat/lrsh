@@ -9,8 +9,8 @@ os:
   - linux
 env:
   global:
-    - LUA=lua-5.3.3
-    - SRC=lua-5.3.3/src
+    - LUA=lua-5.3.4
+    - SRC=lua-5.3.4/src
 install:
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
   - tar zxf $LUA.tar.gz
