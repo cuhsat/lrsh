@@ -19,6 +19,7 @@ install:
   - cd ..
 script:
   - cd build
-  - cmake .. -DDEBUG=ON
+  - cmake ..
+  - make
   - ./palantir -v
 sudo: required
