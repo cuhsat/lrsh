@@ -11,6 +11,13 @@ env:
   global:
     - LUA=lua-5.3.4
     - SRC=lua-5.3.4/src
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+    packages:
+      - cmake
+      - cmake-data
 install:
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
   - tar zxf $LUA.tar.gz
