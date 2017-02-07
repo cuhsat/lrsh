@@ -24,10 +24,6 @@
 #include <limits.h>
 #include <time.h>
 
-#ifdef __APPLE__
-#undef DAEMON
-#endif
-
 #ifndef LOGIN_NAME_MAX
 #define LOGIN_NAME_MAX 255
 #endif

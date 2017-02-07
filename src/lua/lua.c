@@ -32,7 +32,7 @@
 #include <string.h>
 
 #if (defined(DEBUG) && (DEBUG == 1))
-#define LUA_TRACE() fprintf(stderr, "-- %s\n", __FUNCTION__)
+#define LUA_TRACE() fprintf(stderr, "-- %s\n", __func__)
 #else
 #define LUA_TRACE()
 #endif

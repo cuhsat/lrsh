@@ -38,5 +38,9 @@
 *.inc
 *.luac
 
+# Build
+build/*
+!xxd.lua
+
 # Binary
 palantir

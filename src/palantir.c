@@ -33,10 +33,10 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "palantir.inc"
+#include "../build/palantir.inc"
 
-#define LUA_CODE ((const char *)src_palantir_luac)
-#define LUA_SIZE ((size_t)src_palantir_luac_len)
+#define LUA_CODE ((const char *)palantir_luac)
+#define LUA_SIZE ((size_t)palantir_luac_len)
 
 typedef enum {
     MODE_CLIENT = 0,
@@ -103,7 +103,6 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_setfield(L, -2, "sleep");
     lua_pushcfunction(L, lua_env);
     lua_setfield(L, -2, "env");
-
     lua_setfield(L, -2, "os");
 
     lua_setglobal(L, "P");

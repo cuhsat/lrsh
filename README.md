@@ -1,5 +1,5 @@
 # Palantir ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
-Palantir is a Lua scriptable, [extendable](doc/environment.md), tiny reverse 
+Palantir is a Lua scriptable, [extendable](doc/palantir.md), tiny reverse 
 shell, using a human readable [protocol](doc/protocol.md) written in C and 
 [Lua](https://www.lua.org).
 
@@ -32,7 +32,18 @@ return the results where `strerr` will be mapped to `stdout`.
 * <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
 * <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
 
-> Only available if `readline` support was [enabled](doc/build.md).
+> Only available if compiled with `readline` support.
+
+## Building
+```
+$ cd build && cmake .. [-DDEBUG=ON]
+```
+
+The following libraries are required:
+* [Lua 5.1](https://www.lua.org)
+
+The following libraries are supported:
+* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
 
 ## License
 Licensed under the terms of the [MIT License](LICENSE).
