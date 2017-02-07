@@ -27,6 +27,6 @@ install:
 script:
   - cd build
   - cmake ..
-  - make
+  - make VERBOSE=1
   - ./palantir -v
 sudo: required
