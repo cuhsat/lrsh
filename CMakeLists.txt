@@ -60,6 +60,6 @@ add_custom_target(resources
 
 add_dependencies(${PROJECT_NAME} resources)
 
-target_link_libraries(${PROJECT_NAME} ${LIBRARIES} ${LUA_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES} ${LIBRARIES})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
