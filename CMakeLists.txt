@@ -6,6 +6,8 @@ project(palantir)
 
 find_package(Lua REQUIRED)
 
+set(LIBRARIES dl)
+
 set(SOURCE_FILES
     ${CMAKE_SOURCE_DIR}/src/lib/crc.c
     ${CMAKE_SOURCE_DIR}/src/lib/crc.h
@@ -44,7 +46,7 @@ if(HAVE_READLINE)
         ${CMAKE_SOURCE_DIR}/src/lib/readline.c
         ${CMAKE_SOURCE_DIR}/src/lib/readline.h    
     )
-    set(LIBRARIES readline)
+    set(LIBRARIES "${LIBRARIES}" readline)
 endif(HAVE_READLINE)
 
 include_directories(${LUA_INCLUDE_DIR})
