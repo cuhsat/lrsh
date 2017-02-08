@@ -16,7 +16,7 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
-io.write(string.format('Palantir %s (%s)\n', P.VERSION, _VERSION))
+io.write(string.format('Palantir %s (%s) %s\n', P.VERSION, _VERSION, P.BUILD))
 
 -- User modules
 local modules = os.getenv('HOME') .. '/.palantir/?.lua'

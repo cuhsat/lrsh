@@ -54,28 +54,27 @@ extern int os_start(int mode) {
  * @return success
  */
 extern int os_prompt(prompt_t *prompt) {
-    char *buffer = NULL;
-
 #ifdef READLINE
+
+    char *buffer = NULL;
 
     if (readline_prompt(prompt->prompt, &buffer) < 0) {
         return -1;
     }
 
-#else // READLINE
+    strncpy(prompt->line, buffer, sizeof(prompt->line));
 
-    size_t size = 0;
+    free(buffer);
+
+#else // READLINE
 
     printf("%s ", prompt->prompt);
 
-    if (getline(&buffer, &size, stdin) < 0) {
+    if (fgets(prompt->line, sizeof(prompt->line), stdin) == NULL) {
         return -1;
     }
 
 #endif // READLINE
-
-    strncpy(prompt->line, buffer, sizeof(prompt->line));
-    free(buffer);
 
     return 0;
 }

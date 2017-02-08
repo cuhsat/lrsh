@@ -25,12 +25,13 @@ set(SOURCE_FILES
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pedantic -Wall -Werror")
 
-option(HAVE_DEBUG "Debug mode" OFF)
+option(DEBUG "Debug mode" OFF)
 
-if(HAVE_DEBUG)
+if(DEBUG)
     set(CMAKE_VERBOSE_MAKEFILE on)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBUILD='\"${CMAKE_SYSTEM} DEBUG\"'")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG=1")
-endif(HAVE_DEBUG)
+endif(DEBUG)
 
 check_function_exists(daemon HAVE_DAEMON)
 

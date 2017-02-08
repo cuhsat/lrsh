@@ -67,7 +67,7 @@ static int palantir_start(const char *host, uint16_t port) {
 
     luaL_openlibs(L);
 
-    lua_createtable(L, 0, 9);
+    lua_createtable(L, 0, 10);
     lua_pushboolean(L, mode);
     lua_setfield(L, -2, "MODE");
     lua_pushstring(L, host);
@@ -78,6 +78,8 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_setfield(L, -2, "STACK");
     lua_pushstring(L, token);
     lua_setfield(L, -2, "TOKEN");
+    lua_pushstring(L, BUILD);
+    lua_setfield(L, -2, "BUILD");
     lua_pushboolean(L, DEBUG);
     lua_setfield(L, -2, "DEBUG");
     lua_pushstring(L, VERSION);
