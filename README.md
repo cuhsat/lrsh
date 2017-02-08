@@ -36,7 +36,7 @@ return the results where `strerr` will be mapped to `stdout`.
 
 ## Building
 ```
-$ cd build && cmake .. [-DDEBUG=ON]
+$ cd build && cmake .. [-DDEBUG=ON] && make [VERBOSE=1]
 ```
 
 The following libraries are required:
