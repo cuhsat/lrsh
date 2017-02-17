@@ -20,7 +20,7 @@
  */
 #include "os.h"
 
-#ifdef READLINE
+#ifdef HAVE_READLINE
 #include "readline.h"
 #endif
 
@@ -37,13 +37,13 @@
  * @return success
  */
 extern int os_start(int mode) {
-#ifdef READLINE
+#ifdef HAVE_READLINE
 
     if (mode == 1 && readline_init() < 0) {
         return -1;
     }
 
-#endif // READLINE
+#endif // HAVE_READLINE
 
     return 0;
 }
@@ -54,7 +54,7 @@ extern int os_start(int mode) {
  * @return success
  */
 extern int os_prompt(prompt_t *prompt) {
-#ifdef READLINE
+#ifdef HAVE_READLINE
 
     char *buffer = NULL;
 
@@ -66,7 +66,7 @@ extern int os_prompt(prompt_t *prompt) {
 
     free(buffer);
 
-#else // READLINE
+#else // HAVE_READLINE
 
     printf("%s ", prompt->prompt);
 
@@ -74,7 +74,7 @@ extern int os_prompt(prompt_t *prompt) {
         return -1;
     }
 
-#endif // READLINE
+#endif // HAVE_READLINE
 
     return 0;
 }
@@ -105,7 +105,7 @@ extern int os_sleep(time_t time) {
 extern int os_env(env_t *env) {
     struct passwd *pw;
 
-    if (strnlen(env->path, sizeof(env->path)) && chdir(env->path) < 0) {
+    if (strlen(env->path) && chdir(env->path) < 0) {
         return -1;
     }
 
@@ -113,7 +113,7 @@ extern int os_env(env_t *env) {
         return -1;
     }
 
-    strncpy(env->user, pw->pw_name, strnlen(pw->pw_name, sizeof(env->user)));
+    strncpy(env->user, pw->pw_name, strlen(pw->pw_name));
 
     if (gethostname(env->host, sizeof(env->host)) < 0) {
         return -1;
@@ -132,13 +132,13 @@ extern int os_env(env_t *env) {
  * @return success
  */
 extern int os_daemon(int debug) {
-#ifdef DAEMON
+#ifdef HAVE_DAEMON
 
     return daemon(0, debug);
 
-#else // DAEMON
+#else // HAVE_DAEMON
 
     return chdir("/");
 
-#endif // DAEMON
+#endif // HAVE_DAEMON
 }

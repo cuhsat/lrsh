@@ -157,7 +157,7 @@ extern int lua_prompt(lua_State *L) {
         return luaL_error(L, strerror(errno));
     }
 
-    lua_pushlstring(L, prompt.line, strnlen(prompt.line, MAX_LINE));
+    lua_pushlstring(L, prompt.line, strlen(prompt.line));
 
     return 1;
 }
@@ -195,9 +195,9 @@ extern int lua_env(lua_State *L) {
         return luaL_error(L, strerror(errno));
     }
 
-    lua_pushlstring(L, env.user, strnlen(env.user, MAX_USER));
-    lua_pushlstring(L, env.host, strnlen(env.host, MAX_HOST));
-    lua_pushlstring(L, env.path, strnlen(env.path, MAX_PATH));
+    lua_pushlstring(L, env.user, strlen(env.user));
+    lua_pushlstring(L, env.host, strlen(env.host));
+    lua_pushlstring(L, env.path, strlen(env.path));
 
     return 3;
 }

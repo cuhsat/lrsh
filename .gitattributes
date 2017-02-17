@@ -8,5 +8,8 @@
 *.lua text
 *.luac binary
 
+# CMake
+*.txt text
+
 # Palantir
 palantir binary

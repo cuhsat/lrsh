@@ -1,7 +1,7 @@
 # Palantir ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
-Palantir is a Lua scriptable, [extendable](doc/palantir.md), tiny reverse 
-shell, using a human readable [protocol](doc/protocol.md) written in C and 
-[Lua](https://www.lua.org).
+Palantir is a Lua scriptable, [extendable](doc/palantir.md), tiny reverse
+shell, using a human readable [protocol](doc/protocol.md) written in C (C99)
+and [Lua](https://www.lua.org).
 
 ## Usage
 ```
@@ -17,15 +17,15 @@ $ palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT
 * `-c` Executes the command
 * `-f` Executes the file
 
-> The option `-f` has precedence over the option `-c`. The shell will not exit 
-> after all commands, either specified by `-c` or `-f`, are processed.
+> The option `-f` has precedence over the option `-c`. 
+> The shell will not exit after all commands are processed.
 
 ## Commands
 * `-- exit` Shutdown server
 * `-- halt` Shutdown client
 
 All input will be evaluated and execute as Lua commands. The internal function
-`shell` will execute system commands by using the users default shell and 
+`shell` will execute system commands by using the users default shell and
 return the results where `strerr` will be mapped to `stdout`.
 
 ## Keyboard
@@ -39,10 +39,10 @@ return the results where `strerr` will be mapped to `stdout`.
 $ cd build && cmake .. [-DDEBUG=ON] && make [VERBOSE=1]
 ```
 
-The following libraries are required:
+### Libraries required
 * [Lua 5.1](https://www.lua.org)
 
-The following libraries are supported:
+### Libraries supported
 * [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
 
 ## License

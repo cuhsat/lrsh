@@ -18,10 +18,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LIB_READLINE_H
-#define LIB_READLINE_H
+#ifndef LIB_ARGS_H
+#define LIB_ARGS_H
 
-extern int readline_init();
-extern int readline_prompt(const char *prompt, char **line);
+typedef struct {
+    char param;
+    char *value;
+    int index;
+} arg_t;
 
-#endif // LIB_READLINE_H
+extern int args_parse(arg_t *arg, int argc, char *argv[], const char *format);
+extern int args_reset();
+
+#endif // LIB_ARGS_H

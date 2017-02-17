@@ -12,7 +12,7 @@ CHECKSUM (4 bytes) | SIZE (4 bytes) | DATA (n bytes)
 The `CHECKSUM` is a _bitwise CRC-32_ over the `DATA` field only.
 
 ### Authentication
-If an authentication `TOKEN` is provided, the network frames checksum will be 
+If an authentication `TOKEN` is provided, the network frames checksum will be
 pre-feed with the _CRC-32_ of the token before calculation.
 
 ## Command Layer
@@ -29,18 +29,18 @@ ignored by the server and client.
 
 ### Server Commands
 
-#### HELO [user]@[host]:[path]
+#### HELO <user>@<host>:<path>
 Shows the command prompt.
 
-#### TEXT [text]
+#### TEXT <text>
 Prints the text.
 
 ### Client Commands
 
-#### EXEC [command]
+#### EXEC <command>
 Executes the command.
 
-#### PATH [path]
+#### PATH <path>
 Changes the path.
 
 #### HALT

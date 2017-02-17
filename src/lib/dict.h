@@ -228,6 +228,7 @@ const char *dict[] = {
     "shell",
 
     // Palantir globals
+    "P.BUILD",
     "P.DEBUG",
     "P.HOST",
     "P.MODE",
@@ -239,6 +240,7 @@ const char *dict[] = {
     // Palantir commands
     "--exit",
     "--halt",
+
     NULL
 };
 

@@ -18,10 +18,64 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LIB_READLINE_H
-#define LIB_READLINE_H
+#include "args.h"
 
-extern int readline_init();
-extern int readline_prompt(const char *prompt, char **line);
+#include <string.h>
 
-#endif // LIB_READLINE_H
+#define ARGS_PREFIX1 '-'
+#define ARGS_PREFIX2 '/'
+
+#define ARGS_STOP "--"
+#define ARGS_VALUE ':'
+
+static int i = 0;
+
+/**
+ * Args parse
+ * @param arg the parsed argument
+ * @param argc the argument count
+ * @param argv the argument vector
+ * @param format the option format
+ * @return success
+ */
+extern int args_parse(arg_t *arg, int argc, char *argv[], const char *format) {
+    if ((arg->index = ++i) >= argc) {
+        return -1;
+    }
+
+    if (strcmp(argv[i], ARGS_STOP) == 0) {
+        return -1;
+    }
+
+    char *f, *p = argv[i];
+
+    switch (p[0]) {
+        case ARGS_PREFIX1:
+        case ARGS_PREFIX2:
+            if ((f = strchr(format, (++p)[0])) == NULL) {
+                return -1;
+            }
+
+            arg->param = f[0];
+
+            if (f[1] == ARGS_VALUE) {
+                if (++i == argc) {
+                    return -1;
+                }
+
+                arg->value = argv[i];
+            }
+            return 0;
+
+        default:
+            return -1;
+    }
+}
+
+/**
+ * Args reset
+ * @return success
+ */
+extern int args_reset() {
+    return i = 0;
+}

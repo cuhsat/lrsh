@@ -36,16 +36,16 @@
  * @return text
  */
 static char* generator(const char *text, int state) {
-    static int i, len;
+    static int i, size;
 
     if (state == 0) {
-        i = 0; len = strlen(text);
+        i = 0; size = strlen(text);
     }
 
     const char *word;
 
     while ((word = dict[i++]) != NULL) {
-        if (strncmp(word, text, len) == 0) {
+        if (strncmp(word, text, size) == 0) {
             return strdup(word);
         }
     }

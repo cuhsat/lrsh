@@ -48,12 +48,12 @@ static int client = 0;
 static int address(host_t *host, struct sockaddr_in *addr) {
     struct hostent *he;
 
-    if ((he = gethostbyname2(host->name, AF_INET)) == NULL) {
+    if ((he = gethostbyname(host->name)) == NULL) {
         return -1;
     }
 
     memset(addr, 0, sizeof(*addr));
-    memcpy(&(addr->sin_addr), he->h_addr, he->h_length);
+    memcpy(&(addr->sin_addr), he->h_addr_list[0], he->h_length);
 
     addr->sin_family = AF_INET;
     addr->sin_port = htons(host->port);
@@ -96,8 +96,10 @@ static int terminate(int fd) {
  * @return success
  */
 extern int net_auth(const char *token) {
-    if (strlen(token) > 0) {
-        auth = crc32(token, strnlen(token, MAX_TOKEN), 0);
+    size_t size = strlen(token);
+
+    if (size > 0) {
+        auth = crc32(token, size, 0);
     } else {
         auth = 0;
     }
@@ -189,15 +191,15 @@ extern int net_send(frame_t *frame) {
 
 #endif
 
-    if (write(client, (const char *)&checksum, 4) < 4) {
+    if (send(client, (const char *)&checksum, 4, 0) < 4) {
         return -1;
     }
 
-    if (write(client, (const char *)&frame->size, 4) < 4) {
+    if (send(client, (const char *)&frame->size, 4, 0) < 4) {
         return -1;
     }
 
-    if (write(client, frame->data, frame->size) < frame->size) {
+    if (send(client, frame->data, frame->size, 0) < frame->size) {
         return -1;
     }
 
@@ -212,11 +214,11 @@ extern int net_send(frame_t *frame) {
 extern int net_recv(frame_t *frame) {
     uint32_t checksum, size;
 
-    if (read(client, (char *)&checksum, 4) < 4) {
+    if (recv(client, (char *)&checksum, 4, 0) < 4) {
         return -1;
     }
 
-    if (read(client, (char *)&size, 4) < 4) {
+    if (recv(client, (char *)&size, 4, 0) < 4) {
         return -1;
     }
 
@@ -224,7 +226,7 @@ extern int net_recv(frame_t *frame) {
         return -1;
     }
 
-    if (read(client, buffer, size) < size) {
+    if (recv(client, buffer, size, 0) < size) {
         return -1;
     }
 

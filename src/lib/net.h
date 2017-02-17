@@ -24,12 +24,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifndef ARG_MAX
-#define ARG_MAX 255
-#endif
-
-#define MAX_TOKEN ARG_MAX
-
 typedef struct {
     const char *name;
     const uint16_t port;

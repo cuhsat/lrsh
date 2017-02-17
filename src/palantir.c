@@ -19,6 +19,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "palantir.h"
+#include "lib/args.h"
 #include "lib/net.h"
 #include "lib/os.h"
 #include "lua/lua.h"
@@ -31,7 +32,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "../build/palantir.inc"
 
@@ -139,17 +139,17 @@ static void palantir_exit() {
  * @return exit code
  */
 int main(int argc, char *argv[]) {
-    int opt, port = 0; char *t = NULL;
+    arg_t arg; int port = 0; char *t = NULL;
 
-    while ((opt = getopt(argc, argv, "dhlva:c:f:")) != -1) {
-        switch (opt) {
+    while (args_parse(&arg, argc, argv, "dhlva:c:f:") == 0) {
+        switch (arg.param) {
             case 'c':
             case 'f':
-                stack = optarg;
+                stack = arg.value;
                 break;
 
             case 'a':
-                token = optarg;
+                token = arg.value;
                 break;
 
             case 'd':
@@ -157,7 +157,7 @@ int main(int argc, char *argv[]) {
                 break;
 
             case 'h':
-                printf("Usage: %s [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT\n", argv[0]);
+                printf("Usage: palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT\n");
                 exit(EXIT_SUCCESS);
 
             case 'l':
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
                 exit(EXIT_SUCCESS);
 
             case 'v':
-                printf("Palantir %s (%s)\n", VERSION, LUA_VERSION);
+                printf("Palantir %s (%s) %s\n", VERSION, LUA_VERSION, BUILD);
                 exit(EXIT_SUCCESS);
 
             default:
@@ -173,12 +173,12 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if ((argc - optind) < 2) {
+    if ((argc - arg.index) < 2) {
         fprintf(stderr, "Please give HOST and PORT\n");
         exit(EXIT_FAILURE);
     }
 
-    if ((port = strtol(argv[optind + 1], &t, 0)) == 0) {
+    if ((port = strtol(argv[arg.index + 1], &t, 0)) == 0) {
         fprintf(stderr, "Please give HOST and PORT\n");
         exit(EXIT_FAILURE);
     }
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
 
     atexit(palantir_exit);
 
-    if (palantir_start(argv[optind], (uint16_t)port) < 0) {
+    if (palantir_start(argv[arg.index], (uint16_t)port) < 0) {
         perror("Palantir error");
         exit(EXIT_FAILURE);
     }

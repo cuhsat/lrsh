@@ -3,10 +3,11 @@ A new global table named `P` will be defined which contains all shell specific
 functions and properties.
 
 ## Modules
-[Extension modules](https://www.github.com/cuhsat/palantir-modules) can be place under `~/.palantir/`.
+[Extension modules](https://www.github.com/cuhsat/palantir-modules) can be
+placed under `~/.palantir/`.
 
 ## Profile
-An user specific profile can be place under `~/.palantir.lua`.
+An user specific profile can be placed under `~/.palantir.lua`.
 
 Here is an example profile:
 ```
@@ -26,6 +27,7 @@ print('Profile loaded')
 * `HOST`    The command line argument `HOST`
 * `PORT`    The command line argument `PORT`
 * `DEBUG`   The debug flag if compiled with `-DDEBUG=1`
+* `BUILD`   The build system (only if debug flag is set)
 * `VERSION` The semantic version number
 
 ## Functions
