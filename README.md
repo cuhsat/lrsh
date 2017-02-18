@@ -3,12 +3,6 @@
 Palantir is a Lua scriptable, extendable, tiny reverse shell, using a human 
 readable protocol written in C and Lua.
 
-[The Environment](doc/environment.md)
-
-[The Protocol](doc/protocol.md)
-
-![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
-
 ## Usage
 ```
 $ palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT
@@ -31,9 +25,9 @@ All input will be evaluated and execute as Lua commands. The internal function
 `shell` will execute system commands by using the users default shell and
 return the results where `strerr` will be mapped to `stdout`.
 
-## Build
+## Build ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
 ```
-$ cd build && cmake ..
+$ cd build && cmake .. [-DDEBUG=ON] && make [VERBOSE=1]
 ```
 
 Required:
