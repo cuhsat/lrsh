@@ -23,7 +23,6 @@ install:
   - curl -R -O http://www.lua.org/ftp/$LUA.tar.gz
   - tar zxf $LUA.tar.gz
   - cd $LUA
-  - sudo make ../.travis.sh test install
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
       sudo make linux test install;
     fi
