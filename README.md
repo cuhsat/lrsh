@@ -1,7 +1,12 @@
-# Palantir ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
-Palantir is a Lua scriptable, [extendable](doc/palantir.md), tiny reverse
-shell, using a human readable [protocol](doc/protocol.md) written in C (C99)
-and [Lua](https://www.lua.org).
+![Palantir](res/logo_text.png)
+
+Palantir is a Lua scriptable, extendable, tiny reverse shell, using a human 
+readable protocol written in C and Lua.
+
+[Read the environment documentation](doc/environment.md)
+[Read the protocol documentation](doc/protocol.md)
+
+![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
 
 ## Usage
 ```
@@ -17,9 +22,6 @@ $ palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT
 * `-c` Executes the command
 * `-f` Executes the file
 
-> The option `-f` has precedence over the option `-c`. 
-> The shell will not exit after all commands are processed.
-
 ## Commands
 * `-- exit` Shutdown server
 * `-- halt` Shutdown client
@@ -28,21 +30,15 @@ All input will be evaluated and execute as Lua commands. The internal function
 `shell` will execute system commands by using the users default shell and
 return the results where `strerr` will be mapped to `stdout`.
 
-## Keyboard
-* <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
-* <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
-
-> Only available if compiled with `readline` support.
-
-## Building
+## Build
 ```
-$ cd build && cmake .. [-DDEBUG=ON] && make [VERBOSE=1]
+$ cd build && cmake ..
 ```
 
-### Libraries required
+Required:
 * [Lua 5.1](https://www.lua.org)
 
-### Libraries supported
+Supported:
 * [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
 
 ## License

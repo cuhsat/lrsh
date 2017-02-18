@@ -107,7 +107,7 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_setfield(L, -2, "env");
     lua_setfield(L, -2, "os");
 
-    lua_setglobal(L, "P");
+    lua_setglobal(L, "_P");
 
     if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != 0) {
         fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
                 exit(EXIT_SUCCESS);
 
             case 'v':
-                printf("Palantir %s (%s) %s\n", VERSION, LUA_VERSION, BUILD);
+                printf("Palantir %s (%s)\n", VERSION, LUA_VERSION);
                 exit(EXIT_SUCCESS);
 
             default:

@@ -16,7 +16,7 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
-io.write(string.format('Palantir %s (%s) %s\n', P.VERSION, _VERSION, P.BUILD))
+io.write(string.format('Palantir %s (%s)\n', _P.VERSION, _VERSION))
 
 -- User modules
 local modules = os.getenv('HOME') .. '/.palantir/?.lua'
@@ -25,19 +25,19 @@ local modules = os.getenv('HOME') .. '/.palantir/?.lua'
 local profile = os.getenv('HOME') .. '/.palantir.lua'
 
 -- Raw protocol
-local raw_recv = P.net.recv
-local raw_send = P.net.send
+local raw_recv = _P.net.recv
+local raw_send = _P.net.send
 
 -- Input stack
 local stack = {}
 
 -- Palantir error handler
 -- @param error message
-function P.error(message)
+function _P.error(message)
   if message ~= 'Success' then
     io.stderr:write(string.format('Palantir error: %s\n', message))
 
-    if P.DEBUG then
+    if _P.DEBUG then
       io.stderr:write(debug.traceback())
     end
   end
@@ -48,13 +48,13 @@ end
 -- @param event name
 -- @param event param
 -- @return callback result
-function P.event(source, event, param)
-  return pcall(P[source .. '_' .. event:lower()], param)
+function _P.event(source, event, param)
+  return pcall(_P[source .. '_' .. event:lower()], param)
 end
 
 -- Palantir input stack
 -- @param input source
-function P.input(source)
+function _P.input(source)
   local file = io.open(source, 'r')
 
   if file == nil then
@@ -71,7 +71,7 @@ end
 -- Palantir execute script
 -- @param chunk to load
 -- @return result or error
-function P.load(chunk)
+function _P.load(chunk)
   local f, err = load(chunk, 'load', 't')
 
   if f then
@@ -84,7 +84,7 @@ end
 -- Palantir execute shell
 -- @param command to execute
 -- @return result or error
-function P.os.execute(command)
+function _P.os.execute(command)
   local handle = io.popen(command .. ' 2>&1')
   local result = handle:read('*a')
 
@@ -94,7 +94,7 @@ end
 
 -- Palantir receive frame
 -- @return command and param
-function P.net.recv()
+function _P.net.recv()
   local frame = raw_recv()
   return frame:sub(1, 4), frame:sub(6)
 end
@@ -103,7 +103,7 @@ end
 -- @param command
 -- @param param
 -- @return result
-function P.net.send(command, param)
+function _P.net.send(command, param)
   local frame = command .. ' ' .. (param or '')
   return raw_send(frame)
 end
@@ -111,38 +111,38 @@ end
 -- Palantir main server loop
 -- @param host address
 -- @param port number
-function P.net.server(host, port)
-  while not xpcall(function() return P.net.listen(host, port) end, P.error) do
-    P.os.sleep(1000)
+function _P.net.server(host, port)
+  while not xpcall(function() return _P.net.listen(host, port) end, _P.error) do
+    _P.os.sleep(1000)
   end
 
   while true do
-    if xpcall(P.net.accept, P.error) then
+    if xpcall(_P.net.accept, _P.error) then
 
       while true do
-        local status, command, param = xpcall(P.net.recv, P.error)
+        local status, command, param = xpcall(_P.net.recv, _P.error)
 
         if not status then break end
 
-        if P.event('server', command, param) then
+        if _P.event('server', command, param) then
 
         elseif command == 'HELO' then
-          local line = table.remove(stack, 1) or P.os.prompt(param)
+          local line = table.remove(stack, 1) or _P.os.prompt(param)
 
-          if P.event('server', 'prompt', line) then
+          if _P.event('server', 'prompt', line) then
 
           elseif line:lower():match('^cd%s+') then
-            P.net.send('PATH', line:sub(4))
+            _P.net.send('PATH', line:sub(4))
 
           elseif line:lower():match('^--%s*halt%s*$') then
-            P.net.send('HALT')
+            _P.net.send('HALT')
             return
 
           elseif line:lower():match('^--%s*exit%s*$') then
             return
 
           else
-            P.net.send('EXEC', line)
+            _P.net.send('EXEC', line)
           end
 
         elseif command == 'TEXT' then
@@ -160,32 +160,32 @@ end
 -- Palantir main client loop
 -- @param host address
 -- @param port number
-function P.net.client(host, port)
+function _P.net.client(host, port)
   while true do
-    if xpcall(function() return P.net.connect(host, port) end, P.error) then
+    if xpcall(function() return _P.net.connect(host, port) end, _P.error) then
       if client_connected then
-        P.net.send('TEXT', client_ready())
+        _P.net.send('TEXT', client_ready())
       end
 
       while true do
-        P.net.send('HELO', string.format('%s@%s:%s ', P.os.env()))
+        _P.net.send('HELO', string.format('%s@%s:%s ', _P.os.env()))
 
-        local command, param = P.net.recv()
+        local command, param = _P.net.recv()
 
-        if P.event('client', command, param) then
+        if _P.event('client', command, param) then
 
         elseif command == 'PATH' then
-          P.os.env(param)
+          _P.os.env(param)
 
         elseif command == 'EXEC' then
-          P.net.send('TEXT', P.load(param))
+          _P.net.send('TEXT', _P.load(param))
 
         elseif command == 'HALT' then
           os.exit()
         end
       end
 
-    else P.os.sleep(1000) end
+    else _P.os.sleep(1000) end
   end
 end
 
@@ -193,7 +193,7 @@ end
 -- @param command to execute
 -- @return result or error
 function shell(command)
-  return P.os.execute(command)
+  return _P.os.execute(command)
 end
 
 -- Load user modules
@@ -203,11 +203,11 @@ package.path = package.path .. ';' .. modules
 pcall(dofile, profile)
 
 -- Load input stack
-pcall(P.input, P.STACK)
+pcall(_P.input, _P.STACK)
 
 -- Start shell
-local main = (P.MODE and P.net.server or P.net.client)
+local main = (_P.MODE and _P.net.server or _P.net.client)
 
-if xpcall(function() return main(P.HOST, P.PORT) end, P.error) then
+if xpcall(function() return main(_P.HOST, _P.PORT) end, _P.error) then
   io.write('Palantir exit\n')
 end

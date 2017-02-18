@@ -29,18 +29,18 @@ ignored by the server and client.
 
 ### Server Commands
 
-#### HELO <user>@<host>:<path>
+#### HELO user@host:path
 Shows the command prompt.
 
-#### TEXT <text>
+#### TEXT text
 Prints the text.
 
 ### Client Commands
 
-#### EXEC <command>
+#### EXEC command
 Executes the command.
 
-#### PATH <path>
+#### PATH path
 Changes the path.
 
 #### HALT

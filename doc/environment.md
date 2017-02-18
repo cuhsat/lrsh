@@ -1,6 +1,12 @@
 # Environment
-A new global table named `P` will be defined which contains all shell specific
-functions and properties.
+A new global table named `_P` will be defined which contains all shell 
+specific functions and properties.
+
+## Keyboard
+* <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
+* <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
+
+> Only available if compiled with `readline` support.
 
 ## Modules
 [Extension modules](https://www.github.com/cuhsat/palantir-modules) can be
@@ -12,7 +18,7 @@ An user specific profile can be placed under `~/.palantir.lua`.
 Here is an example profile:
 ```
 -- greet client
-function P.client_ready()
+function _P.client_ready()
   return 'Hello\n'
 end
 
@@ -89,6 +95,12 @@ The alias `shell` is provided as a shortcut of `os.execute`:
 return shell('echo hello')
 ```
 
+## Stack
+The input stack can be specified by the command line options `-f` and `-c`.
+The option `-f` has precedence over the option `-c`. If an input stack is 
+provided, the commands will be processed line by line. The shell will not 
+exit automatically after all commands are processed.
+
 ## Callbacks
 The default shell functionality can be extended by creating custom event
 callbacks in the users profile. There are four different event sources:
@@ -106,25 +118,25 @@ The `<command>` names will be converted to lowercase.
 
 Here is an example on how to implement an simple _echo server_:
 ```
-function P.client_ready()
+function _P.client_ready()
   return 'This is an echo server'
 end
 ```
 ```
-function P.client_echo(param)
-  P.net.send('ECHO', param)
+function _P.client_echo(param)
+  _P.net.send('ECHO', param)
   return true
 end
 ```
 ```
-function P.server_echo(param)
+function _P.server_echo(param)
   io.write(param .. '\n')
   return true
 end
 ```
 ```
-function P.server_prompt(line)
-  P.net.send('ECHO', line)
+function _P.server_prompt(line)
+  _P.net.send('ECHO', line)
   return true
 end
 ```
