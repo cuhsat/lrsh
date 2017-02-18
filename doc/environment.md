@@ -2,6 +2,12 @@
 A new global table named `_P` will be defined which contains all shell 
 specific functions and properties.
 
+## Keyboard
+* <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
+* <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
+
+> Only available if compiled with `readline` support.
+
 ## Modules
 [Extension modules](https://www.github.com/cuhsat/palantir-modules) can be
 placed under `~/.palantir/`.
@@ -19,12 +25,6 @@ end
 -- debug
 print('Profile loaded')
 ```
-
-## Keyboard
-* <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
-* <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
-
-> Only available if compiled with `readline` support.
 
 ## Constants
 * `MODE`    The command line option `-d`
