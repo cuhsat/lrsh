@@ -10,10 +10,10 @@ if #arg < 1 then
 end
 
 -- Normalize filename
-local filename = arg[1]:lower():gsub("%W", "_")
+local filename = arg[1]:lower():match("^.+/(.+)$"):gsub("%W", "_")
 
 -- Read file data
-local file = assert(io.open(arg[1], "r"))
+local file = assert(io.open(arg[1], "rb"))
 local data = file:read("*all")
 file:close()
 

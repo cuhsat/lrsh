@@ -22,26 +22,37 @@
 #include "crc.h"
 
 #include <errno.h>
-#include <netdb.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
+#ifdef POSIX
+#include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
+typedef int socket_t;
+#endif
+
+#ifdef WINNT
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
+typedef SOCKET socket_t;
+#endif
+
 static uint32_t auth = 0;
 static char *buffer = NULL;
-static int server = 0;
-static int client = 0;
+static socket_t server = 0;
+static socket_t client = 0;
 
 /**
  * Fill address
- * @param host the host address
+ * @param host the host
  * @param addr the address
  * @return success
  */
@@ -53,14 +64,26 @@ static int address(host_t *host, struct sockaddr_in *addr) {
     }
 
     memset(addr, 0, sizeof(*addr));
-    memcpy(&(addr->sin_addr), he->h_addr_list[0], he->h_length);
+    memcpy(&(addr->sin_addr), he->h_addr_list[0], (size_t)he->h_length);
 
     addr->sin_family = AF_INET;
     addr->sin_port = htons(host->port);
 
+#ifdef POSIX
+
     if (inet_pton(AF_INET, host->name, &(addr->sin_addr)) <= 0) {
         return -1;
     }
+
+#endif // POSIX
+
+#ifdef WINNT
+
+    if ((addr->sin_addr.s_addr = inet_addr(host->name)) == -1) {
+        return -1;
+    }
+
+#endif // WINNT
 
     return 0;
 }
@@ -70,13 +93,15 @@ static int address(host_t *host, struct sockaddr_in *addr) {
  * @param fd the socket
  * @return success
  */
-static int terminate(int fd) {
+static int terminate(socket_t fd) {
     if (fd > 0) {
         socklen_t len = sizeof(errno);
 
-        if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &errno, &len) < 0) {
+        if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (void*)&errno, &len) < 0) {
             return -1;
         }
+
+#ifdef POSIX
 
         if ((shutdown(fd, SHUT_RDWR) < 0) && (errno != ENOTCONN)) {
             return -1;
@@ -85,6 +110,16 @@ static int terminate(int fd) {
         if (close(fd) < 0) {
             return -1;
         }
+
+#endif // POSIX
+
+#ifdef WINNT
+
+        if (closesocket(fd) != 0) {
+            return -1;
+        }
+
+#endif // WINNT
     }
 
     return 0;
@@ -231,7 +266,7 @@ extern int net_recv(frame_t *frame) {
     }
 
     if (checksum != crc32(buffer, size, auth)) {
-        errno = ((auth > 0) ? EACCES : EBADMSG);
+        errno = ((auth > 0) ? EACCES : EILSEQ);
         return -1;
     }
 

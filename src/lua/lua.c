@@ -58,7 +58,7 @@ extern int lua_connect(lua_State *L) {
 
     host_t host = {
         luaL_checkstring(L, 1),
-        luaL_checkinteger(L, 2)
+        (const uint16_t)luaL_checkinteger(L, 2)
     };
 
     if (net_connect(&host) < 0) {
@@ -78,7 +78,7 @@ extern int lua_listen(lua_State *L) {
 
     host_t host = {
         luaL_checkstring(L, 1),
-        luaL_checkinteger(L, 2)
+        (const uint16_t)luaL_checkinteger(L, 2)
     };
 
     if (net_listen(&host) < 0) {
@@ -170,7 +170,7 @@ extern int lua_prompt(lua_State *L) {
 extern int lua_sleep(lua_State *L) {
     LUA_TRACE();
 
-    os_sleep(luaL_checkinteger(L, 1));
+    os_sleep((time_t)luaL_checkinteger(L, 1));
 
     return 0;
 }

@@ -34,13 +34,12 @@
 # Apple
 .DS_Store
 
+# CLion
+.idea
+
 # Lua
 *.inc
 *.luac
-
-# Build
-build/*
-!xxd.lua
 
 # Binary
 palantir

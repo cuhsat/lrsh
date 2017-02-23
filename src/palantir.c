@@ -28,12 +28,13 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../build/palantir.inc"
+#include "palantir.inc"
 
 #define LUA_CODE ((const char *)palantir_luac)
 #define LUA_SIZE ((size_t)palantir_luac_len)
@@ -128,7 +129,11 @@ static int palantir_start(const char *host, uint16_t port) {
  */
 static void palantir_exit() {
     if (net_exit() < 0) {
-        perror("Palantir error");
+        fprintf(stderr, "Palantir error: %s\n", strerror(errno));
+    }
+
+    if (os_exit() < 0) {
+        fprintf(stderr, "Palantir error: %s\n", strerror(errno));
     }
 }
 
@@ -184,14 +189,14 @@ int main(int argc, char *argv[]) {
     }
 
     if (mode == MODE_CLIENT && os_daemon(DEBUG) < 0) {
-        perror("Palantir error");
+        fprintf(stderr, "Palantir error: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
     atexit(palantir_exit);
 
     if (palantir_start(argv[arg.index], (uint16_t)port) < 0) {
-        perror("Palantir error");
+        fprintf(stderr, "Palantir error: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 

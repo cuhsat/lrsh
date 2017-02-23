@@ -20,16 +20,10 @@
  */
 #include "os.h"
 
-#ifdef HAVE_READLINE
-#include "readline.h"
-#endif
-
-#include <pwd.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <string.h>
-#include <unistd.h>
+#include <winsock2.h>
+#include <windows.h>
 
 /**
  * OS start
@@ -37,13 +31,11 @@
  * @return success
  */
 extern int os_start(int mode) {
-#ifdef HAVE_READLINE
+    WSADATA wsa;
 
-    if (mode == 1 && readline_init() < 0) {
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
         return -1;
     }
-
-#endif // HAVE_READLINE
 
     return 0;
 }
@@ -54,29 +46,13 @@ extern int os_start(int mode) {
  * @return success
  */
 extern int os_prompt(prompt_t *prompt) {
-    char *buffer = NULL;
-
-#ifdef HAVE_READLINE
-
-    if (readline_prompt(prompt->prompt, &buffer) < 0) {
-        return -1;
-    }
-
-#else // HAVE_READLINE
-
-    size_t size = 0;
-
     printf("%s", prompt->prompt);
 
-    if (getline(&buffer, &size, stdin) < 0) {
+    if (fgets(prompt->line, sizeof(prompt->line), stdin) == NULL) {
         return -1;
     }
 
-#endif // HAVE_READLINE
-
-    strncpy(prompt->line, buffer, sizeof(prompt->line));
-
-    free(buffer);
+    prompt->line[strcspn(prompt->line, "\n")] = 0;
 
     return 0;
 }
@@ -87,13 +63,8 @@ extern int os_prompt(prompt_t *prompt) {
  * @return success
  */
 extern int os_sleep(time_t time) {
-    struct timespec ts;
-
-    ts.tv_sec  = (time / 1000);
-    ts.tv_nsec = (time % 1000) * 1000000L;
-
-    while (nanosleep(&ts, &ts) < 0) {
-        continue;
+    if (SleepEx((DWORD)time, FALSE) != 0) {
+        return -1;
     }
 
     return 0;
@@ -105,23 +76,23 @@ extern int os_sleep(time_t time) {
  * @return success
  */
 extern int os_env(env_t *env) {
-    struct passwd *pw;
-
-    if (strlen(env->path) && chdir(env->path) < 0) {
+    if (strlen(env->path) && SetCurrentDirectoryA(env->path) == 0) {
         return -1;
     }
 
-    if ((pw = getpwuid(getuid())) == NULL) {
+    DWORD user_size = sizeof(env->user);
+
+    if (GetUserNameA(env->user, &user_size) == 0) {
         return -1;
     }
 
-    strncpy(env->user, pw->pw_name, strlen(pw->pw_name));
+    DWORD host_size = sizeof(env->host);
 
-    if (gethostname(env->host, sizeof(env->host)) < 0) {
+    if (GetComputerNameA(env->host, &host_size) == 0) {
         return -1;
     }
 
-    if (getcwd(env->path, sizeof(env->path)) == NULL) {
+    if (GetCurrentDirectoryA(sizeof(env->path), env->path) == 0) {
         return -1;
     }
 
@@ -134,15 +105,15 @@ extern int os_env(env_t *env) {
  * @return success
  */
 extern int os_daemon(int debug) {
-#ifdef HAVE_DAEMON
+    if (ShowWindow(GetConsoleWindow(), debug) == 0) {
+        return -1;
+    }
 
-    return daemon(0, debug);
+    if (SetCurrentDirectoryA("C:\\") == 0) {
+        return -1;
+    }
 
-#else // HAVE_DAEMON
-
-    return chdir("/");
-
-#endif // HAVE_DAEMON
+    return 0;
 }
 
 /**
@@ -150,5 +121,9 @@ extern int os_daemon(int debug) {
  * @return success
  */
 extern int os_exit() {
+    if (WSACleanup() != 0) {
+        return -1;
+    }
+
     return 0;
 }

@@ -57,5 +57,6 @@ extern int os_prompt(prompt_t *prompt);
 extern int os_sleep(time_t time);
 extern int os_env(env_t *env);
 extern int os_daemon(int debug);
+extern int os_exit();
 
 #endif // LIB_OS_H

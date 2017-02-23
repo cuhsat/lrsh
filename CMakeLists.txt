@@ -1,17 +1,23 @@
 cmake_minimum_required(VERSION 3.0)
 
 #
+#  Project
+#
+
+project(palantir)
+
+#
+#  Settings
+#
+
+enable_testing()
+
+#
 #  Imports
 #
 
 include(CheckFunctionExists)
 include(CheckLibraryExists)
-
-#
-#  Project
-#
-
-project(palantir)
 
 #
 #  Prerequisites
@@ -30,6 +36,12 @@ if(NOT LUAC_EXECUTABLE)
 endif()
 
 #
+#  Compiler flags
+#
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pedantic -Wall -Werror")
+
+#
 #  Source files
 #
 
@@ -38,7 +50,6 @@ set(SOURCE_FILES
     ${CMAKE_SOURCE_DIR}/src/lib/args.h
     ${CMAKE_SOURCE_DIR}/src/lib/crc.c
     ${CMAKE_SOURCE_DIR}/src/lib/crc.h
-    ${CMAKE_SOURCE_DIR}/src/lib/dict.h
     ${CMAKE_SOURCE_DIR}/src/lib/net.c
     ${CMAKE_SOURCE_DIR}/src/lib/net.h
     ${CMAKE_SOURCE_DIR}/src/lib/os.h
@@ -53,7 +64,7 @@ set(SOURCE_FILES
 #  Libraries
 #
 
-set(LIBRARIES dl)
+set(LIBRARIES "")
 
 #
 #  Debug mode
@@ -63,8 +74,8 @@ option(DEBUG "Debug mode" OFF)
 
 if(DEBUG)
     set(CMAKE_VERBOSE_MAKEFILE on)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBUILD='\"${CMAKE_SYSTEM} DEBUG\"'")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG=1")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBUILD='\"${CMAKE_SYSTEM} DEBUG\"'")
 endif(DEBUG)
 
 #
@@ -72,11 +83,24 @@ endif(DEBUG)
 #
 
 if(UNIX)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pedantic -Wall -Werror")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPOSIX=1")
     set(SOURCE_FILES "${SOURCE_FILES}"
         ${CMAKE_SOURCE_DIR}/src/lib/os_posix.c
     )
+    set(LIBRARIES "${LIBRARIES}" dl)
 endif(UNIX)
+
+#
+#  Windows NT support
+#
+
+if(WIN32)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWINNT=1")
+    set(SOURCE_FILES "${SOURCE_FILES}"
+        ${CMAKE_SOURCE_DIR}/src/lib/os_winnt.c
+    )
+    set(LIBRARIES "${LIBRARIES}" ws2_32)
+endif(WIN32)
 
 #
 #  Daemon support (Excluding OS X)
@@ -97,6 +121,7 @@ check_library_exists(readline readline "readline.h" HAVE_READLINE)
 if(HAVE_READLINE AND NOT APPLE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_READLINE=1")
     set(SOURCE_FILES "${SOURCE_FILES}"
+        ${CMAKE_SOURCE_DIR}/src/lib/dict.h
         ${CMAKE_SOURCE_DIR}/src/lib/readline.c
         ${CMAKE_SOURCE_DIR}/src/lib/readline.h
     )
@@ -107,7 +132,7 @@ endif(HAVE_READLINE AND NOT APPLE)
 #  Includes
 #
 
-include_directories(${LUA_INCLUDE_DIR})
+include_directories(${LUA_INCLUDE_DIR} ${CMAKE_BINARY_DIR})
 
 #
 #  Binary
@@ -119,9 +144,15 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 #  Resources
 #
 
+set(XXD "${CMAKE_SOURCE_DIR}/src/tools/xxd.lua")
+set(PALANTIR_LUA "${CMAKE_SOURCE_DIR}/src/palantir.lua")
+set(PALANTIR_LUAC "${CMAKE_BINARY_DIR}/palantir.luac")
+set(PALANTIR_INC "${CMAKE_BINARY_DIR}/palantir.inc")
+
 add_custom_target(resources
-    COMMAND ${LUAC_EXECUTABLE} -s -o palantir.luac ${CMAKE_SOURCE_DIR}/src/palantir.lua
-    COMMAND ${LUA_EXECUTABLE} xxd.lua palantir.luac > palantir.inc
+    COMMAND ${LUAC_EXECUTABLE} -s -o ${PALANTIR_LUAC} ${PALANTIR_LUA}
+    COMMAND ${LUA_EXECUTABLE} ${XXD} ${PALANTIR_LUAC} > ${PALANTIR_INC}
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
 add_dependencies(${PROJECT_NAME} resources)
@@ -135,8 +166,6 @@ target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES} ${LIBRARIES})
 #
 #  Testing
 #
-
-enable_testing()
 
 add_test(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/test/test.sh)
 

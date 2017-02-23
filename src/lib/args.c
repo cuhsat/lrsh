@@ -22,11 +22,11 @@
 
 #include <string.h>
 
-#define ARGS_PREFIX1 '-'
-#define ARGS_PREFIX2 '/'
-
 #define ARGS_STOP "--"
+#define ARGS_POSIX '-'
+#define ARGS_WINNT '/'
 #define ARGS_VALUE ':'
+#define ARGS_ERROR '?'
 
 static int i = 0;
 
@@ -50,20 +50,20 @@ extern int args_parse(arg_t *arg, int argc, char *argv[], const char *format) {
     char *f, *p = argv[i];
 
     switch (p[0]) {
-        case ARGS_PREFIX1:
-        case ARGS_PREFIX2:
-            if ((f = strchr(format, (++p)[0])) == NULL) {
-                return -1;
-            }
+        case ARGS_POSIX:
+        case ARGS_WINNT:
+            arg->param = ARGS_ERROR;
 
-            arg->param = f[0];
+            if ((f = strchr(format, (++p)[0])) != NULL) {
+                arg->param = f[0];
 
-            if (f[1] == ARGS_VALUE) {
-                if (++i == argc) {
-                    return -1;
+                if (f[1] == ARGS_VALUE) {
+                    if (++i == argc) {
+                        arg->param = ARGS_ERROR;
+                    } else {
+                        arg->value = argv[i];
+                    }
                 }
-
-                arg->value = argv[i];
             }
             return 0;
 

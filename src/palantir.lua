@@ -16,13 +16,16 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
-io.write(string.format('Palantir %s (%s)\n', _P.VERSION, _VERSION))
+io.write(string.format('Palantir %s (%s)', _P.VERSION, _VERSION))
+
+-- User home directory
+local home = os.getenv('HOME') or os.getenv('USERPROFILE') or '.'
 
 -- User modules
-local modules = os.getenv('HOME') .. '/.palantir/?.lua'
+local modules = home .. '/.palantir/?.lua'
 
 -- User profile
-local profile = os.getenv('HOME') .. '/.palantir.lua'
+local profile = home .. '/.palantir.lua'
 
 -- Raw protocol
 local raw_recv = _P.net.recv
@@ -168,7 +171,7 @@ function _P.net.client(host, port)
       end
 
       while true do
-        _P.net.send('HELO', string.format('%s@%s:%s ', _P.os.env()))
+        _P.net.send('HELO', string.format('%s@%s:%s> ', _P.os.env()))
 
         local command, param = _P.net.recv()
 
