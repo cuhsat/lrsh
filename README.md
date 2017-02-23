@@ -83,6 +83,7 @@ automatically after all commands are processed.
 * `VERSION` The semantic version number
 
 ## Functions
+Mainly for internal use.
 
 ### Common
 * `error(message)`
