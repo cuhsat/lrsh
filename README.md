@@ -1,4 +1,4 @@
-![Palantir](res/palantir.png)
+![Palantir](doc/palantir.png)
 
 Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
 readable protocol written in C and Lua.
