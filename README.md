@@ -3,6 +3,19 @@
 Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
 readable protocol written in C and Lua.
 
+# Build ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
+```
+$ mkdir build && cd build
+$ cmake .. [-DDEBUG=ON]
+$ make [VERBOSE=1]
+```
+
+Required:
+* [Lua 5.1](https://www.lua.org)
+
+Supported:
+* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
+
 # Usage
 ```
 $ palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT
@@ -25,18 +38,18 @@ All input will be evaluated and execute as Lua commands. The internal function
 `shell` will execute system commands by using the users default shell and
 return the results where `strerr` will be mapped to `stdout`.
 
-# Environment
-A new global table named `_P` will be defined which contains all shell
-specific functions and properties.
-
 ## Keyboard
 * <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
 * <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
 
 > Only available if compiled with `readline` support.
 
+# Environment
+A new global table named `_P` will be defined which contains all shell
+specific functions and properties.
+
 ## Modules
-[Extension modules](https://www.github.com/cuhsat/palantir-modules) can be
+Extension [modules](https://www.github.com/cuhsat/palantir-modules) can be
 placed under `~/.palantir/`.
 
 ## Profile
@@ -53,6 +66,12 @@ end
 print('Profile loaded')
 ```
 
+## Stack
+The input stack can be specified by the command line options `f` and `c`. The
+option `f` has precedence over the option `c`. If an input stack is provided,
+the commands will be processed line by line. The shell will not exit
+automatically after all commands are processed.
+
 ## Constants
 * `MODE`    The command line option `d`
 * `TOKEN`   The command line argument `a`
@@ -66,67 +85,31 @@ print('Profile loaded')
 ## Functions
 
 ### Common
-
-#### error(message)
-Prints the error `message`.
-
-#### event(source, event, param)
-Calls the function `<source>_<event>(<param>)` if exists.
-
-#### input(source)
-Builds the input stack from `source`.
-
-#### load(chunk)
-Returns the output of the executed `chunk` (global environment).
+* `error(message)`
+* `event(source, event, param)`
+* `input(source)`
+* `load(chunk)`
 
 ### Network
-
-#### net.server(host, port)
-Starts as server on `host` and `port`.
-
-#### net.client(host, port)
-Starts as client on `host` and `port`.
-
-#### net.connect(host, port)
-Connects to `host` and `port`.
-
-#### net.listen(host, port)
-Listens on `host` and `port`.
-
-#### net.accept()
-Accepts incoming connections.
-
-#### net.recv()
-Returns the received `command` and `param`.
-
-#### net.send(command, param)
-Sends the given `command` and `param`.
+* `net.server(host, port)`
+* `net.client(host, port)`
+* `net.connect(host, port)`
+* `net.listen(host, port)`
+* `net.accept()`
+* `net.recv()`
+* `net.send(command, param)`
 
 ### Operating System
-
-#### os.env(path)
-Returns the `user`, `host` and `path` variables, sets the `path` if given.
-
-#### os.execute(command)
-Returns the `command` output executed by the users default shell.
-
-#### os.prompt(prompt)
-Prints `prompt` and returns the users input.
-
-#### os.sleep(milliseconds)
-Sleeps for the given `milliseconds`.
+* `os.env(path)`
+* `os.execute(command)`
+* `os.prompt(prompt)`
+* `os.sleep(milliseconds)`
 
 ### Alias
-The alias `shell` is provided as a shortcut of `os.execute`:
+The alias `shell` is provided as an shortcut of `os.execute`:
 ```
 return shell('echo hello')
 ```
-
-## Stack
-The input stack can be specified by the command line options `f` and `c`. The
-option `f` has precedence over the option `c`. If an input stack is provided,
-the commands will be processed line by line. The shell will not exit
-automatically after all commands are processed.
 
 ## Callbacks
 The default shell functionality can be extended by creating custom event
@@ -198,23 +181,13 @@ If an unknown command is received, no error will be raised, instead it will be
 ignored by the client and server.
 
 ### Server Commands
-
-#### HELO [user]@[host]:[path]
-Shows the command prompt.
-
-#### TEXT [text]
-Prints the text.
+* `HELO <user>@<host>:<path>`
+* `TEXT <text>`
 
 ### Client Commands
-
-#### EXEC [command]
-Executes the command.
-
-#### PATH [path]
-Changes the path.
-
-#### HALT
-Halts the client.
+* `EXEC <command>`
+* `PATH <path>`
+* `HALT`
 
 ### Examples
 ```
@@ -240,19 +213,6 @@ Client: HELO root@localhost:/var
 ```
 Server: EXIT
 ```
-
-# Build ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
-```
-$ mkdir build && cd build
-$ cmake .. [-DDEBUG=ON]
-$ make [VERBOSE=1]
-```
-
-Required:
-* [Lua 5.1](https://www.lua.org)
-
-Supported:
-* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
 
 # License
 Licensed under the terms of the [MIT License](LICENSE).
