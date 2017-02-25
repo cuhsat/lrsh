@@ -39,7 +39,9 @@ endif()
 #  Compiler flags
 #
 
+set(BUILD "${CMAKE_SYSTEM} ${CMAKE_C_COMPILER_ID} (${CMAKE_GENERATOR})")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pedantic -Wall -Werror")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBUILD='\"${BUILD}\"'")
 
 #
 #  Source files
@@ -75,7 +77,6 @@ option(DEBUG "Debug mode" OFF)
 if(DEBUG)
     set(CMAKE_VERBOSE_MAKEFILE on)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG=1")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBUILD='\"${CMAKE_SYSTEM} DEBUG\"'")
 endif(DEBUG)
 
 #

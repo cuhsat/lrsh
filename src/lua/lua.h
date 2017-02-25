@@ -31,8 +31,8 @@ extern int lua_accept(lua_State *L);
 extern int lua_send(lua_State *L);
 extern int lua_recv(lua_State *L);
 
+extern int lua_path(lua_State *L);
 extern int lua_prompt(lua_State *L);
 extern int lua_sleep(lua_State *L);
-extern int lua_env(lua_State *L);
 
 #endif // LUA_LUA_H

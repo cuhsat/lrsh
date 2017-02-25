@@ -142,6 +142,33 @@ extern int lua_recv(lua_State *L) {
 }
 
 /**
+ * Lua path
+ * @param L the Lua state address
+ * @return stack count
+ */
+extern int lua_path(lua_State *L) {
+    LUA_TRACE();
+
+    path_t path;
+
+    if (lua_gettop(L) > 0) {
+        strcpy(path.path, luaL_checkstring(L, 1));
+    } else {
+        memset(path.path, 0, sizeof(path.path));
+    }
+
+    if (os_path(&path)) {
+        return luaL_error(L, strerror(errno));
+    }
+
+    lua_pushlstring(L, path.user, strlen(path.user));
+    lua_pushlstring(L, path.host, strlen(path.host));
+    lua_pushlstring(L, path.path, strlen(path.path));
+
+    return 3;
+}
+
+/**
  * Lua prompt
  * @param L the Lua state address
  * @return stack count
@@ -173,31 +200,4 @@ extern int lua_sleep(lua_State *L) {
     os_sleep((time_t)luaL_checkinteger(L, 1));
 
     return 0;
-}
-
-/**
- * Lua env
- * @param L the Lua state address
- * @return stack count
- */
-extern int lua_env(lua_State *L) {
-    LUA_TRACE();
-
-    env_t env;
-
-    if (lua_gettop(L) > 0) {
-        strcpy(env.path, luaL_checkstring(L, 1));
-    } else {
-        memset(env.path, 0, sizeof(env.path));
-    }
-
-    if (os_env(&env)) {
-        return luaL_error(L, strerror(errno));
-    }
-
-    lua_pushlstring(L, env.user, strlen(env.user));
-    lua_pushlstring(L, env.host, strlen(env.host));
-    lua_pushlstring(L, env.path, strlen(env.path));
-
-    return 3;
 }

@@ -8,13 +8,13 @@ PORT=${2:-8211}
 TOKEN=$(git rev-parse HEAD)
 
 SERVER_FLAGS="-a $TOKEN -d"
-CLIENT_FLAGS="-a $TOKEN -c --halt"
+CLIENT_FLAGS="-a $TOKEN"
 
 main() {
     killall palantir 2> /dev/null || true
 
     ./palantir $SERVER_FLAGS $HOST $PORT
-    ./palantir $CLIENT_FLAGS $HOST $PORT
+    ./palantir $CLIENT_FLAGS $HOST $PORT <<< '--halt'
 }
 
 main "$@"

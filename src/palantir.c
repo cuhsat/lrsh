@@ -44,9 +44,8 @@ typedef enum {
     MODE_SERVER = 1
 } palantir_mode;
 
-static palantir_mode mode = MODE_SERVER;
+static palantir_mode mode = MODE_CLIENT;
 static const char *token = "";
-static const char *stack = "";
 
 /**
  * Palantir start
@@ -58,7 +57,7 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     lua_atpanic(L, lua_panic);
 
-    if (os_start(mode) < 0) {
+    if (os_init(mode) < 0) {
         return -1;
     }
 
@@ -68,23 +67,20 @@ static int palantir_start(const char *host, uint16_t port) {
 
     luaL_openlibs(L);
 
-    lua_createtable(L, 0, 10);
-    lua_pushboolean(L, mode);
-    lua_setfield(L, -2, "MODE");
+    lua_pushinteger(L, mode);
+    lua_setglobal(L, "SERVER");
     lua_pushstring(L, host);
-    lua_setfield(L, -2, "HOST");
+    lua_setglobal(L, "HOST");
     lua_pushinteger(L, port);
-    lua_setfield(L, -2, "PORT");
-    lua_pushstring(L, stack);
-    lua_setfield(L, -2, "STACK");
+    lua_setglobal(L, "PORT");
     lua_pushstring(L, token);
-    lua_setfield(L, -2, "TOKEN");
+    lua_setglobal(L, "TOKEN");
     lua_pushstring(L, BUILD);
-    lua_setfield(L, -2, "BUILD");
+    lua_setglobal(L, "BUILD");
     lua_pushboolean(L, DEBUG);
-    lua_setfield(L, -2, "DEBUG");
+    lua_setglobal(L, "DEBUG");
     lua_pushstring(L, VERSION);
-    lua_setfield(L, -2, "VERSION");
+    lua_setglobal(L, "VERSION");
 
     lua_createtable(L, 0, 5);
     lua_pushcfunction(L, lua_connect);
@@ -97,18 +93,16 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_setfield(L, -2, "recv");
     lua_pushcfunction(L, lua_send);
     lua_setfield(L, -2, "send");
-    lua_setfield(L, -2, "net");
+    lua_setglobal(L, "net");
 
-    lua_createtable(L, 0, 3);
+    lua_getglobal(L, "os");
+    lua_pushcfunction(L, lua_path);
+    lua_setfield(L, -2, "path");
     lua_pushcfunction(L, lua_prompt);
     lua_setfield(L, -2, "prompt");
     lua_pushcfunction(L, lua_sleep);
     lua_setfield(L, -2, "sleep");
-    lua_pushcfunction(L, lua_env);
-    lua_setfield(L, -2, "env");
-    lua_setfield(L, -2, "os");
-
-    lua_setglobal(L, "_P");
+    lua_pop(L, 1);
 
     if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != 0) {
         fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
@@ -146,23 +140,18 @@ static void palantir_exit() {
 int main(int argc, char *argv[]) {
     arg_t arg; int port = 0; char *t = NULL;
 
-    while (args_parse(&arg, argc, argv, "dhlva:c:f:") == 0) {
+    while (args_parse(&arg, argc, argv, "a:dhlv") == 0) {
         switch (arg.param) {
-            case 'c':
-            case 'f':
-                stack = arg.value;
-                break;
-
             case 'a':
                 token = arg.value;
                 break;
 
             case 'd':
-                mode = MODE_CLIENT;
+                mode = MODE_SERVER;
                 break;
 
             case 'h':
-                printf("Usage: palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT\n");
+                printf("Usage: palantir [-dhlv] [-a TOKEN] HOST PORT\n");
                 exit(EXIT_SUCCESS);
 
             case 'l':
@@ -188,7 +177,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (mode == MODE_CLIENT && os_daemon(DEBUG) < 0) {
+    if (mode == MODE_SERVER && os_daemon(DEBUG) < 0) {
         fprintf(stderr, "Palantir error: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }

@@ -31,9 +31,7 @@ install:
     fi
   - cd ..
 script:
-  - mkdir build
-  - cd build
-  - cmake ..
+  - cmake .
   - make
   - ./palantir -v
 sudo: required

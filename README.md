@@ -5,12 +5,11 @@ readable protocol written in C and Lua.
 
 # Build ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
 ```
-$ mkdir build && cd build
-$ cmake .. [-DDEBUG=ON]
-$ make [VERBOSE=1]
+$ cmake . [-DDEBUG=ON] && make [VERBOSE=1]
 ```
 
 Required:
+* [CMake 3.0](https://cmake.org)
 * [Lua 5.1](https://www.lua.org)
 
 Supported:
@@ -18,24 +17,22 @@ Supported:
 
 # Usage
 ```
-$ palantir [-dhlv] [-a TOKEN] [-c COMMAND] [-f FILE] HOST PORT
+$ palantir [-dhlv] [-a TOKEN] HOST PORT
 ```
 
 ## Options
-* `d` Starts in passive mode _(listen)_
+* `d` Start as server
 * `h` Shows the usage information
 * `l` Shows the license
 * `v` Shows the version
 * `a` Authentication token
-* `c` Executes the command
-* `f` Executes the file
 
 ## Commands
-* `-- exit` Shutdown server
-* `-- halt` Shutdown client
+* `-- exit` Shutdown client
+* `-- halt` Shutdown server
 
 All input will be evaluated and execute as Lua commands. The internal function
-`shell` will execute system commands by using the users default shell and
+`os.shell` will execute system commands by using the users default shell and
 return the results where `strerr` will be mapped to `stdout`.
 
 ## Keyboard
@@ -45,51 +42,24 @@ return the results where `strerr` will be mapped to `stdout`.
 > Only available if compiled with `readline` support.
 
 # Environment
-A new global table named `_P` will be defined which contains all shell
-specific functions and properties.
-
-## Modules
-Extension [modules](https://www.github.com/cuhsat/palantir-modules) can be
-placed under `~/.palantir/`.
+New global constants and functions will be defined which contain all shell
+specific extensions.
 
 ## Profile
-An user specific profile can be placed under `~/.palantir.lua`.
-
-Here is an example profile:
-```
--- greet client
-function _P.client_ready()
-  return 'Hello\n'
-end
-
--- debug
-print('Profile loaded')
-```
-
-## Stack
-The input stack can be specified by the command line options `f` and `c`. The
-option `f` has precedence over the option `c`. If an input stack is provided,
-the commands will be processed line by line. The shell will not exit
-automatically after all commands are processed.
+A user specific [profile](https://www.github.com/cuhsat/palantir-profile) can 
+be placed under `~/.palantir.lua`.
 
 ## Constants
-* `MODE`    The command line option `d`
+* `SERVER`  The command line option `d`
 * `TOKEN`   The command line argument `a`
-* `STACK`   The command line argument `c` or `f`
 * `HOST`    The command line argument `HOST`
 * `PORT`    The command line argument `PORT`
-* `DEBUG`   The debug flag if compiled in debug mode
-* `BUILD`   The build system (only if debug flag is set)
-* `VERSION` The semantic version number
+* `HOME`    The stated users home directory
+* `DEBUG`   The compiled debug flag
+* `BUILD`   The compiled build information
+* `VERSION` The compiled version number
 
 ## Functions
-Mainly for internal use.
-
-### Common
-* `error(message)`
-* `event(source, event, param)`
-* `input(source)`
-* `load(chunk)`
 
 ### Network
 * `net.server(host, port)`
@@ -101,27 +71,21 @@ Mainly for internal use.
 * `net.send(command, param)`
 
 ### Operating System
-* `os.env(path)`
-* `os.execute(command)`
+* `os.path(path)`
 * `os.prompt(prompt)`
+* `os.shell(command)`
 * `os.sleep(milliseconds)`
-
-### Alias
-The alias `shell` is provided as an shortcut of `os.execute`:
-```
-return shell('echo hello')
-```
 
 ## Callbacks
 The default shell functionality can be extended by creating custom event
 callbacks in the users profile. There are four different event sources:
 
-* `client_ready()`          Called when the client is connected
-* `client_<command>(param)` Called when the client receives a `<command>`
+* `server_ready()`          Called when the server is connected
 * `server_<command>(param)` Called when the server receives a `<command>`
-* `server_prompt(line)`     Called when the server processes a prompt
+* `client_<command>(param)` Called when the client receives a `<command>`
+* `client_prompt(line)`     Called when the client processes a prompt
 
-All callbacks except `client_ready` must return a `boolean`. In case `true`
+All callbacks except `server_ready` must return a `boolean`. In case `true`
 is returned, all further processing will be prevented. The `client_ready`
 callback must return a `string`, which will be displayed by the client.
 
@@ -129,25 +93,25 @@ The `<command>` names will be converted to lowercase.
 
 Here is an example on how to implement an simple _Echo Server_:
 ```
-function _P.client_ready()
+function server_ready()
   return 'This is an echo server'
 end
 ```
 ```
-function _P.client_echo(param)
-  _P.net.send('ECHO', param)
+function server_echo(param)
+  net.send('ECHO', param)
   return true
 end
 ```
 ```
-function _P.server_echo(param)
+function client_echo(param)
   io.write(param .. '\n')
   return true
 end
 ```
 ```
-function _P.server_prompt(line)
-  _P.net.send('ECHO', line)
+function client_prompt(line)
+  net.send('ECHO', line)
   return true
 end
 ```
@@ -181,38 +145,38 @@ for better readability.
 If an unknown command is received, no error will be raised, instead it will be
 ignored by the client and server.
 
-### Server Commands
+### Server issued
 * `HELO <user>@<host>:<path>`
 * `TEXT <text>`
 
-### Client Commands
+### Client issued
 * `EXEC <command>`
 * `PATH <path>`
 * `HALT`
 
 ### Examples
 ```
-Client: HELO root@localhost:/
+Server: HELO root@localhost:/
 ```
 ```
-Server: PATH var
-```
-
-```
-Client: HELO root@localhost:/var
-```
-```
-Server: EXEC return shell('echo hello')
-```
-```
-Client: TEXT hello
+Client: PATH var
 ```
 
 ```
-Client: HELO root@localhost:/var
+Server: HELO root@localhost:/var
 ```
 ```
-Server: EXIT
+Client: EXEC return os.shell('echo hello')
+```
+```
+Server: TEXT hello
+```
+
+```
+Server: HELO root@localhost:/var
+```
+```
+Client: HALT
 ```
 
 # License

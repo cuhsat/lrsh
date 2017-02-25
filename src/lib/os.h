@@ -50,13 +50,13 @@ typedef struct {
     char user[MAX_USER];
     char host[MAX_HOST];
     char path[MAX_PATH];
-} env_t;
+} path_t;
 
-extern int os_start(int mode);
+extern int os_init(int mode);
+extern int os_daemon(int debug);
+extern int os_path(path_t *path);
 extern int os_prompt(prompt_t *prompt);
 extern int os_sleep(time_t time);
-extern int os_env(env_t *env);
-extern int os_daemon(int debug);
 extern int os_exit();
 
 #endif // LIB_OS_H

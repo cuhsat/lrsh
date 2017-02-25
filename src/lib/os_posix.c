@@ -32,18 +32,64 @@
 #include <unistd.h>
 
 /**
- * OS start
+ * OS init
  * @param mode the mode
  * @return success
  */
-extern int os_start(int mode) {
+extern int os_init(int mode) {
 #ifdef HAVE_READLINE
 
-    if (mode == 1 && readline_init() < 0) {
+    if (mode == 0 && readline_init() < 0) {
         return -1;
     }
 
 #endif // HAVE_READLINE
+
+    return 0;
+}
+
+/**
+ * OS daemon
+ * @param debug the debug flag
+ * @return success
+ */
+extern int os_daemon(int debug) {
+#ifdef HAVE_DAEMON
+
+    return daemon(0, debug);
+
+#else // HAVE_DAEMON
+
+    return chdir("/");
+
+#endif // HAVE_DAEMON
+}
+
+/**
+ * OS path
+ * @param path the path address
+ * @return success
+ */
+extern int os_path(path_t *path) {
+    struct passwd *pw;
+
+    if (strlen(path->path) && chdir(path->path) < 0) {
+        return -1;
+    }
+
+    if ((pw = getpwuid(getuid())) == NULL) {
+        return -1;
+    }
+
+    strncpy(path->user, pw->pw_name, strlen(pw->pw_name));
+
+    if (gethostname(path->host, sizeof(path->host)) < 0) {
+        return -1;
+    }
+
+    if (getcwd(path->path, sizeof(path->path)) == NULL) {
+        return -1;
+    }
 
     return 0;
 }
@@ -97,52 +143,6 @@ extern int os_sleep(time_t time) {
     }
 
     return 0;
-}
-
-/**
- * OS env
- * @param env the env address
- * @return success
- */
-extern int os_env(env_t *env) {
-    struct passwd *pw;
-
-    if (strlen(env->path) && chdir(env->path) < 0) {
-        return -1;
-    }
-
-    if ((pw = getpwuid(getuid())) == NULL) {
-        return -1;
-    }
-
-    strncpy(env->user, pw->pw_name, strlen(pw->pw_name));
-
-    if (gethostname(env->host, sizeof(env->host)) < 0) {
-        return -1;
-    }
-
-    if (getcwd(env->path, sizeof(env->path)) == NULL) {
-        return -1;
-    }
-
-    return 0;
-}
-
-/**
- * OS daemon
- * @param debug the debug flag
- * @return success
- */
-extern int os_daemon(int debug) {
-#ifdef HAVE_DAEMON
-
-    return daemon(0, debug);
-
-#else // HAVE_DAEMON
-
-    return chdir("/");
-
-#endif // HAVE_DAEMON
 }
 
 /**

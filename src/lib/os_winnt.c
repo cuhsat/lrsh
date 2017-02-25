@@ -26,14 +26,60 @@
 #include <windows.h>
 
 /**
- * OS start
+ * OS init
  * @param mode the mode
  * @return success
  */
-extern int os_start(int mode) {
+extern int os_init(int mode) {
     WSADATA wsa;
 
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+/**
+ * OS daemon
+ * @param debug the debug flag
+ * @return success
+ */
+extern int os_daemon(int debug) {
+    if (ShowWindow(GetConsoleWindow(), debug) == 0) {
+        return -1;
+    }
+
+    if (SetCurrentDirectoryA("C:\\") == 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+/**
+ * OS path
+ * @param path the path address
+ * @return success
+ */
+extern int os_path(path_t *path) {
+    if (strlen(path->path) && SetCurrentDirectoryA(path->path) == 0) {
+        return -1;
+    }
+
+    DWORD user_size = sizeof(path->user);
+
+    if (GetUserNameA(path->user, &user_size) == 0) {
+        return -1;
+    }
+
+    DWORD host_size = sizeof(path->host);
+
+    if (GetComputerNameA(path->host, &host_size) == 0) {
+        return -1;
+    }
+
+    if (GetCurrentDirectoryA(sizeof(path->path), path->path) == 0) {
         return -1;
     }
 
@@ -64,52 +110,6 @@ extern int os_prompt(prompt_t *prompt) {
  */
 extern int os_sleep(time_t time) {
     if (SleepEx((DWORD)time, FALSE) != 0) {
-        return -1;
-    }
-
-    return 0;
-}
-
-/**
- * OS env
- * @param env the env address
- * @return success
- */
-extern int os_env(env_t *env) {
-    if (strlen(env->path) && SetCurrentDirectoryA(env->path) == 0) {
-        return -1;
-    }
-
-    DWORD user_size = sizeof(env->user);
-
-    if (GetUserNameA(env->user, &user_size) == 0) {
-        return -1;
-    }
-
-    DWORD host_size = sizeof(env->host);
-
-    if (GetComputerNameA(env->host, &host_size) == 0) {
-        return -1;
-    }
-
-    if (GetCurrentDirectoryA(sizeof(env->path), env->path) == 0) {
-        return -1;
-    }
-
-    return 0;
-}
-
-/**
- * OS daemon
- * @param debug the debug flag
- * @return success
- */
-extern int os_daemon(int debug) {
-    if (ShowWindow(GetConsoleWindow(), debug) == 0) {
-        return -1;
-    }
-
-    if (SetCurrentDirectoryA("C:\\") == 0) {
         return -1;
     }
 
