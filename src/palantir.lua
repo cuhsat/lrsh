@@ -28,9 +28,9 @@ local profile = HOME .. '/.palantir.lua'
 local raw_recv = net.recv
 local raw_send = net.send
 
--- Error handler
+-- Local error handler
 -- @param error message
-function _error(message)
+local function _error(message)
   if message ~= 'Success' then
     io.stderr:write(string.format('Palantir error: %s\n', message))
 
@@ -40,12 +40,12 @@ function _error(message)
   end
 end
 
--- Event trigger
+-- Local event trigger
 -- @param event source
 -- @param event name
 -- @param event param
 -- @return callback result
-function _event(source, event, param)
+local function _event(source, event, param)
   local status, result = pcall(_G[source .. '_' .. event:lower()], param)
 
   if status then
@@ -55,10 +55,10 @@ function _event(source, event, param)
   end
 end
 
--- Evaluate script
+-- Local evaluate script
 -- @param chunk to load
 -- @return result or error
-function _eval(chunk)
+local function _eval(chunk)
   local f, err = load(chunk, 'load', 't')
 
   if f then
