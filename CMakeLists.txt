@@ -168,9 +168,9 @@ target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES} ${LIBRARIES})
 #  Testing (POSIX only)
 #
 
-if(UNIX)
+if(UNI AND NOT APPLEX)
     add_test(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/test/test.sh)
-endif(UNIX)
+endif(UNIX AND NOT APPLE)
 
 #
 #  Install (POSIX only)
