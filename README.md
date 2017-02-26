@@ -5,7 +5,7 @@ readable protocol written in C and Lua.
 
 # Build ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
 ```
-$ cmake . [-DDEBUG=ON] && make [VERBOSE=1]
+$ cmake . && make
 ```
 
 Required:
@@ -35,6 +35,10 @@ All input will be evaluated and execute as Lua commands. The internal function
 `os.shell` will execute system commands by using the users default shell and
 return the results where `strerr` will be mapped to `stdout`.
 
+## Profile
+A user specific [profile](https://www.github.com/cuhsat/palantir-profile) can 
+be placed under `~/.palantir.lua`.
+
 ## Keyboard
 * <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
 * <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
@@ -45,23 +49,21 @@ return the results where `strerr` will be mapped to `stdout`.
 New global constants and functions will be defined which contain all shell
 specific extensions.
 
-## Profile
-A user specific [profile](https://www.github.com/cuhsat/palantir-profile) can 
-be placed under `~/.palantir.lua`.
-
 ## Constants
 * `SERVER`  The command line option `d`
 * `TOKEN`   The command line argument `a`
 * `HOST`    The command line argument `HOST`
 * `PORT`    The command line argument `PORT`
 * `HOME`    The stated users home directory
-* `DEBUG`   The compiled debug flag
 * `BUILD`   The compiled build information
+* `DEBUG`   The compiled debug flag
 * `VERSION` The compiled version number
 
 ## Functions
 
 ### Network
+The network functions share one socket and are not meant to be re-opened:
+
 * `net.server(host, port)`
 * `net.client(host, port)`
 * `net.connect(host, port)`
@@ -71,6 +73,8 @@ be placed under `~/.palantir.lua`.
 * `net.send(command, param)`
 
 ### Operating System
+The operating system functions will extend the Lua build-in `os` library:
+
 * `os.path(path)`
 * `os.prompt(prompt)`
 * `os.shell(command)`
