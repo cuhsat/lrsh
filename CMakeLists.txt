@@ -165,13 +165,17 @@ add_dependencies(${PROJECT_NAME} resources)
 target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES} ${LIBRARIES})
 
 #
-#  Testing
+#  Testing (POSIX only)
 #
 
-add_test(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/test/test.sh)
+if(UNIX)
+    add_test(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/test/test.sh)
+endif(UNIX)
 
 #
-#  Install
+#  Install (POSIX only)
 #
 
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+if(UNIX)
+    install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+endif(UNIX)
