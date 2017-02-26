@@ -77,6 +77,18 @@ static int newline(int count, int key) {
 }
 
 /**
+ * Terminate
+ * @param count parameter
+ * @param key code
+ * @return success
+ */
+static int terminate(int count, int key) {
+    rl_replace_line("--exit", 1);
+
+    return (rl_done = 1);
+}
+
+/**
  * Readline init
  * @return success
  */
@@ -85,6 +97,10 @@ extern int readline_init() {
     rl_attempted_completion_function = completion;
 
     if (rl_bind_keyseq("\\C-n", newline) != 0) {
+        return -1;
+    }
+
+    if (rl_bind_keyseq("\\C-x", terminate) != 0) {
         return -1;
     }
 

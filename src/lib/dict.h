@@ -239,9 +239,6 @@ const char *dict[] = {
     "VERSION",
 
     // Own functions
-    "_error",
-    "_eval",
-    "_event",
     "net",
     "net.accept",
     "net.client",

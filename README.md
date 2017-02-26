@@ -35,15 +35,16 @@ All input will be evaluated and execute as Lua commands. The internal function
 `os.shell` will execute system commands by using the users default shell and
 return the results where `strerr` will be mapped to `stdout`.
 
+## Keyboard
+* <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
+* <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
+* <kbd>Ctrl</kbd>+<kbd>x</kbd> termintates the shell
+
+> Only available if compiled with `readline` support.
+
 ## Profile
 A user specific [profile](https://www.github.com/cuhsat/palantir-profile) can 
 be placed under `~/.palantir.lua`.
-
-## Keyboard
-* <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
-* <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
-
-> Only available if compiled with `readline` support.
 
 # Environment
 New global constants and functions will be defined which contain all shell

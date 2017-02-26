@@ -67,7 +67,7 @@ static int palantir_start(const char *host, uint16_t port) {
 
     luaL_openlibs(L);
 
-    lua_pushinteger(L, mode);
+    lua_pushboolean(L, mode);
     lua_setglobal(L, "SERVER");
     lua_pushstring(L, host);
     lua_setglobal(L, "HOST");

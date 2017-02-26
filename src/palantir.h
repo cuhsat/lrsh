@@ -30,7 +30,7 @@
 #endif
 
 #ifndef BUILD
-#define BUILD "Release"
+#define BUILD "Unknown"
 #endif
 
 #ifndef DEBUG
