@@ -33,5 +33,5 @@ install:
 script:
   - cmake .
   - make
-  - ./palantir -v
+  - make test
 sudo: required
