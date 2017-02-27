@@ -3,17 +3,7 @@
 Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
 readable protocol written in C and Lua.
 
-# Build ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
-```
-$ cmake . && make
-```
-
-Required:
-* [CMake 3.0](https://cmake.org)
-* [Lua 5.1](https://www.lua.org)
-
-Supported:
-* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
+![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
 
 # Usage
 ```
@@ -36,9 +26,9 @@ All input will be evaluated and execute as Lua commands. The internal function
 return the results where `strerr` will be mapped to `stdout`.
 
 ## Keyboard
-* <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
 * <kbd>Ctrl</kbd>+<kbd>n</kbd> inserts a new line
 * <kbd>Ctrl</kbd>+<kbd>x</kbd> termintates the shell
+* <kbd>Tab</kbd> autocompletes keywords, functions, globals and commands
 
 > Only available if compiled with `readline` support.
 
@@ -183,6 +173,18 @@ Server: HELO root@localhost:/var
 ```
 Client: HALT
 ```
+
+# Build
+```
+$ cmake [-DDEBUG=ON] . && make [VERBOSE=1]
+```
+
+## Required
+* [CMake 3.0](https://cmake.org)
+* [Lua 5.1](https://www.lua.org)
+
+## Supported
+* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
 
 # License
 Licensed under the terms of the [MIT License](LICENSE).
