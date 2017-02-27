@@ -179,9 +179,11 @@ end
 -- Load user profile
 pcall(dofile, profile)
 
--- Start shell
+-- Main loop
 local main = (SERVER and net.server or net.client)
 
+-- Run shell
 while not xpcall(function() return main(HOST, PORT) end, _error) do end
 
+-- Exit
 io.write('Palantir exit\n')
