@@ -27,7 +27,10 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#define NAME "Palantir"
+#define READLINE_NAME "Palantir"
+
+#define KEYSEQ_NEWLINE   "\\C-n"
+#define KEYSEQ_TERMINATE "\\C-x"
 
 /**
  * Generator
@@ -83,6 +86,7 @@ static int newline(int count, int key) {
  * @return success
  */
 static int terminate(int count, int key) {
+    printf("\n");
     rl_replace_line("--exit", 1);
 
     return (rl_done = 1);
@@ -93,14 +97,14 @@ static int terminate(int count, int key) {
  * @return success
  */
 extern int readline_init() {
-    rl_readline_name = NAME;
+    rl_readline_name = READLINE_NAME;
     rl_attempted_completion_function = completion;
 
-    if (rl_bind_keyseq("\\C-n", newline) != 0) {
+    if (rl_bind_keyseq(KEYSEQ_NEWLINE, newline) != 0) {
         return -1;
     }
 
-    if (rl_bind_keyseq("\\C-x", terminate) != 0) {
+    if (rl_bind_keyseq(KEYSEQ_TERMINATE, terminate) != 0) {
         return -1;
     }
 

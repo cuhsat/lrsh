@@ -71,17 +71,13 @@ extern int os_daemon(int debug) {
  * @return success
  */
 extern int os_path(path_t *path) {
-    struct passwd *pw;
-
     if (strlen(path->path) && chdir(path->path) < 0) {
         return -1;
     }
 
-    if ((pw = getpwuid(getuid())) == NULL) {
+    if (getlogin_r(path->user, sizeof(path->user)) != 0) {
         return -1;
     }
-
-    strncpy(path->user, pw->pw_name, strlen(pw->pw_name));
 
     if (gethostname(path->host, sizeof(path->host)) < 0) {
         return -1;

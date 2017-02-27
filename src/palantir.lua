@@ -31,7 +31,7 @@ local raw_send = net.send
 -- Local error handler
 -- @param error message
 local function _error(message)
-  if message ~= 'Success' then
+  if message ~= 'Success' and message ~= 'No error' then
     io.stderr:write(string.format('Palantir error: %s\n', message))
 
     if DEBUG then
@@ -55,20 +55,20 @@ local function _event(source, event, param)
   end
 end
 
--- Local evaluate script
+-- Local evaluate chunk
 -- @param chunk to load
 -- @return result or error
 local function _eval(chunk)
-  local f, err = load(chunk, 'load', 't')
+  local code, result = load(chunk, 'load', 't')
 
-  if f then
-    return tostring(f() or '')
+  if code then
+    return tostring(code() or '')
   else
-    return string.format('Palantir error: %s\n', err)
+    return string.format('Palantir error: %s\n', result)
   end
 end
 
--- OS execute shell
+-- OS execute shell command
 -- @param command to execute
 -- @return result or error
 function os.shell(command)
@@ -182,6 +182,6 @@ pcall(dofile, profile)
 -- Start shell
 local main = (SERVER and net.server or net.client)
 
-if xpcall(function() return main(HOST, PORT) end, _error) then
-  io.write('Palantir exit\n')
-end
+while not xpcall(function() return main(HOST, PORT) end, _error) do end
+
+io.write('Palantir exit\n')
