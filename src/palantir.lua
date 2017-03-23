@@ -16,13 +16,13 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
-io.write(string.format('Palantir %s (%s)\n', VERSION, _VERSION))
+io.write(string.format('Palantir %s (%s %s)\n', VERSION, _VERSION, BUILD))
 
 -- Home directory
 HOME = os.getenv('HOME') or os.getenv('USERPROFILE') or '.'
 
 -- User profile
-local profile = HOME .. '/.palantir.lua'
+local profile = HOME .. '/.profile.lua'
 
 -- Raw protocol
 local raw_recv = net.recv
@@ -59,10 +59,10 @@ end
 -- @param chunk to load
 -- @return result or error
 local function _eval(chunk)
-  local code, result = load(chunk, 'load', 't')
+  local command, result = load(chunk, 'command', 't')
 
-  if code then
-    return tostring(code() or '')
+  if command then
+    return tostring(command() or '')
   else
     return string.format('Palantir error: %s\n', result)
   end
@@ -150,10 +150,6 @@ end
 function net.server(host, port)
   while true do
     if xpcall(function() return net.connect(host, port) end, _error) then
-      if server_ready then
-        net.send('TEXT', server_ready())
-      end
-
       while true do
         net.send('HELO', string.format('%s@%s:%s ', os.path()))
 

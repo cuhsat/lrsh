@@ -1,5 +1,5 @@
-.\" Manpage for palantir
-.TH PALANTIR 1
+.\" Manpage for Palantir
+.TH PALANTIR 8
 .SH NAME
 Palantir \- Lua Reverse Shell
 .SH SYNOPSIS
@@ -10,7 +10,7 @@ Palantir is a Lua scriptable, portable, tiny reverse shell.
 .IP "-d"
 Start as server
 .IP "-h"
-Shows the usage information
+Shows the usage
 .IP "-l"
 Shows the license
 .IP "-v"
@@ -18,7 +18,7 @@ Shows the version
 .IP "-a"
 Authentication token
 .SH FILES
-.I ~/.palantir.lua
+.I ~/.profile.lua
 .RS
 Executed at start
 .RE

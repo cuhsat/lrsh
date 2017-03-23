@@ -32,9 +32,9 @@
 #include <string.h>
 
 #if (defined(DEBUG) && (DEBUG == 1))
-#define LUA_TRACE() fprintf(stderr, "-- %s\n", __func__)
+#define LUA_TRACE fprintf(stderr, "-- %s\n", __func__)
 #else
-#define LUA_TRACE()
+#define LUA_TRACE
 #endif
 
 /**
@@ -54,7 +54,7 @@ extern int lua_panic(lua_State *L) {
  * @return stack count
  */
 extern int lua_connect(lua_State *L) {
-    LUA_TRACE();
+    LUA_TRACE;
 
     host_t host = {
         luaL_checkstring(L, 1),
@@ -74,7 +74,7 @@ extern int lua_connect(lua_State *L) {
  * @return stack count
  */
 extern int lua_listen(lua_State *L) {
-    LUA_TRACE();
+    LUA_TRACE;
 
     host_t host = {
         luaL_checkstring(L, 1),
@@ -94,7 +94,7 @@ extern int lua_listen(lua_State *L) {
  * @return stack count
  */
 extern int lua_accept(lua_State *L) {
-    LUA_TRACE();
+    LUA_TRACE;
 
     if (net_accept() < 0) {
         return luaL_error(L, strerror(errno));
@@ -109,7 +109,7 @@ extern int lua_accept(lua_State *L) {
  * @return stack count
  */
 extern int lua_send(lua_State *L) {
-    LUA_TRACE();
+    LUA_TRACE;
 
     frame_t frame;
 
@@ -128,7 +128,7 @@ extern int lua_send(lua_State *L) {
  * @return stack count
  */
 extern int lua_recv(lua_State *L) {
-    LUA_TRACE();
+    LUA_TRACE;
 
     frame_t frame;
 
@@ -147,7 +147,7 @@ extern int lua_recv(lua_State *L) {
  * @return stack count
  */
 extern int lua_path(lua_State *L) {
-    LUA_TRACE();
+    LUA_TRACE;
 
     path_t path;
 
@@ -174,7 +174,7 @@ extern int lua_path(lua_State *L) {
  * @return stack count
  */
 extern int lua_prompt(lua_State *L) {
-    LUA_TRACE();
+    LUA_TRACE;
 
     prompt_t prompt = {
         luaL_checkstring(L, 1)
@@ -195,7 +195,7 @@ extern int lua_prompt(lua_State *L) {
  * @return stack count
  */
 extern int lua_sleep(lua_State *L) {
-    LUA_TRACE();
+    LUA_TRACE;
 
     os_sleep((time_t)luaL_checkinteger(L, 1));
 

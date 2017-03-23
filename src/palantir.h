@@ -23,14 +23,14 @@
 
 #include <lua.h>
 
-#define VERSION "1.27.2"
+#define VERSION "1.28.0"
 
 #if LUA_VERSION_NUM < 501
 #error "Lua 5.1 required"
 #endif
 
 #ifndef BUILD
-#define BUILD "unknown"
+#define BUILD "Generic"
 #endif
 
 #ifndef DEBUG

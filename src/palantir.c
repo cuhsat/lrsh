@@ -36,8 +36,8 @@
 
 #include "palantir.inc"
 
-#define LUA_CODE ((const char *)palantir_luac)
-#define LUA_SIZE ((size_t)palantir_luac_len)
+#define PALANTIR_CODE ((const char *)palantir_luac)
+#define PALANTIR_SIZE ((size_t)palantir_luac_len)
 
 typedef enum {
     MODE_CLIENT = 0,
@@ -104,7 +104,7 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_setfield(L, -2, "sleep");
     lua_pop(L, 1);
 
-    if (luaL_loadbuffer(L, LUA_CODE, LUA_SIZE, "lua") != 0) {
+    if (luaL_loadbuffer(L, PALANTIR_CODE, PALANTIR_SIZE, "lua") != 0) {
         fprintf(stderr, "Palantir error: %s\n", lua_tostring(L, -1));
         return -1;
     }
@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
                 exit(EXIT_SUCCESS);
 
             case 'v':
-                printf("Palantir %s (%s)\n", VERSION, LUA_VERSION);
+                printf("Palantir %s (%s %s)\n", VERSION, LUA_VERSION, BUILD);
                 exit(EXIT_SUCCESS);
 
             default:

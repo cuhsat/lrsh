@@ -29,17 +29,21 @@ find_program(LUAC_EXECUTABLE NAMES luac)
 
 if(NOT LUA_EXECUTABLE)
     message(FATAL_ERROR "Lua not found!")
-endif()
+endif(NOT LUA_EXECUTABLE)
 
 if(NOT LUAC_EXECUTABLE)
     message(FATAL_ERROR "Luac not found!")
-endif()
+endif(NOT LUAC_EXECUTABLE)
+
+if(NOT UNIX AND NOT WIN32)
+    message(FATAL_ERROR "System not supported!")
+endif(NOT UNIX AND NOT WIN32)
 
 #
 #  Compiler flags
 #
 
-set(BUILD "${CMAKE_SYSTEM} ${CMAKE_C_COMPILER_ID} (${CMAKE_GENERATOR})")
+set(BUILD "${CMAKE_SYSTEM} ${CMAKE_C_COMPILER_ID}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pedantic -Wall -Werror")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBUILD='\"${BUILD}\"'")
 
@@ -168,9 +172,9 @@ target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES} ${LIBRARIES})
 #  Testing (POSIX only)
 #
 
-if(UNIX AND NOT APPLE)
+if(UNIX AND HAVE_READLINE)
     add_test(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/test/test.sh)
-endif(UNIX AND NOT APPLE)
+endif(UNIX AND HAVE_READLINE)
 
 #
 #  Install (POSIX only)

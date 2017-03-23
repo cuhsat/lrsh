@@ -3,6 +3,8 @@
 Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
 readable protocol written in C and Lua.
 
+![License](https://img.shields.io/github/license/cuhsat/palantir.svg)
+![Release](https://img.shields.io/github/release/cuhsat/palantir.svg)
 ![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
 
 # Usage
@@ -12,7 +14,7 @@ $ palantir [-dhlv] [-a TOKEN] HOST PORT
 
 ## Options
 * `d` Start as server
-* `h` Shows the usage information
+* `h` Shows the usage
 * `l` Shows the license
 * `v` Shows the version
 * `a` Authentication token
@@ -22,7 +24,7 @@ $ palantir [-dhlv] [-a TOKEN] HOST PORT
 * `-- halt` Shutdown server
 
 All input will be evaluated and execute as Lua commands. The internal function
-`os.shell` will execute system commands by using the users default shell and
+`os.shell` will execute system commands by using the users default shell and 
 return the results where `strerr` will be mapped to `stdout`.
 
 ## Keyboard
@@ -33,8 +35,12 @@ return the results where `strerr` will be mapped to `stdout`.
 > Only available if compiled with `readline` support.
 
 ## Profile
-A user specific [profile](https://www.github.com/cuhsat/palantir-profile) can 
-be placed under `~/.palantir.lua`.
+A user [profile](https://www.github.com/cuhsat/palantir-profile) can be placed
+under `~/.profile.lua` and will be loaded at the start.
+
+## Modules
+Add-on [modules](https://www.github.com/cuhsat/palantir-modules) will be
+searched with-in the default Lua `package.path`.
 
 # Environment
 New global constants and functions will be defined which contain all shell
@@ -73,25 +79,18 @@ The operating system functions will extend the Lua build-in `os` library:
 
 ## Callbacks
 The default shell functionality can be extended by creating custom event
-callbacks in the users profile. There are four different event sources:
+callbacks. There are three different event sources:
 
-* `server_ready()`          Called when the server is connected
 * `server_<command>(param)` Called when the server receives a `<command>`
 * `client_<command>(param)` Called when the client receives a `<command>`
 * `client_prompt(line)`     Called when the client processes a prompt
 
-All callbacks except `server_ready` must return a `boolean`. In case `true`
-is returned, all further processing will be prevented. The `client_ready`
-callback must return a `string`, which will be displayed by the client.
+All callbacks must return a `boolean`. In case `true` is returned, all further
+processing will be prevented.
 
 The `<command>` names will be converted to lowercase.
 
 Here is an example on how to implement an simple _Echo Server_:
-```
-function server_ready()
-  return 'This is an echo server'
-end
-```
 ```
 function server_echo(param)
   net.send('ECHO', param)

@@ -34,20 +34,20 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-
-#define CLOSE(fd) (close(fd) < 0)
-
-typedef int socket_t;
-#endif // POSIX
+#endif
 
 #ifdef WINNT
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#endif
 
-#define CLOSE(fd) (closesocket(fd) != 0)
+#ifdef POSIX
+typedef int socket_t;
+#endif
 
+#ifdef WINNT
 typedef SOCKET socket_t;
-#endif // WINNT
+#endif
 
 static uint32_t auth = 0;
 static char *buffer = NULL;
@@ -93,9 +93,21 @@ static int terminate(socket_t fd) {
             return -1;
         }
 
-        if (CLOSE(fd)) {
+#ifdef POSIX
+
+        if (close(fd) < 0) {
             return -1;
         }
+
+#endif // POSIX
+
+#ifdef WINNT
+
+        if (closesocket(fd) != 0) {
+            return -1;
+        }
+
+#endif // WINNT
     }
 
     return 0;
