@@ -1,3 +1,6 @@
+# System
+* text=auto
+
 # C
 *.c text
 *.h text
