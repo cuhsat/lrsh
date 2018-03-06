@@ -8,26 +8,10 @@
   <img src="https://img.shields.io/github/license/cuhsat/palantir.svg" alt="License">
 </p>
 
-Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
-readable protocol written in C and Lua.
-
-* [Usage](#usage)
-  * [Options](#options)
-  * [Commands](#commands)
-  * [Keyboard](#keyboard)
-  * [Profile](#profile)
-  * [Modules](#modules)
-* [Environment](#environment)
-  * [Constants](#constants)
-  * [Functions](#functions)
-  * [Callbacks](#callbacks)
-* [Protocol](#protocol)
-  * [Network Layer](#network-layer)
-  * [Command Layer](#command-layer)
-* [Build](#build)
-  * [Required](#required)
-  * [Supported](#supported)
-* [License](#license)
+<p align="center">
+  Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
+  readable protocol written in C and Lua
+</p>
 
 # Usage
 ```
