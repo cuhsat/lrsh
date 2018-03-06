@@ -1,11 +1,32 @@
-![Palantir](doc/palantir.png)
+<p align="center">
+  <img src="doc/palantir.png" alt="Palantir">
+</p>
+<p align="center">
+  <img src="https://img.shields.io/travis/cuhsat/palantir.svg" alt="Build">
+  <img src="https://img.shields.io/github/release/cuhsat/palantir.svg" alt="Release">
+  <img src="https://img.shields.io/github/license/cuhsat/palantir.svg" alt="License">
+</p>
 
 Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
 readable protocol written in C and Lua.
 
-![License](https://img.shields.io/github/license/cuhsat/palantir.svg)
-![Release](https://img.shields.io/github/release/cuhsat/palantir.svg)
-![Build](https://img.shields.io/travis/cuhsat/palantir.svg)
+* [Usage](#usage)
+  * [Options](#options)
+  * [Commands](#commands)
+  * [Keyboard](#keyboard)
+  * [Profile](#profile)
+  * [Modules](#modules)
+* [Environment](#environment)
+  * [Constants](#constants)
+  * [Functions](#functions)
+  * [Callbacks](#callback)
+* [Protocol](#protocol)
+  * [Network Layer](#network-layer)
+  * [Command Layer](#command-layer)
+* [Build](#build)
+  * [Required](#required)
+  * [Supported](#supported)
+* [License](#license)
 
 # Usage
 ```
@@ -24,7 +45,7 @@ $ palantir [-dhlv] [-a TOKEN] HOST PORT
 * `-- halt` Shutdown server
 
 All input will be evaluated and execute as Lua commands. The internal function
-`os.shell` will execute system commands by using the users default shell and 
+`os.shell` will execute system commands by using the users default shell and
 return the results where `strerr` will be mapped to `stdout`.
 
 ## Keyboard
@@ -35,7 +56,7 @@ return the results where `strerr` will be mapped to `stdout`.
 > Only available if compiled with `readline` support.
 
 ## [Profile](https://www.github.com/cuhsat/palantir-profile)
-A user profile can be placed under `~/.profile.lua` and will be loaded at the 
+A user profile can be placed under `~/.profile.lua` and will be loaded at the
 start.
 
 ## [Modules](https://www.github.com/cuhsat/palantir-modules)
@@ -138,11 +159,11 @@ for better readability.
 If an unknown command is received, no error will be raised, instead it will be
 ignored by the client and server.
 
-### Server issued
+### Server Issued
 * `HELO <user>@<host>:<path>`
 * `TEXT <text>`
 
-### Client issued
+### Client Issued
 * `EXEC <command>`
 * `PATH <path>`
 * `HALT`
