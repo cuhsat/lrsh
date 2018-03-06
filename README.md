@@ -1,9 +1,10 @@
 <p align="center">
   <img src="doc/palantir.png" alt="Palantir">
 </p>
+
 <p align="center">
-  <img src="https://img.shields.io/travis/cuhsat/palantir.svg" alt="Build">
   <img src="https://img.shields.io/github/release/cuhsat/palantir.svg" alt="Release">
+  <img src="https://img.shields.io/travis/cuhsat/palantir.svg" alt="Build">
   <img src="https://img.shields.io/github/license/cuhsat/palantir.svg" alt="License">
 </p>
 
@@ -19,7 +20,7 @@ readable protocol written in C and Lua.
 * [Environment](#environment)
   * [Constants](#constants)
   * [Functions](#functions)
-  * [Callbacks](#callback)
+  * [Callbacks](#callbacks)
 * [Protocol](#protocol)
   * [Network Layer](#network-layer)
   * [Command Layer](#command-layer)
