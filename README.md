@@ -40,12 +40,13 @@ return the results where `strerr` will be mapped to `stdout`.
 
 > Only available if compiled with `readline` support.
 
-## [Profile](https://www.github.com/cuhsat/palantir-profile)
-A user profile can be placed under `~/.profile.lua` and will be loaded at the
-start.
+## Profile 
+[A user profile](https://www.github.com/cuhsat/palantir-profile) can be 
+placed under `~/.profile.lua` and will be loaded at the start.
 
-## [Modules](https://www.github.com/cuhsat/palantir-modules)
-Add-on modules will be searched with-in the default Lua `package.path`.
+## Modules
+[Add-on modules](https://www.github.com/cuhsat/palantir-modules) will be 
+searched with-in the default Lua `package.path`.
 
 # Environment
 New global constants and functions will be defined which contain all shell
