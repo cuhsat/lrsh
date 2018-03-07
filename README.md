@@ -3,9 +3,10 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/release/cuhsat/palantir.svg" alt="Release">
-  <img src="https://img.shields.io/travis/cuhsat/palantir.svg" alt="Build">
-  <img src="https://img.shields.io/github/license/cuhsat/palantir.svg" alt="License">
+  <img src="https://img.shields.io/github/release/cuhsat/palantir.svg"> 
+  <img src="https://img.shields.io/github/languages/code-size/cuhsat/palantir.svg">
+  <img src="https://img.shields.io/travis/cuhsat/palantir.svg">
+  <img src="https://img.shields.io/github/license/cuhsat/palantir.svg">
 </p>
 
 <p align="center">
