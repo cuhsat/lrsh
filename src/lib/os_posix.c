@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2017 Christian Uhsat <christian@uhsat.de>
+ * Copyright (c) 2016-2018 Christian Uhsat <christian@uhsat.de>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -75,9 +75,13 @@ extern int os_path(path_t *path) {
         return -1;
     }
 
-    if (getlogin_r(path->user, sizeof(path->user)) != 0) {
+    struct passwd *pass;
+
+    if ((pass = getpwuid(getuid())) == NULL) {
         return -1;
     }
+
+    strncpy(path->user, pass->pw_name, sizeof(path->user));
 
     if (gethostname(path->host, sizeof(path->host)) < 0) {
         return -1;

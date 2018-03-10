@@ -44,7 +44,7 @@ endif(NOT UNIX AND NOT WIN32)
 #
 
 set(BUILD "${CMAKE_SYSTEM} ${CMAKE_C_COMPILER_ID}")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pedantic -Wall -Werror")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -pedantic -Wall -Werror")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBUILD='\"${BUILD}\"'")
 
 #
@@ -88,6 +88,8 @@ endif(DEBUG)
 #
 
 if(UNIX)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_DEFAULT_SOURCE")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_BSD_SOURCE")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPOSIX=1")
     set(SOURCE_FILES "${SOURCE_FILES}"
         ${CMAKE_SOURCE_DIR}/src/lib/os_posix.c
