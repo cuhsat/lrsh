@@ -42,7 +42,7 @@ return the results where `strerr` will be mapped to `stdout`.
 > Only available if compiled with `readline` support.
 
 ## Profile 
-[A user profile](https://www.github.com/cuhsat/palantir-profile) can be 
+A [user profile](https://www.github.com/cuhsat/palantir-profile) can be 
 placed under `~/.profile.lua` and will be loaded at the start.
 
 ## Modules
@@ -97,7 +97,7 @@ processing will be prevented.
 
 The `<command>` names will be converted to lowercase.
 
-Here is an example on how to implement an simple _Echo Server_:
+Here is an example on how to implement a simple _Echo Server_:
 ```
 function server_echo(param)
   net.send('ECHO', param)
@@ -186,11 +186,15 @@ $ cmake [-DDEBUG=ON] . && make [VERBOSE=1]
 ```
 
 ## Required
+Required minimum versions:
+
 * [CMake 3.0](https://cmake.org)
 * [Lua 5.1](https://www.lua.org)
 
 ## Supported
-* [Readline](https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html)
+Suppored minimum versions:
+
+* [Readline 6](https://tiswww.case.edu/php/chet/readline/rltop.html)
 
 # License
 Licensed under the terms of the [MIT License](LICENSE).
