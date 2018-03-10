@@ -33,5 +33,9 @@ install:
 script:
   - cmake .
   - make
-  - ./test/test.sh
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      make test
+    else
+      ./palantir -v
+    fi
 sudo: required
