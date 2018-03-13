@@ -59,6 +59,7 @@ specific extensions.
 * `HOST`    The command line argument `HOST`
 * `PORT`    The command line argument `PORT`
 * `HOME`    The stated users home directory
+* `FILE`    The current running binary path
 * `BUILD`   The compiled build information
 * `DEBUG`   The compiled debug flag
 * `VERSION` The compiled version number
@@ -99,6 +100,12 @@ The `<command>` names will be converted to lowercase.
 
 Here is an example on how to implement a simple _Echo Server_:
 ```
+function client_prompt(line)
+  net.send('ECHO', line)
+  return true
+end
+```
+```
 function server_echo(param)
   net.send('ECHO', param)
   return true
@@ -107,12 +114,6 @@ end
 ```
 function client_echo(param)
   io.write(param .. '\n')
-  return true
-end
-```
-```
-function client_prompt(line)
-  net.send('ECHO', line)
   return true
 end
 ```

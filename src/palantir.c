@@ -57,7 +57,13 @@ static int palantir_start(const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     lua_atpanic(L, lua_panic);
 
+    file_t file;
+
     if (os_init(mode) < 0) {
+        return -1;
+    }
+
+    if (os_file(&file) < 0) {
         return -1;
     }
 
@@ -67,6 +73,8 @@ static int palantir_start(const char *host, uint16_t port) {
 
     luaL_openlibs(L);
 
+    lua_pushstring(L, file.path);
+    lua_setglobal(L, "FILE");
     lua_pushboolean(L, mode);
     lua_setglobal(L, "SERVER");
     lua_pushstring(L, host);

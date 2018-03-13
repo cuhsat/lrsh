@@ -137,7 +137,9 @@ function net.client(host, port)
             param = param .. '\n'
           end
 
-          io.write(param)
+          if param:match('%S+') then
+            io.write(param)
+          end
         end
       end
     end

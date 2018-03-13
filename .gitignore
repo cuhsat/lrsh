@@ -1,5 +1,10 @@
+# Compiled Lua sources
+*.inc
+*.luac
+
 # Object files
 *.o
+*.os
 *.ko
 *.obj
 *.elf
@@ -13,6 +18,8 @@
 *.a
 *.la
 *.lo
+*.def
+*.exp
 
 # Shared objects (inc. Windows DLLs)
 *.dll
@@ -37,9 +44,13 @@
 # CLion
 .idea
 
-# Lua
-*.inc
-*.luac
+# CMake
+*.cmake
+CMakeFiles/
+CMakeCache.txt
+
+# Makefile
+Makefile
 
 # Binary
 palantir

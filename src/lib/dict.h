@@ -231,6 +231,7 @@ const char *dict[] = {
     // Own globals
     "BUILD",
     "DEBUG",
+    "FILE",
     "HOME",
     "HOST",
     "MODE",

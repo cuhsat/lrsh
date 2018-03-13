@@ -173,6 +173,10 @@ extern int net_listen(host_t *host) {
         return -1;
     }
 
+    if (setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &(int){ 1 }, sizeof(int)) < 0) {
+        return -1;
+    }
+
     if (bind(server, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         return -1;
     }

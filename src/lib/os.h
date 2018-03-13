@@ -47,6 +47,10 @@ typedef struct {
 } prompt_t;
 
 typedef struct {
+    char path[MAX_PATH];
+} file_t;
+
+typedef struct {
     char user[MAX_USER];
     char host[MAX_HOST];
     char path[MAX_PATH];
@@ -54,6 +58,7 @@ typedef struct {
 
 extern int os_init(int mode);
 extern int os_daemon(int debug);
+extern int os_file(file_t *file);
 extern int os_path(path_t *path);
 extern int os_prompt(prompt_t *prompt);
 extern int os_sleep(time_t time);
