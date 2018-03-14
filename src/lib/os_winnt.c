@@ -58,19 +58,6 @@ extern int os_daemon(int debug) {
 }
 
 /**
- * OS file
- * @param file the file address
- * @return success
- */
-extern int os_file(file_t *file) {
-    if (GetModuleFileNameA(NULL, file->path, sizeof(file->path)) == 0) {
-        return -1;
-    }
-
-    return 0;
-}
-
-/**
  * OS path
  * @param path the path address
  * @return success

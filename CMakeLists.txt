@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 #
 #  Project
@@ -23,6 +23,7 @@ include(CheckLibraryExists)
 #  Prerequisites
 #
 
+find_package(Git REQUIRED)
 find_package(Lua REQUIRED)
 find_program(LUA_EXECUTABLE NAMES lua)
 find_program(LUAC_EXECUTABLE NAMES luac)
@@ -40,11 +41,27 @@ if(NOT UNIX AND NOT WIN32)
 endif(NOT UNIX AND NOT WIN32)
 
 #
+#  Variables
+#
+
+execute_process(COMMAND ${GIT_EXECUTABLE} describe --abbrev=0 --tags
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    OUTPUT_VARIABLE GIT_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+string(REGEX REPLACE "^v" "" GIT_VERSION ${GIT_VERSION})
+string(CONCAT VERSION "Palantir" " " ${GIT_VERSION})
+
+message(STATUS "Version ${VERSION}")
+
+#
 #  Compiler flags
 #
 
 set(BUILD "${CMAKE_SYSTEM} ${CMAKE_C_COMPILER_ID}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -pedantic -Wall -Werror")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DVERSION='\"${VERSION}\"'")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DBUILD='\"${BUILD}\"'")
 
 #

@@ -58,8 +58,8 @@ specific extensions.
 * `TOKEN`   The command line argument `a`
 * `HOST`    The command line argument `HOST`
 * `PORT`    The command line argument `PORT`
-* `FILE`    The current running binary path
-* `HOME`    The stated users home directory
+* `FILE`    The stated file name and path
+* `HOME`    The stated user home directory
 * `BUILD`   The compiled build information
 * `DEBUG`   The compiled debug flag
 * `VERSION` The compiled version number

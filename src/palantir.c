@@ -49,21 +49,16 @@ static const char *token = "";
 
 /**
  * Palantir start
+ * @param file the file name and path
  * @param host the host address (name or ip)
  * @param port the port number
  * @return success
  */
-static int palantir_start(const char *host, uint16_t port) {
+static int palantir_start(const char *file, const char *host, uint16_t port) {
     lua_State *L = luaL_newstate();
     lua_atpanic(L, lua_panic);
 
-    file_t file;
-
     if (os_init(mode) < 0) {
-        return -1;
-    }
-
-    if (os_file(&file) < 0) {
         return -1;
     }
 
@@ -73,10 +68,10 @@ static int palantir_start(const char *host, uint16_t port) {
 
     luaL_openlibs(L);
 
-    lua_pushstring(L, file.path);
-    lua_setglobal(L, "FILE");
     lua_pushboolean(L, mode);
     lua_setglobal(L, "SERVER");
+    lua_pushstring(L, file);
+    lua_setglobal(L, "FILE");
     lua_pushstring(L, host);
     lua_setglobal(L, "HOST");
     lua_pushinteger(L, port);
@@ -167,7 +162,7 @@ int main(int argc, char *argv[]) {
                 exit(EXIT_SUCCESS);
 
             case 'v':
-                printf("Palantir %s (%s %s)\n", VERSION, LUA_VERSION, BUILD);
+                printf("%s (%s %s)\n", VERSION, LUA_VERSION, BUILD);
                 exit(EXIT_SUCCESS);
 
             default:
@@ -192,7 +187,7 @@ int main(int argc, char *argv[]) {
 
     atexit(palantir_exit);
 
-    if (palantir_start(argv[arg.index], (uint16_t)port) < 0) {
+    if (palantir_start(argv[0], argv[arg.index], (uint16_t)port) < 0) {
         fprintf(stderr, "Palantir error: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }

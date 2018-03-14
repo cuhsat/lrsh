@@ -16,7 +16,7 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
-io.write(string.format('Palantir %s (%s %s)\n', VERSION, _VERSION, BUILD))
+io.write(string.format('%s (%s %s)\n', VERSION, _VERSION, BUILD))
 
 -- Home directory
 HOME = os.getenv('HOME') or os.getenv('USERPROFILE') or '.'
@@ -27,6 +27,11 @@ local profile = HOME .. '/.profile.lua'
 -- Raw protocol
 local raw_recv = net.recv
 local raw_send = net.send
+
+-- Lua 5.1 compatibility
+if loadstring == nil then
+  loadstring = function(chunk, name) return load(chunk, name, 't') end
+end
 
 -- Local error handler
 -- @param error message
@@ -59,7 +64,7 @@ end
 -- @param chunk to load
 -- @return result or error
 local function _eval(chunk)
-  local command, result = load(chunk, 'command', 't')
+  local command, result = loadstring(chunk, 'command')
 
   if command then
     return tostring(command() or '')

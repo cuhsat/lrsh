@@ -23,10 +23,12 @@
 
 #include <lua.h>
 
-#define VERSION "1.30.0"
-
 #if LUA_VERSION_NUM < 501
 #error "Lua 5.1 required"
+#endif
+
+#ifndef VERSION
+#define VERSION "Palantir"
 #endif
 
 #ifndef BUILD
