@@ -41,9 +41,9 @@ return the results where `strerr` will be mapped to `stdout`.
 
 > Only available if compiled with `readline` support.
 
-## Profile 
-A [user profile](https://www.github.com/cuhsat/palantir-profile) can be 
-placed under `~/.profile.lua` and will be loaded at the start.
+## Profile
+The user profile `~/.profile.lua` will be loaded at the start. The macro
+`$ <command>` is defined as a shortcut for `os.shell()` calls by default.
 
 ## Modules
 [Add-on modules](https://www.github.com/cuhsat/palantir-modules) will be 
