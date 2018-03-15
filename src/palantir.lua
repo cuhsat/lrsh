@@ -16,7 +16,7 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
-io.write(string.format('%s (%s %s)\n', VERSION, _VERSION, BUILD))
+io.write(string.format('%s (%s with %s)\n', VERSION, BUILD, _VERSION))
 
 -- Home directory
 HOME = os.getenv('HOME') or os.getenv('USERPROFILE') or '.'
