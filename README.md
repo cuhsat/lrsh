@@ -29,6 +29,8 @@ $ palantir [-dhlv] [-a TOKEN] HOST PORT
 * `a` Authentication token
 
 ## Commands
+* `-- get <regex>` Gets all matching
+* `-- put <regex>` Puts all matching
 * `-- exit` Exits the client
 * `-- halt` Halts the server
 

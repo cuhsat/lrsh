@@ -29,8 +29,10 @@ local raw_recv = net.recv
 local raw_send = net.send
 
 -- Lua 5.x compatibility
-loadstring = loadstring or function(chunk, chunkname)
-  return load(chunk, chunkname, 't')
+if not loadstring then
+  function loadstring(chunk, chunkname)
+    return load(chunk, chunkname, 't')
+  end
 end
 
 -- Local error handler
@@ -55,9 +57,9 @@ local function _event(source, event, param)
 
   if status then
     return result
-  else
-    return false
   end
+
+  return false
 end
 
 -- Local evaluate chunk
@@ -68,9 +70,9 @@ local function _eval(chunk)
 
   if command then
     return tostring(command() or '')
-  else
-    return string.format('Palantir error: %s\n', result)
   end
+
+  return string.format('Palantir error: %s\n', result)
 end
 
 -- OS execute shell command
@@ -189,7 +191,8 @@ pcall(dofile, profile)
 
 -- Run shell
 while not xpcall(function()
-  return (SERVER and net.server or net.client)(HOST, PORT)
+  local main = SERVER and net.server or net.client
+  return main(HOST, PORT)
 end, _error) do end
 
 -- Exit
