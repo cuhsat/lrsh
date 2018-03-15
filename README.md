@@ -1,9 +1,11 @@
+<!-- Palantir -->
+
 <p align="center">
   <img src="doc/palantir.png" alt="Palantir">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/release/cuhsat/palantir.svg"> 
+  <img src="https://img.shields.io/github/release/cuhsat/palantir.svg">
   <img src="https://img.shields.io/github/languages/code-size/cuhsat/palantir.svg">
   <img src="https://img.shields.io/travis/cuhsat/palantir.svg">
   <img src="https://img.shields.io/github/license/cuhsat/palantir.svg">
@@ -27,8 +29,8 @@ $ palantir [-dhlv] [-a TOKEN] HOST PORT
 * `a` Authentication token
 
 ## Commands
-* `-- exit` Shutdown client
-* `-- halt` Shutdown server
+* `-- exit` Exits the client
+* `-- halt` Halts the server
 
 All input will be evaluated and execute as Lua commands. The internal function
 `os.shell` will execute system commands by using the users default shell and
@@ -46,7 +48,7 @@ The user profile `~/.profile.lua` will be loaded at the start. The macro
 `$ <command>` is defined as a shortcut for `os.shell()` calls by default.
 
 ## Modules
-[Add-on modules](https://www.github.com/cuhsat/palantir-modules) will be 
+[Add-on modules](https://www.github.com/cuhsat/palantir-modules) will be
 searched with-in the default Lua `package.path`.
 
 # Environment
