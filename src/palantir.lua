@@ -79,7 +79,6 @@ end
 function os.shell(command)
   local handle = io.popen(command .. ' 2>&1')
   local result = handle:read('*a')
-
   handle:close()
   return result
 end
@@ -118,6 +117,7 @@ function net.client(host, port)
 
         if _event('client', command, param) then
 
+        -- HELO command
         elseif command == 'HELO' then
           local line = os.prompt(param)
 
@@ -137,6 +137,7 @@ function net.client(host, port)
             net.send('EXEC', line)
           end
 
+        -- TEXT command
         elseif command == 'TEXT' then
           if param:sub(-1) ~= '\n' then
             param = param .. '\n'
@@ -157,6 +158,7 @@ end
 function net.server(host, port)
   while true do
     if xpcall(function() return net.connect(host, port) end, _error) then
+
       while true do
         net.send('HELO', string.format('%s@%s:%s ', os.path()))
 
@@ -164,12 +166,15 @@ function net.server(host, port)
 
         if _event('server', command, param) then
 
+        -- PATH command
         elseif command == 'PATH' then
           os.path(param)
 
+        -- EXEC command
         elseif command == 'EXEC' then
           net.send('TEXT', _eval(param))
 
+        -- HALT command
         elseif command == 'HALT' then
           os.exit()
         end
@@ -182,11 +187,10 @@ end
 -- Load user profile
 pcall(dofile, profile)
 
--- Main loop
-local main = (SERVER and net.server or net.client)
-
 -- Run shell
-while not xpcall(function() return main(HOST, PORT) end, _error) do end
+while not xpcall(function()
+  return (SERVER and net.server or net.client)(HOST, PORT)
+end, _error) do end
 
 -- Exit
 io.write('Palantir exit\n')
