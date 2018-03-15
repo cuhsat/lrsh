@@ -28,9 +28,9 @@ local profile = HOME .. '/.profile.lua'
 local raw_recv = net.recv
 local raw_send = net.send
 
--- Lua 5.1 compatibility
-if loadstring == nil then
-  loadstring = function(chunk, name) return load(chunk, name, 't') end
+-- Lua 5.x compatibility
+loadstring = loadstring or function(chunk, chunkname)
+  return load(chunk, chunkname, 't')
 end
 
 -- Local error handler
