@@ -14,4 +14,7 @@ function client_prompt(line)
   end
 end
 
+-- Start in home
+os.path(HOME)
+
 print('Profile loaded')
