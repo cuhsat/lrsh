@@ -53,7 +53,7 @@ execute_process(COMMAND ${GIT_EXECUTABLE} describe --abbrev=0 --tags
 string(REGEX REPLACE "^v" "" GIT_VERSION ${GIT_VERSION})
 string(CONCAT VERSION "Palantir" " " ${GIT_VERSION})
 
-message(STATUS "Version ${VERSION}")
+message(STATUS "Using version \"${VERSION}\"")
 
 #
 #  Compiler flags
