@@ -37,7 +37,7 @@ end
 
 -- Local error handler
 -- @param error message
-local function _error(message)
+local function error(message)
   if message ~= 'Success' and message ~= 'No error' then
     io.stderr:write(string.format('Palantir error: %s\n', message))
 
@@ -47,12 +47,12 @@ local function _error(message)
   end
 end
 
--- Local event trigger
+-- Local callback trigger
 -- @param event source
 -- @param event name
 -- @param event param
 -- @return callback result
-local function _event(source, event, param)
+local function trigger(source, event, param)
   local status, result = pcall(_G[source .. '_' .. event:lower()], param)
 
   if status then
@@ -62,11 +62,11 @@ local function _event(source, event, param)
   return false
 end
 
--- Local evaluate chunk
+-- Local execute chunk
 -- @param chunk to load
 -- @return result or error
-local function _eval(chunk)
-  local command, result = loadstring(chunk, 'command')
+local function execute(chunk)
+  local command, result = loadstring(chunk, 'prompt')
 
   if command then
     return tostring(command() or '')
@@ -105,25 +105,25 @@ end
 -- @param host address
 -- @param port number
 function net.client(host, port)
-  while not xpcall(function() return net.listen(host, port) end, _error) do
+  while not xpcall(function() return net.listen(host, port) end, error) do
     os.sleep(1000)
   end
 
   while true do
-    if xpcall(net.accept, _error) then
+    if xpcall(net.accept, error) then
 
       while true do
-        local status, command, param = xpcall(net.recv, _error)
+        local status, command, param = xpcall(net.recv, error)
 
         if not status then break end
 
-        if _event('client', command, param) then
+        if trigger('client', command, param) then
 
         -- HELO command
         elseif command == 'HELO' then
           local line = os.prompt(param)
 
-          if _event('client', 'prompt', line) then
+          if trigger('client', 'prompt', line) then
 
           elseif line:lower():match('^cd%s+') then
             net.send('PATH', line:sub(4))
@@ -159,14 +159,14 @@ end
 -- @param port number
 function net.server(host, port)
   while true do
-    if xpcall(function() return net.connect(host, port) end, _error) then
+    if xpcall(function() return net.connect(host, port) end, error) then
 
       while true do
         net.send('HELO', string.format('%s@%s:%s ', os.path()))
 
         local command, param = net.recv()
 
-        if _event('server', command, param) then
+        if trigger('server', command, param) then
 
         -- PATH command
         elseif command == 'PATH' then
@@ -174,7 +174,7 @@ function net.server(host, port)
 
         -- EXEC command
         elseif command == 'EXEC' then
-          net.send('TEXT', _eval(param))
+          net.send('TEXT', execute(param))
 
         -- HALT command
         elseif command == 'HALT' then
@@ -193,7 +193,7 @@ pcall(dofile, profile)
 while not xpcall(function()
   local main = SERVER and net.server or net.client
   return main(HOST, PORT)
-end, _error) do end
+end, error) do end
 
 -- Exit
 io.write('Palantir exit\n')
