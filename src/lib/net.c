@@ -214,7 +214,7 @@ extern int net_send(frame_t *frame) {
 
 #if (defined(DEBUG) && (DEBUG == 1))
 
-    fprintf(stderr, ">> %.*s\n", (int)(frame->size), frame->data);
+    fprintf(stderr, "<< %.*s\n", (int)(frame->size), frame->data);
 
 #endif
 
@@ -267,7 +267,7 @@ extern int net_recv(frame_t *frame) {
 
 #if (defined(DEBUG) && (DEBUG == 1))
 
-    fprintf(stderr, "<< %.*s\n", (int)(frame->size), frame->data);
+    fprintf(stderr, ">> %.*s\n", (int)(frame->size), frame->data);
 
 #endif
 
