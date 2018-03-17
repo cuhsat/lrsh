@@ -1,16 +1,13 @@
-<!-- Palantir -->
-
+<!-- PALANTIR -->
 <p align="center">
   <img src="doc/palantir.png" alt="Palantir">
 </p>
-
 <p align="center">
   <img src="https://img.shields.io/github/release/cuhsat/palantir.svg">
   <img src="https://img.shields.io/github/languages/code-size/cuhsat/palantir.svg">
   <img src="https://img.shields.io/travis/cuhsat/palantir.svg">
   <img src="https://img.shields.io/github/license/cuhsat/palantir.svg">
 </p>
-
 <p align="center">
   Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
   readable protocol written in C and Lua
@@ -29,8 +26,6 @@ $ palantir [-dhlv] [-a TOKEN] HOST PORT
 * `a` Authentication token
 
 ## Commands
-* `-- get <regex>` Gets all matching
-* `-- put <regex>` Puts all matching
 * `-- exit` Exits the client
 * `-- halt` Halts the server
 
@@ -49,9 +44,8 @@ return the results where `strerr` will be mapped to `stdout`.
 The user profile `~/.profile.lua` will be loaded at the start. The macro
 `$ <command>` is defined as a shortcut for `os.shell()` calls by default.
 
-## Modules
-[Add-on modules](https://www.github.com/cuhsat/palantir-modules) will be
-searched with-in the default Lua `package.path`.
+## Packages
+Add-on packages will be searched with-in the default Lua `package.path`.
 
 # Environment
 New global constants and functions will be defined which contain all shell
@@ -187,7 +181,7 @@ Client: HALT
 
 # Build
 ```
-$ cmake [-DDEBUG=ON] . && make [VERBOSE=1]
+$ cmake [-DDEBUG=ON] . && make
 ```
 
 ## Required
