@@ -1,17 +1,12 @@
-<!-- PALANTIR -->
-<p align="center">
-  <img src="doc/palantir.png" alt="Palantir">
-</p>
-<p align="center">
-  <img src="https://img.shields.io/github/release/cuhsat/palantir.svg">
-  <img src="https://img.shields.io/github/languages/code-size/cuhsat/palantir.svg">
-  <img src="https://img.shields.io/travis/cuhsat/palantir.svg">
-  <img src="https://img.shields.io/github/license/cuhsat/palantir.svg">
-</p>
-<p align="center">
-  Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
-  readable protocol written in C and Lua
-</p>
+![Palantir](doc/palantir.png)
+
+![](https://img.shields.io/github/release/cuhsat/palantir.svg)
+![](https://img.shields.io/github/languages/code-size/cuhsat/palantir.svg)
+![](https://img.shields.io/travis/cuhsat/palantir.svg)
+![](https://img.shields.io/github/license/cuhsat/palantir.svg)
+
+Palantir is a Lua scriptable, portable, tiny reverse shell, using a human
+readable protocol written in C and Lua.
 
 # Usage
 ```
